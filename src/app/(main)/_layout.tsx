@@ -17,15 +17,9 @@ export default function TabLayout() {
     /* <Tabs.Screen name="index" options={{ href: null }} /> */
   }
   return (
-    <Tabs
-      tabBar={(props) => {
-        console.log(props.descriptors);
-
-        return <TabBar {...props} />;
-      }}
-    >
+    <Tabs tabBar={(props) => <TabBar {...props} />}>
       <Tabs.Screen
-        name="home"
+        name="index"
         options={{
           title: "Home",
         }}

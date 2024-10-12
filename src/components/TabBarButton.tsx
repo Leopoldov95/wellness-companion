@@ -31,8 +31,7 @@ const TabBarButton = ({
   label: string;
 }) => {
   const icons = {
-    index: (props: any) => <Feather name="map" size={24} {...props} />,
-    home: (props: any) => <Feather name="home" size={24} {...props} />,
+    index: (props: any) => <Feather name="home" size={24} {...props} />,
     goals: (props: any) => <Feather name="target" size={24} {...props} />,
     chart: (props: any) => <Feather name="bar-chart" size={24} {...props} />,
     profile: (props: any) => <Feather name="user" size={24} {...props} />,
@@ -69,6 +68,10 @@ const TabBarButton = ({
       top,
     };
   });
+
+  console.log("*****");
+  console.log(routeName);
+
   return (
     <Pressable
       onPress={onPress}

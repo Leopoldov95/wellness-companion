@@ -10,4 +10,13 @@ export const globalStyles = StyleSheet.create({
     color: Colors.light.primary,
     fontFamily: Fonts.seconday[700],
   },
+  subheader: {
+    fontFamily: Fonts.seconday[500],
+    fontSize: 18,
+    color: Colors.light.tertiary,
+  },
+  body: {
+    fontSize: 16,
+    fontFamily: Fonts.primary[400],
+  },
 });
