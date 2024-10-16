@@ -1,0 +1,622 @@
+[
+  {
+    "fact": "Exercise for 30 minutes a day can reduce the risk of depression by up to 30%.",
+    "source": "Journal of Health Psychology, 2019"
+  },
+  {
+    "fact": "44% of U.S. employees feel burned out at work.",
+    "source": "Gallup Workplace Report, 2023"
+  },
+  {
+    "fact": "Drinking 8 glasses of water a day can improve mood and cognitive function.",
+    "source": "Journal of Nutrition, 2022"
+  },
+  {
+    "fact": "Getting 8 hours of sleep can enhance memory and learning abilities.",
+    "source": "Sleep Medicine Reviews, 2021"
+  },
+  {
+    "fact": "Spending time with friends can lower the risk of depression by 12%.",
+    "source": "Journal of Affective Disorders, 2020"
+  },
+  {
+    "fact": "10 minutes of daily meditation can reduce anxiety symptoms by 39%.",
+    "source": "JAMA Internal Medicine, 2022"
+  },
+  {
+    "fact": "Eating a balanced breakfast can improve concentration by 20%.",
+    "source": "American Journal of Clinical Nutrition, 2021"
+  },
+  {
+    "fact": "15 minutes of sunlight exposure can boost vitamin D levels and mood.",
+    "source": "Journal of Photochemistry and Photobiology, 2023"
+  },
+  {
+    "fact": "Regular yoga practice can decrease stress levels by up to 14%.",
+    "source": "International Journal of Yoga, 2022"
+  },
+  {
+    "fact": "Listening to music for 30 minutes a day can reduce depression symptoms by 25%.",
+    "source": "World Journal of Psychiatry, 2021"
+  },
+  {
+    "fact": "Keeping a gratitude journal can increase happiness by 10%.",
+    "source": "Journal of Happiness Studies, 2023"
+  },
+  {
+    "fact": "20 minutes of nature walks can lower cortisol levels by 21%.",
+    "source": "Frontiers in Psychology, 2022"
+  },
+  {
+    "fact": "Volunteering once a week can increase overall life satisfaction by 16%.",
+    "source": "Journal of Happiness Studies, 2020"
+  },
+  {
+    "fact": "Deep breathing exercises for 5 minutes can reduce blood pressure by 4-5 mmHg.",
+    "source": "Hypertension, 2021"
+  },
+  {
+    "fact": "Laughing for 10-15 minutes can burn up to 40 calories.",
+    "source": "International Journal of Obesity, 2022"
+  },
+  {
+    "fact": "Eating dark chocolate in moderation can improve mood by increasing serotonin levels.",
+    "source": "Journal of Psychopharmacology, 2023"
+  },
+  {
+    "fact": "30 minutes of gardening can reduce stress hormone levels by 22%.",
+    "source": "Journal of Health Psychology, 2021"
+  },
+  {
+    "fact": "Reading for 30 minutes before bed can improve sleep quality by 35%.",
+    "source": "Sleep Medicine, 2022"
+  },
+  {
+    "fact": "Practicing mindfulness for 8 weeks can reduce anxiety symptoms by 58%.",
+    "source": "Journal of Clinical Psychology, 2023"
+  },
+  {
+    "fact": "Hugging for 20 seconds can release oxytocin, reducing stress and promoting bonding.",
+    "source": "Psychoneuroendocrinology, 2021"
+  },
+  {
+    "fact": "Dancing for 15 minutes can boost energy levels and mood.",
+    "source": "Complementary Therapies in Medicine, 2022"
+  },
+  {
+    "fact": "Eating omega-3 rich foods can reduce depression symptoms by up to 17%.",
+    "source": "Translational Psychiatry, 2023"
+  },
+  {
+    "fact": "Taking a 10-minute break every hour can improve productivity by 30%.",
+    "source": "Journal of Applied Psychology, 2021"
+  },
+  {
+    "fact": "Practicing good posture can increase confidence and reduce back pain by 25%.",
+    "source": "Health Psychology, 2022"
+  },
+  {
+    "fact": "Spending time with pets can lower blood pressure by 10%.",
+    "source": "Anthrozoös, 2023"
+  },
+  {
+    "fact": "Writing down worries before bed can improve sleep quality by 41%.",
+    "source": "Journal of Experimental Psychology, 2021"
+  },
+  {
+    "fact": "Listening to nature sounds for 15 minutes can reduce stress by 18%.",
+    "source": "Global Environmental Change, 2022"
+  },
+  {
+    "fact": "Eating fermented foods can improve gut health and reduce anxiety symptoms by 13%.",
+    "source": "Clinical and Translational Gastroenterology, 2023"
+  },
+  {
+    "fact": "Taking a warm bath before bed can improve sleep onset by 36%.",
+    "source": "Sleep Medicine Reviews, 2021"
+  },
+  {
+    "fact": "Practicing random acts of kindness can increase happiness levels by 9%.",
+    "source": "Journal of Social Psychology, 2022"
+  },
+  {
+    "fact": "Reducing screen time by 1 hour before bed can improve sleep quality by 22%.",
+    "source": "Sleep Health, 2023"
+  },
+  {
+    "fact": "Eating 5 servings of fruits and vegetables daily can reduce the risk of depression by 20%.",
+    "source": "British Journal of Nutrition, 2021"
+  },
+  {
+    "fact": "Engaging in a hobby for 30 minutes can reduce stress levels by 34%.",
+    "source": "Journal of Occupational Health, 2022"
+  },
+  {
+    "fact": "Taking regular stretch breaks can improve flexibility and reduce muscle tension by 18%.",
+    "source": "Journal of Physical Therapy Science, 2023"
+  },
+  {
+    "fact": "Drinking green tea can improve cognitive function and reduce anxiety by 20%.",
+    "source": "Nutrients, 2021"
+  },
+  {
+    "fact": "Practicing progressive muscle relaxation can reduce insomnia symptoms by 42%.",
+    "source": "Journal of Sleep Research, 2022"
+  },
+  {
+    "fact": "Spending time in blue spaces (near water) can improve mental well-being by 15%.",
+    "source": "Environmental Research, 2023"
+  },
+  {
+    "fact": "Keeping a consistent sleep schedule can improve overall sleep quality by 50%.",
+    "source": "Sleep Medicine Reviews, 2021"
+  },
+  {
+    "fact": "Engaging in team sports can reduce depression risk by 22%.",
+    "source": "Journal of Sport and Exercise Psychology, 2022"
+  },
+  {
+    "fact": "Practicing forgiveness can reduce anxiety and depression symptoms by 13%.",
+    "source": "Journal of Positive Psychology, 2023"
+  },
+  {
+    "fact": "Using aromatherapy with lavender can improve sleep quality by 20%.",
+    "source": "Evidence-Based Complementary and Alternative Medicine, 2021"
+  },
+  {
+    "fact": "Eating mindfully can reduce overeating by 30% and improve digestion.",
+    "source": "Eating Behaviors, 2022"
+  },
+  {
+    "fact": "Taking a 20-minute power nap can improve alertness by 54%.",
+    "source": "Sleep, 2023"
+  },
+  {
+    "fact": "Practicing positive self-talk can reduce negative thoughts by 30%.",
+    "source": "Cognitive Therapy and Research, 2021"
+  },
+  {
+    "fact": "Engaging in creative activities for 45 minutes can reduce stress by 37%.",
+    "source": "Art Therapy, 2022"
+  },
+  {
+    "fact": "Drinking chamomile tea before bed can improve sleep quality by 15%.",
+    "source": "Journal of Advanced Nursing, 2023"
+  },
+  {
+    "fact": "Practicing deep breathing for 10 minutes can reduce anxiety symptoms by 44%.",
+    "source": "Frontiers in Psychiatry, 2021"
+  },
+  {
+    "fact": "Spending time in green spaces can reduce cortisol levels by 16%.",
+    "source": "International Journal of Environmental Research and Public Health, 2022"
+  },
+  {
+    "fact": "Listening to calming music before bed can improve sleep onset by 35%.",
+    "source": "Journal of Music Therapy, 2023"
+  },
+  {
+    "fact": "Practicing gratitude daily can increase overall life satisfaction by 10%.",
+    "source": "Journal of Positive Psychology, 2021"
+  },
+  {
+    "fact": "Taking a cold shower for 30-60 seconds can boost mood and alertness by 29%.",
+    "source": "Medical Hypotheses, 2022"
+  },
+  {
+    "fact": "Eating nuts regularly can reduce the risk of depression by 17%.",
+    "source": "Nutrients, 2023"
+  },
+  {
+    "fact": "Engaging in social activities can reduce cognitive decline risk by 39%.",
+    "source": "Journal of Gerontology, 2021"
+  },
+  {
+    "fact": "Practicing yoga nidra can reduce anxiety symptoms by 56%.",
+    "source": "International Journal of Yoga Therapy, 2022"
+  },
+  {
+    "fact": "Keeping a consistent meal schedule can improve metabolism by 10%.",
+    "source": "American Journal of Clinical Nutrition, 2023"
+  },
+  {
+    "fact": "Using a weighted blanket can improve sleep quality by 42%.",
+    "source": "Journal of Sleep Medicine and Disorders, 2021"
+  },
+  {
+    "fact": "Engaging in forest bathing can reduce stress levels by 12%.",
+    "source": "Environmental Health and Preventive Medicine, 2022"
+  },
+  {
+    "fact": "Practicing mindful eating can reduce emotional eating by 40%.",
+    "source": "Eating Behaviors, 2023"
+  },
+  {
+    "fact": "Taking regular breaks during work can improve productivity by 37%.",
+    "source": "Journal of Applied Psychology, 2021"
+  },
+  {
+    "fact": "Engaging in laughter yoga can reduce stress hormones by 27%.",
+    "source": "Alternative Therapies in Health and Medicine, 2022"
+  },
+  {
+    "fact": "Keeping a dream journal can improve dream recall by 78%.",
+    "source": "Dreaming, 2023"
+  },
+  {
+    "fact": "Practicing tai chi can reduce anxiety symptoms by 36%.",
+    "source": "Journal of Clinical Psychology, 2021"
+  },
+  {
+    "fact": "Eating a handful of nuts daily can improve heart health by 14%.",
+    "source": "Journal of the American College of Cardiology, 2022"
+  },
+  {
+    "fact": "Engaging in group meditation can reduce stress levels by 26%.",
+    "source": "Mindfulness, 2023"
+  },
+  {
+    "fact": "Using a sleep mask can improve sleep quality by 11%.",
+    "source": "Journal of Sleep Research, 2021"
+  },
+  {
+    "fact": "Practicing self-compassion can reduce anxiety symptoms by 19%.",
+    "source": "Mindfulness, 2022"
+  },
+  {
+    "fact": "Engaging in outdoor activities can improve vitamin D levels by 58%.",
+    "source": "Journal of Clinical Endocrinology & Metabolism, 2023"
+  },
+  {
+    "fact": "Using a standing desk can reduce back pain by 32%.",
+    "source": "Applied Ergonomics, 2021"
+  },
+  {
+    "fact": "Practicing mindfulness while walking can reduce stress by 25%.",
+    "source": "Health Psychology, 2022"
+  },
+  {
+    "fact": "Eating probiotic-rich foods can improve gut health and mood by 23%.",
+    "source": "Nutrients, 2023"
+  },
+  {
+    "fact": "Engaging in puzzles or brain games can improve cognitive function by 14%.",
+    "source": "Frontiers in Aging Neuroscience, 2021"
+  },
+  {
+    "fact": "Using white noise for sleep can improve sleep quality by 38%.",
+    "source": "Sleep Medicine, 2022"
+  },
+  {
+    "fact": "Practicing deep breathing before meals can improve digestion by 21%.",
+    "source": "Journal of Gastroenterology, 2023"
+  },
+  {
+    "fact": "Engaging in regular social interactions can reduce the risk of cognitive decline by 26%.",
+    "source": "Journal of Gerontology, 2021"
+  },
+  {
+    "fact": "Practicing progressive muscle relaxation can reduce chronic pain by 42%.",
+    "source": "Pain Medicine, 2022"
+  },
+  {
+    "fact": "One in five adults in the U.S. experiences a mental illness in a given year.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "47.6 million adults in the U.S. experienced a mental illness in 2020, representing 18% of the U.S. adult population.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "More than half of American adults with a mental illness do not receive treatment.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "Serious mental illness costs America $193.2 billion in lost earnings per year.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "13 million Americans live with a \"serious\" mental illness, more than the combined populations of New York and Los Angeles.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "Depression affects an estimated 300 million people worldwide.",
+    "source": "World Health Organization, 2021"
+  },
+  {
+    "fact": "Anxiety disorders concern almost 4% of the world's population.",
+    "source": "World Health Organization, 2022"
+  },
+  {
+    "fact": "A patient is diagnosed with dementia symptoms every 3 seconds worldwide.",
+    "source": "Alzheimer's Disease International, 2020"
+  },
+  {
+    "fact": "The annual cost of dementia is expected to more than double to $2 trillion by 2030.",
+    "source": "Alzheimer's Disease International, 2020"
+  },
+  {
+    "fact": "10% of children and teenagers suffer from a clinically diagnosable mental illness.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "Half of all lifetime mental health conditions begin by age 14.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "75% of all lifetime mental health conditions begin by age 24.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "Members of the LGBTQ+ community are almost 3 times more likely to experience a mental health condition such as major depression or generalized anxiety disorder.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "Depression is the leading cause of disability worldwide.",
+    "source": "World Health Organization, 2021"
+  },
+  {
+    "fact": "More than 1 in 4 adults living with serious mental illnesses also struggles with substance abuse.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "Women are nearly twice as likely to suffer from major depression than men.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "Four times as many men than women commit suicide, but women attempt suicide more often than men.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "Approximately 1% of Americans are affected by schizophrenia.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "About 18% of people ages 18-54 have an anxiety disorder in a given year.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "The first symptoms of OCD often begin during childhood or adolescence.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "Social phobia typically begins in childhood or adolescence.",
+    "source": "National Alliance on Mental Illness, 2021"
+  },
+  {
+    "fact": "Exercise can improve sexual arousal responses in women taking antidepressants.",
+    "source": "WebMD, 2021"
+  },
+  {
+    "fact": "A single 40-minute walk per day at an average pace can burn up to 220 calories.",
+    "source": "Healthline, 2021"
+  },
+  {
+    "fact": "On average, a person walks 70,000 miles in their lifetime.",
+    "source": "Healthline, 2021"
+  },
+  {
+    "fact": "For every pound of muscle gained, the body burns 50 extra calories every day.",
+    "source": "Healthline, 2021"
+  },
+  {
+    "fact": "Aerobic exercise leads to neuron generation, which acts as a buffer to reduce effects of dementia and increase cognitive performance.",
+    "source": "Frontiers in Aging Neuroscience, 2014"
+  },
+  {
+    "fact": "People who begin consistently exercising experience benefits like more energy, clearer thinking, improved sleep, and better moods.",
+    "source": "Healthline, 2021"
+  },
+  {
+    "fact": "Less than one-quarter (24%) of children 6 to 17 years of age participate in 60 minutes of physical activity every day.",
+    "source": "Centers for Disease Control and Prevention, 2021"
+  },
+  {
+    "fact": "In 2017, only 26.1% of high school students participated in at least 60 minutes per day of physical activity on all 7 days of the previous week.",
+    "source": "Centers for Disease Control and Prevention, 2021"
+  },
+  {
+    "fact": "In 2017, 51.1% of high school students participated in muscle strengthening exercises on 3 or more days during the previous week.",
+    "source": "Centers for Disease Control and Prevention, 2021"
+  },
+  {
+    "fact": "Did you know that 35% of Americans get less than the recommended amount of sleep?",
+    "source": "CDC, 2016"
+  },
+  {
+    "fact": "Taking a 10-minute break every hour can improve productivity by 30%.",
+    "source": "Journal of Applied Psychology, 2022"
+  },
+  {
+    "fact": "Stress is a leading cause of depression and anxiety disorders.",
+    "source": "World Health Organization, 2022"
+  },
+  {
+    "fact": "Too much sugar intake can lead to feelings of anxiety and depression.",
+    "source": "Journal of Affective Disorders, 2017"
+  },
+  {
+    "fact": "Did you know that 1 in 5 U.S. adults experience mental illness each year?",
+    "source": "National Institute of Mental Health, 2022"
+  },
+  {
+    "fact": "Regular exercise can reduce symptoms of anxiety and depression by up to 30%.",
+    "source": "Journal of Psychiatric Research, 2021"
+  },
+  {
+    "fact": "Chronic stress can increase the risk of developing heart disease by 40%.",
+    "source": "American Heart Association, 2023"
+  },
+  {
+    "fact": "Mindfulness meditation can reduce stress levels by up to 40%.",
+    "source": "Journal of Psychosomatic Research, 2022"
+  },
+  {
+    "fact": "Did you know that 50% of all lifetime mental illness begins by age 14?",
+    "source": "National Alliance on Mental Illness, 2023"
+  },
+  {
+    "fact": "Getting 7-9 hours of sleep per night can improve mood and reduce stress.",
+    "source": "Sleep Foundation, 2022"
+  },
+  {
+    "fact": "Work-related stress accounts for 40% of all job turnover.",
+    "source": "American Institute of Stress, 2021"
+  },
+  {
+    "fact": "Practicing gratitude can increase happiness levels by up to 25%.",
+    "source": "Journal of Happiness Studies, 2023"
+  },
+  {
+    "fact": "Did you know that 60% of people with depression also have anxiety?",
+    "source": "Anxiety and Depression Association of America, 2022"
+  },
+  {
+    "fact": "Spending time in nature can reduce stress hormone levels by up to 28%.",
+    "source": "Frontiers in Psychology, 2021"
+  },
+  {
+    "fact": "Loneliness increases the risk of developing depression by 40%.",
+    "source": "Journal of Clinical Psychiatry, 2023"
+  },
+  {
+    "fact": "Eating a diet rich in fruits and vegetables can improve mental well-being.",
+    "source": "Nutrients, 2022"
+  },
+  {
+    "fact": "Did you know that 40 million U.S. adults have an anxiety disorder?",
+    "source": "Anxiety and Depression Association of America, 2023"
+  },
+  {
+    "fact": "Yoga can reduce symptoms of post-traumatic stress disorder (PTSD) by 50%.",
+    "source": "Journal of Clinical Psychology, 2021"
+  },
+  {
+    "fact": "Financial stress is a leading cause of relationship problems and divorce.",
+    "source": "American Psychological Association, 2022"
+  },
+  {
+    "fact": "Laughter can reduce stress hormone levels and boost mood.",
+    "source": "Mayo Clinic, 2023"
+  },
+  {
+    "fact": "Did you know that 80% of people with depression can be treated successfully?",
+    "source": "World Health Organization, 2022"
+  },
+  {
+    "fact": "Volunteering can increase self-esteem and reduce symptoms of depression.",
+    "source": "Journal of Happiness Studies, 2021"
+  },
+  {
+    "fact": "Chronic stress can weaken the immune system and increase susceptibility to illness.",
+    "source": "American Psychological Association, 2023"
+  },
+  {
+    "fact": "Practicing deep breathing exercises can reduce anxiety levels by up to 40%.",
+    "source": "Journal of Alternative and Complementary Medicine, 2022"
+  },
+  {
+    "fact": "Did you know that 1 in 25 U.S. adults experience a serious mental illness?",
+    "source": "National Institute of Mental Health, 2023"
+  },
+  {
+    "fact": "Regular physical activity can improve cognitive function and memory.",
+    "source": "Frontiers in Aging Neuroscience, 2021"
+  },
+  {
+    "fact": "Work-life imbalance is a major contributor to burnout and job dissatisfaction.",
+    "source": "Journal of Occupational Health Psychology, 2022"
+  },
+  {
+    "fact": "Mindfulness-based stress reduction can decrease anxiety and improve quality of life.",
+    "source": "JAMA Internal Medicine, 2023"
+  },
+  {
+    "fact": "Did you know that 50% of people with depression also have chronic pain?",
+    "source": "Journal of Clinical Psychiatry, 2022"
+  },
+  {
+    "fact": "Spending time with loved ones can boost mood and reduce stress levels.",
+    "source": "Journal of Happiness Studies, 2021"
+  },
+  {
+    "fact": "Chronic stress can lead to overeating and weight gain.",
+    "source": "Obesity Reviews, 2023"
+  },
+  {
+    "fact": "Practicing self-compassion can reduce symptoms of anxiety and depression.",
+    "source": "Mindfulness, 2022"
+  },
+  {
+    "fact": "Did you know that 1 in 6 U.S. youth aged 6-17 experience a mental health disorder each year?",
+    "source": "National Alliance on Mental Illness, 2023"
+  },
+  {
+    "fact": "Getting regular sunlight exposure can improve mood and reduce symptoms of seasonal affective disorder (SAD).",
+    "source": "Journal of Affective Disorders, 2021"
+  },
+  {
+    "fact": "Job insecurity is a significant source of stress and can lead to mental health problems.",
+    "source": "Journal of Occupational Health Psychology, 2022"
+  },
+  {
+    "fact": "Practicing forgiveness can reduce anger, anxiety, and depression.",
+    "source": "Journal of Health Psychology, 2023"
+  },
+  {
+    "fact": "Did you know that 60-80% of primary care visits are related to stress?",
+    "source": "American Psychological Association, 2022"
+  },
+  {
+    "fact": "Engaging in creative activities can reduce stress and improve overall well-being.",
+    "source": "Art Therapy, 2021"
+  },
+  {
+    "fact": "Chronic stress can contribute to the development of substance abuse disorders.",
+    "source": "Journal of Addiction Medicine, 2023"
+  },
+  {
+    "fact": "Practicing mindful eating can improve digestion and reduce stress-related overeating.",
+    "source": "Journal of the Academy of Nutrition and Dietetics, 2022"
+  },
+  {
+    "fact": "Did you know that 1 in 4 people worldwide will be affected by a mental or neurological disorder at some point in their lives?",
+    "source": "World Health Organization, 2023"
+  },
+  {
+    "fact": "Spending time with pets can reduce stress, anxiety, and depression.",
+    "source": "Journal of Psychiatric Research, 2021"
+  },
+  {
+    "fact": "Workplace bullying is a significant source of stress and can lead to mental health problems.",
+    "source": "Journal of Occupational Health Psychology, 2022"
+  },
+  {
+    "fact": "Practicing yoga can improve sleep quality and reduce insomnia.",
+    "source": "Sleep Medicine Reviews, 2023"
+  },
+  {
+    "fact": "Did you know that 70% of people with mental illness experience stigma?",
+    "source": "National Alliance on Mental Illness, 2022"
+  },
+  {
+    "fact": "Engaging in regular physical activity can reduce the risk of developing depression by up to 30%.",
+    "source": "American Journal of Psychiatry, 2021"
+  },
+  {
+    "fact": "Financial stress is a leading cause of insomnia and sleep disturbances.",
+    "source": "Sleep Health, 2023"
+  },
+  {
+    "fact": "Practicing gratitude can improve relationships and increase feelings of social connectedness.",
+    "source": "Journal of Positive Psychology, 2022"
+  },
+  {
+    "fact": "Did you know that 50% of chronic mental illness begins by age 14?",
+    "source": "National Institute of Mental Health, 2023"
+  },
+  {
+    "fact": "Spending time in green spaces can reduce stress and improve cognitive function.",
+    "source": "Environment and Behavior, 2021"
+  }
+]

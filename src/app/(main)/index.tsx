@@ -4,6 +4,7 @@ import Colors from "@/src/constants/Colors";
 import Feather from "@expo/vector-icons/Feather";
 import { globalStyles } from "@/src/styles/globals";
 import Fonts from "@/src/constants/Fonts";
+import Facts from "@/src/components/Facts";
 import Happy from "@/assets/images/emotions/happy.svg";
 import Sad from "@/assets/images/emotions/sad.svg";
 import Neutral from "@/assets/images/emotions/neutral.svg";
@@ -77,6 +78,19 @@ const HomeScreen = () => {
             </Pressable>
           </View>
         </View>
+
+        {/* Upcomming self care */}
+        <View style={styles.upcomming}></View>
+
+        {/* weeekly progress of self care goals */}
+        <View style={styles.progress}></View>
+
+        {/* Fun mental health facts */}
+        <Facts />
+
+        {/*** Quick Links ***/}
+        {/* Meditate */}
+        {/* Gratitude Journal */}
       </View>
     </View>
   );
@@ -84,7 +98,7 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
+    backgroundColor: Colors.light.offWhite,
     flex: 1,
   },
   name: {
@@ -122,6 +136,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     padding: 15,
+    gap: 24,
   },
   moodContainer: {},
   moods: {
@@ -135,6 +150,8 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     paddingHorizontal: 10,
   },
+  upcomming: {},
+  progress: {},
 });
 
 export default HomeScreen;

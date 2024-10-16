@@ -15,6 +15,11 @@ export default {
     quinary: "#926dfc",
     greyBg: "#f7f4f2",
     textDark: "#100336",
+    lightBlue: "#a8d0e6",
+    softGreen: "#b8e1dd",
+    warmYellow: "#f8e9a1",
+    offWhite: "#f9f7f7",
+    softOrange: "#f6d5a7",
   },
   dark: {
     text: "#fff",

@@ -19,4 +19,12 @@ export const globalStyles = StyleSheet.create({
     fontSize: 16,
     fontFamily: Fonts.primary[400],
   },
+  bodySm: {
+    fontSize: 14,
+    fontFamily: Fonts.primary[400],
+  },
+  linkText: {
+    fontFamily: Fonts.primary[300],
+    color: Colors.light.tint,
+  },
 });

@@ -69,9 +69,6 @@ const TabBarButton = ({
     };
   });
 
-  console.log("*****");
-  console.log(routeName);
-
   return (
     <Pressable
       onPress={onPress}

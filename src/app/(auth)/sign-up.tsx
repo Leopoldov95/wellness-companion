@@ -30,10 +30,12 @@ const SignUpScreen = () => {
   async function signInWithEmail() {
     setLoading(true);
 
-    if (!validateInput()) {
-      setLoading(false);
-      return;
-    }
+    //! TESTING ~ silencig for navigation
+
+    // if (!validateInput()) {
+    //   setLoading(false);
+    //   return;
+    // }
 
     // const { error } = await supabase.auth.signInWithPassword({
     //   email,
@@ -44,7 +46,7 @@ const SignUpScreen = () => {
     //! Only for testing, but move the user to the home page
     setLoading(false);
 
-    router.push("/(main)");
+    router.push("/(auth)/onboarding");
     //return <Redirect href={"/(main)"} />;
 
     //router.push("/");
@@ -140,10 +142,10 @@ const SignUpScreen = () => {
       <Button
         disabled={loading}
         onPress={signInWithEmail}
-        text={loading ? "Signing in..." : "Sign in"}
+        text={loading ? "Creating Account..." : "Create Account"}
       />
       <Link href="/(auth)/sign-up" style={styles.link}>
-        <Text style={styles.linkText}>Create an account</Text>
+        <Text style={styles.linkText}>Already have an account?</Text>
       </Link>
     </View>
   );

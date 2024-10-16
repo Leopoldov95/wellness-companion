@@ -33,7 +33,7 @@ const WelcomeScreen = () => {
           text="Get Started"
         />
         <Link href="/(auth)/sign-up" style={styles.link}>
-          <Text style={styles.linkText}>Already have an account?</Text>
+          <Text style={globalStyles.linkText}>Already have an account?</Text>
         </Link>
       </View>
     </View>
@@ -65,10 +65,6 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
   },
   link: {},
-  linkText: {
-    fontFamily: Fonts.primary[300],
-    color: Colors.light.tint,
-  },
 });
 
 export default WelcomeScreen;
