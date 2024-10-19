@@ -23,7 +23,12 @@ export default function TabBar({
 }: BottomTabBarProps) {
   const [dimensions, setDimensions] = useState({ height: 20, width: 100 });
 
-  const buttonWidth = dimensions.width / state.routes.length;
+  const filteredRoutes = state.routes.filter(
+    (route) => route.name !== "meditate"
+  );
+  const buttonWidth = dimensions.width / filteredRoutes.length;
+
+  // const buttonWidth = dimensions.width / state.routes.length;
 
   const onTabbarLayout = (e: LayoutChangeEvent) => {
     setDimensions({
@@ -55,7 +60,7 @@ export default function TabBar({
           },
         ]}
       />
-      {state.routes.map((route, index) => {
+      {filteredRoutes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
           options.tabBarLabel !== undefined

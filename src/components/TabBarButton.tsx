@@ -35,6 +35,7 @@ const TabBarButton = ({
     goals: (props: any) => <Feather name="target" size={24} {...props} />,
     chart: (props: any) => <Feather name="bar-chart" size={24} {...props} />,
     profile: (props: any) => <Feather name="user" size={24} {...props} />,
+    meditate: (props: any) => <Feather name="user" size={24} {...props} />,
   };
 
   const scale = useSharedValue(0);

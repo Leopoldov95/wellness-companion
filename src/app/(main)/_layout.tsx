@@ -13,36 +13,5 @@ import TabBar from "@/src/components/TabBar";
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
-  {
-    /* <Tabs.Screen name="index" options={{ href: null }} /> */
-  }
-  return (
-    <Tabs tabBar={(props) => <TabBar {...props} />}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-        }}
-      />
-      <Tabs.Screen
-        name="goals"
-        options={{
-          title: "Goals",
-        }}
-      />
-      <Tabs.Screen
-        name="chart"
-        options={{
-          title: "Charts",
-        }}
-      />
-
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-        }}
-      />
-    </Tabs>
-  );
+  return <Tabs tabBar={(props) => <TabBar {...props} />}></Tabs>;
 }

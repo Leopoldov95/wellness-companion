@@ -10,6 +10,8 @@ import Sad from "@/assets/images/emotions/sad.svg";
 import Neutral from "@/assets/images/emotions/neutral.svg";
 import VeryHappy from "@/assets/images/emotions/very-happy.svg";
 import VerySad from "@/assets/images/emotions/very-sad.svg";
+import Meditate from "@/assets/images/activities/meditate.svg";
+import { Link } from "expo-router";
 
 const HomeScreen = () => {
   const options: Intl.DateTimeFormatOptions = {
@@ -90,6 +92,13 @@ const HomeScreen = () => {
 
         {/*** Quick Links ***/}
         {/* Meditate */}
+        <Link href={"/(main)/meditate"} asChild>
+          <Pressable style={styles.meditate}>
+            <Meditate width={60} height={60} />
+            <Text>Meditate</Text>
+          </Pressable>
+        </Link>
+
         {/* Gratitude Journal */}
       </View>
     </View>
@@ -152,6 +161,15 @@ const styles = StyleSheet.create({
   },
   upcomming: {},
   progress: {},
+  meditate: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 20,
+    backgroundColor: Colors.light.warmYellow,
+    borderRadius: 32,
+    gap: 4,
+  },
 });
 
 export default HomeScreen;

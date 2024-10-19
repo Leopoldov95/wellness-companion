@@ -30,6 +30,8 @@ const OnboardingScreen = () => {
     // UPDATE the user profile to have the picture
     // SET the local session to contain the updated user information
     // UPDATE the user context
+    // redirect to the home page
+    router.push("/(main)");
   };
 
   return (
@@ -48,6 +50,7 @@ const OnboardingScreen = () => {
 
       <Button onPress={onProfileAdd} text="Continue"></Button>
       <Button
+        variant="secondary"
         onPress={() => router.push("/(main)")}
         text="Skip For Now"
       ></Button>
@@ -58,10 +61,9 @@ const OnboardingScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 20,
+    paddingVertical: 40,
     paddingHorizontal: 10,
     gap: 20,
-    alignItems: "center",
   },
   image: {
     width: 250,
