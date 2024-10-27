@@ -3,169 +3,72 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  TouchableOpacity,
   ListRenderItem,
   Pressable,
 } from "react-native";
-import React, {
-  DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_REACT_NODES,
-  useEffect,
-  useState,
-} from "react";
 import Colors from "@/src/constants/Colors";
-import { Audio, AVPlaybackStatus } from "expo-av";
-import { Asset } from "expo-asset";
-import * as FileSystem from "expo-file-system";
 import Fonts from "@/src/constants/Fonts";
 import Feather from "@expo/vector-icons/Feather";
-import { Sound } from "expo-av/build/Audio";
-
-type TrackModule = {
-  [key: string]: number;
-};
+import { useMeditate } from "@/src/providers/MeditateContext";
+import { globalStyles } from "@/src/styles/globals";
+import Button from "@/src/components/Button";
+import { useState } from "react";
+import DurationButton from "@/src/components/meditate/DurationButton";
 
 type TrackAsset = {
   name: string;
   uri: string;
 };
 
-type RootStackParamList = {
-  TrackList: undefined;
-  Player: { track: TrackAsset };
-};
-
-type TrackListScreenProps = {
-  navigation: StackNavigationProp<RootStackParamList, "TrackList">;
-};
+type DurationType = 5 | 10 | 15;
 
 const MeditateScreen = () => {
-  const [tracks, setTracks] = useState<TrackAsset[]>([]);
-  const [playBackObj, setPlaybackObj] = useState<Sound | null>(null);
-  const [soundObj, setSoundObj] = useState<AVPlaybackStatus | null>(null);
-  const [currentAudio, setCurrentAudio] = useState<TrackAsset | null>(null);
+  const { tracks, onTrackPress, currentAudio } = useMeditate();
+  const [selectedDuration, setSelectedDuration] = useState<DurationType>(5);
 
-  useEffect(() => {
-    async function loadTracks() {
-      // This will be stored in a DB, local test only
-      const audioModules: TrackModule = {
-        track1: require("../../../../assets/tracks/Blessing.mp3"),
-        track2: require("../../../../assets/tracks/Blossom.mp3"),
-        track3: require("../../../../assets/tracks/Earth.mp3"),
-        track4: require("../../../../assets/tracks/Floating.mp3"),
-        track5: require("../../../../assets/tracks/Motion.mp3"),
-        track6: require("../../../../assets/tracks/Movement.mp3"),
-        track7: require("../../../../assets/tracks/Replenish.mp3"),
-        // Add more tracks as needed
-      };
-
-      const loadedAssets: any = await Asset.loadAsync(
-        Object.values(audioModules)
-      );
-
-      setTracks(loadedAssets);
-    }
-
-    loadTracks();
-  }, []);
-
-  // refactor
-  const play = async (playback: Sound, uri: string) => {
-    try {
-      return await playback.loadAsync({ uri }, { shouldPlay: true });
-    } catch (error) {
-      console.error("error inside play method", error);
-    }
-  };
-
-  const pause = async (playback: Sound) => {
-    try {
-      return await playback?.setStatusAsync({ shouldPlay: false });
-    } catch (error) {
-      console.error("error inside pause method", error);
-    }
-  };
-
-  // refactor end
-
-  const playTrack = async (track: TrackAsset) => {
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      staysActiveInBackground: true,
-      playsInSilentModeIOS: true,
-    });
-    // playing audio for the first time
-    if (soundObj === null) {
-      console.log("playing audio...");
-
-      const playBackObj = new Audio.Sound();
-
-      const status = await play(playBackObj, track.uri);
-      if (status) {
-        setCurrentAudio(track);
-        setPlaybackObj(playBackObj);
-        setSoundObj(status);
-      }
-
-      return;
-    }
-
-    // pause audio if playing
-    if (playBackObj && soundObj?.isLoaded && soundObj.isPlaying) {
-      const status = await pause(playBackObj);
-      if (status) {
-        setSoundObj(status);
-      }
-      return;
-    }
-
-    // resume audio if paused
-    if (
-      soundObj.isLoaded &&
-      !soundObj.isPlaying &&
-      currentAudio?.name === track.name
-    ) {
-      const status = await playBackObj?.playAsync();
-      if (status) {
-        setSoundObj(status);
-      }
-      return;
-    }
-
-    // try {
-    //   await Audio.setAudioModeAsync({
-    //     allowsRecordingIOS: false,
-    //     staysActiveInBackground: true,
-    //     playsInSilentModeIOS: true,
-    //   });
-
-    //   const { sound } = await Audio.Sound.createAsync(
-    //     { uri: track.uri },
-    //     { shouldPlay: true }
-    //   );
-    //   await sound.playAsync();
-    // } catch (error) {
-    //   console.log("Error playing track:", error);
-    // }
+  const handleDurationSelect = (duration: DurationType) => {
+    setSelectedDuration(duration);
+    // You can add additional logic here, such as updating the context or performing other actions
   };
 
   const renderItem: ListRenderItem<TrackAsset> = ({ item }) => (
     <View style={styles.track}>
       <Text style={styles.trackName}>{item.name}</Text>
       {/* !! This should redirect to another media player page */}
-      <Pressable onPress={() => playTrack(item)}>
+      {/* ! changing func to test player screen */}
+      {/* <Pressable onPress={() => router.push("/(main)/meditate/player")}> */}
+      <Pressable onPress={() => onTrackPress(item)}>
         {/* change icon on play (separate screen) */}
         <Feather name="play-circle" size={32} color={Colors.light.primary} />
       </Pressable>
     </View>
   );
 
-  const getTracks = () => {};
-
   return (
     <View style={styles.container}>
-      <Text>Welcome to the Meditate screen!</Text>
+      <Text style={globalStyles.title}>Meditation</Text>
 
       {/* set the duration */}
+      <View style={styles.duration}>
+        <Text style={globalStyles.subheader}>Set Duration:</Text>
+        <View style={styles.durationAction}>
+          <DurationButton
+            duration={5}
+            selectedDuration={selectedDuration}
+            handleDurationSelect={handleDurationSelect}
+          />
+          <DurationButton
+            duration={10}
+            selectedDuration={selectedDuration}
+            handleDurationSelect={handleDurationSelect}
+          />
+          <DurationButton
+            duration={15}
+            selectedDuration={selectedDuration}
+            handleDurationSelect={handleDurationSelect}
+          />
+        </View>
+      </View>
 
       <FlatList
         data={tracks}
@@ -206,6 +109,17 @@ const styles = StyleSheet.create({
   trackName: {
     fontSize: 20,
     fontFamily: Fonts.seconday[600],
+  },
+  duration: {
+    marginTop: 16,
+    marginBottom: 24,
+    display: "flex",
+    gap: 8,
+  },
+  durationAction: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
   },
 });
 
