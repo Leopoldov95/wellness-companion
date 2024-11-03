@@ -1,13 +1,68 @@
-import { View, Text, StyleSheet, Dimensions, Image } from "react-native";
-import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Image,
+  Pressable,
+} from "react-native";
+import React, { useState } from "react";
 import Slider from "@react-native-community/slider";
 import PlayerButton from "@/src/components/meditate/PlayerButton";
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
+import { useMeditate } from "@/src/providers/MeditateContext";
+import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
+import { router } from "expo-router";
+import Feather from "@expo/vector-icons/Feather";
+import { playTrack, pauseTrack } from "@/src/providers/audioUtils";
 
 const { width, height } = Dimensions.get("window");
 
 const PlayerScreen = () => {
+  const {
+    tracks,
+    playBackObj,
+    currentAudio,
+    isPlaying,
+    onTrackPress,
+    selectedDuration,
+    totalAudioCount,
+    currentAudioIdx,
+    setCurrentAudio,
+    setPlaybackObj,
+    setSoundObj,
+    setIsPlaying,
+    setCurrentAudioIdx,
+  } = useMeditate();
+
+  console.log(playBackObj);
+
+  const handleNext = async () => {
+    if (playBackObj) {
+      const { isLoaded } = await playBackObj?.getStatusAsync();
+      const isLastAudio = currentAudioIdx + 1 === totalAudioCount;
+      let audio = tracks[currentAudioIdx + 1];
+      let index, status;
+
+      if (!isLoaded && !isLastAudio) {
+        index = currentAudioIdx + 1;
+        status = await playTrack(playBackObj, audio.uri);
+      }
+
+      if (status) {
+        // set the state here
+      }
+    }
+  };
+
+  const onBackBtn = () => {
+    if (playBackObj) {
+      playBackObj.setStatusAsync({ shouldPlay: false });
+    }
+    router.back();
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -18,9 +73,39 @@ const PlayerScreen = () => {
         />
         <View style={styles.overlay} />
       </View>
+      {/* custom back button */}
+      {/* TODO ~ need to PAUSE when going back */}
+      <Pressable style={styles.backBtn} onPress={onBackBtn}>
+        <Feather name="arrow-left" size={48} color="#fff" />
+      </Pressable>
       <View style={styles.content}>
-        {/* TODO ~ We'll want the track name here */}
-        <Text style={styles.trackName}>Earth</Text>
+        <Text style={styles.trackName}>{currentAudio?.name}</Text>
+        {/* Timer controls */}
+        <View style={styles.timerContainer}>
+          <CountdownCircleTimer
+            isPlaying={isPlaying}
+            duration={selectedDuration * 60}
+            strokeWidth={5}
+            colors={[Colors.light.quinary]}
+            size={250}
+            onComplete={() => {
+              // Handle timer completion
+              return { shouldRepeat: false, delay: 1 };
+            }}
+          >
+            {({ remainingTime }) => (
+              <Text style={styles.timerText}>
+                {`${Math.floor(remainingTime / 60)
+                  .toString()
+                  .padStart(2, "0")}:${(remainingTime % 60)
+                  .toString()
+                  .padStart(2, "0")}`}
+              </Text>
+            )}
+          </CountdownCircleTimer>
+        </View>
+
+        {/* Player controls */}
         <View style={styles.bottomControls}>
           <Slider
             style={styles.slider}
@@ -33,11 +118,11 @@ const PlayerScreen = () => {
           <View style={styles.audioControllers}>
             <PlayerButton iconType="PREV" />
             <PlayerButton
-              onPress={() => console.log("playing")}
+              onPress={() => currentAudio && onTrackPress(currentAudio)}
               style={{ marginHorizontal: 30 }}
-              iconType="PLAY"
+              iconType={isPlaying ? "PAUSE" : "PLAY"}
             />
-            <PlayerButton iconType="NEXT" />
+            <PlayerButton iconType="NEXT" onPress={handleNext} />
           </View>
         </View>
       </View>
@@ -48,6 +133,12 @@ const PlayerScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  backBtn: {
+    position: "absolute",
+    top: 26,
+    left: 20,
+    zIndex: 10,
   },
   imageContainer: {
     position: "absolute",
@@ -80,7 +171,7 @@ const styles = StyleSheet.create({
   },
   bottomControls: {
     marginBottom: 100, // Adjust this value to move controls higher or lower
-    backgroundColor: "rgba(255, 255, 255, 0.75)",
+    backgroundColor: "rgba(255, 255, 255, 0.65)",
     borderRadius: 24,
     padding: 8,
   },
@@ -92,6 +183,19 @@ const styles = StyleSheet.create({
   audioControllers: {
     flexDirection: "row",
     justifyContent: "center",
+  },
+  timerContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+    backgroundColor: "rgba(255,255,255,0.25)",
+    width: 250,
+    marginHorizontal: "auto",
+    borderRadius: 125,
+  },
+  timerText: {
+    fontSize: 40,
+    fontFamily: Fonts.primary[400],
+    color: "white",
   },
 });
 

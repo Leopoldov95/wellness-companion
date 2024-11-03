@@ -8,27 +8,37 @@ import {
   useEffect,
   useState,
 } from "react";
-
-type TrackModule = {
-  [key: string]: number;
-};
-
-type TrackAsset = {
-  name: string;
-  uri: string;
-};
+import {
+  MeditateContextType,
+  TrackAsset,
+  DurationType,
+  TrackModule,
+} from "@/src/types/meditation";
+import {
+  setupAudioMode,
+  loadTracks,
+  playTrack,
+  playNextTrack,
+  pauseTrack,
+  resumeTrack,
+} from "./audioUtils";
 
 //* These are the states and functions I want exposed OUTSIDE the provider
-type MeditateContextType = {
-  tracks: TrackAsset[];
-  currentAudio: TrackAsset | null;
-  onTrackPress: (track: TrackAsset) => Promise<void>;
-};
-
 const MeditateContext = createContext<MeditateContextType>({
   tracks: [],
   currentAudio: null,
   onTrackPress: async (track: TrackAsset) => {},
+  isPlaying: false,
+  selectedDuration: 5,
+  setSelectedDuration: () => {},
+  playBackObj: null,
+  totalAudioCount: 0,
+  currentAudioIdx: 0,
+  setCurrentAudio: () => {},
+  setPlaybackObj: () => {},
+  setSoundObj: () => {},
+  setIsPlaying: () => {},
+  setCurrentAudioIdx: () => {},
 });
 
 const MeditateProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -38,73 +48,38 @@ const MeditateProvider: React.FC<{ children: React.ReactNode }> = ({
   const [playBackObj, setPlaybackObj] = useState<Sound | null>(null);
   const [soundObj, setSoundObj] = useState<AVPlaybackStatus | null>(null);
   const [currentAudio, setCurrentAudio] = useState<TrackAsset | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [selectedDuration, setSelectedDuration] = useState<DurationType>(5);
+  const [totalAudioCount, setTotalAudioCount] = useState<number>(0);
+  const [currentAudioIdx, setCurrentAudioIdx] = useState<number>(0);
 
   useEffect(() => {
-    console.log("hello from meditate provider");
-    async function loadTracks() {
-      //! This will be stored in a DB, local test only
-      const audioModules: TrackModule = {
-        track1: require("../../assets/tracks/Blessing.mp3"),
-        track2: require("../../assets/tracks/Blossom.mp3"),
-        track3: require("../../assets/tracks/Earth.mp3"),
-        track4: require("../../assets/tracks/Floating.mp3"),
-        track5: require("../../assets/tracks/Motion.mp3"),
-        track6: require("../../assets/tracks/Movement.mp3"),
-        track7: require("../../assets/tracks/Replenish.mp3"),
-        // Add more tracks as needed
-      };
-
-      const loadedAssets: any = await Asset.loadAsync(
-        Object.values(audioModules)
-      );
-
-      setTracks(loadedAssets);
+    async function initializeTracks() {
+      const loadedTracks = await loadTracks();
+      setTracks(loadedTracks);
+      setTotalAudioCount(loadedTracks.length);
     }
 
-    loadTracks();
+    initializeTracks();
   }, []);
 
-  const playTrack = async (playback: Sound, uri: string) => {
-    try {
-      return await playback.loadAsync({ uri }, { shouldPlay: true });
-    } catch (error) {
-      console.error("error inside play method", error);
-    }
-  };
-
-  const pauseTrack = async (playback: Sound) => {
-    try {
-      return await playback.setStatusAsync({ shouldPlay: false });
-    } catch (error) {
-      console.error("error inside pause method", error);
-    }
-  };
-
-  const resumeTrack = async (playback: Sound) => {
-    try {
-      return await await playback.playAsync();
-    } catch (error) {
-      console.error("error inside resume method", error);
-    }
-  };
-
-  const playNextTrack = async (playback: Sound, uri: string) => {
-    try {
-      // stop current audio
-      await playback.stopAsync();
-      await playback.unloadAsync();
-      return await playTrack(playback, uri);
-    } catch (error) {
-      console.error("error inside next track method", error);
-    }
-  };
-
   const onTrackPress = async (track: TrackAsset) => {
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      staysActiveInBackground: true,
-      playsInSilentModeIOS: true,
-    });
+    await setupAudioMode();
+
+    if (soundObj === null) {
+      const playBackObj = new Audio.Sound();
+      const status = await playTrack(playBackObj, track.uri);
+      if (status) {
+        setCurrentAudio(track);
+        setPlaybackObj(playBackObj);
+        setSoundObj(status);
+        setIsPlaying(true);
+        setCurrentAudioIdx(track.id);
+      }
+      return;
+    }
+
+    // ... rest of the onTrackPress logic
     // playing audio for the first time
     if (soundObj === null) {
       console.log("playing audio...");
@@ -116,6 +91,8 @@ const MeditateProvider: React.FC<{ children: React.ReactNode }> = ({
         setCurrentAudio(track);
         setPlaybackObj(playBackObj);
         setSoundObj(status);
+        setIsPlaying(true);
+        setCurrentAudioIdx(track.id);
       }
 
       return;
@@ -131,6 +108,7 @@ const MeditateProvider: React.FC<{ children: React.ReactNode }> = ({
       const status = await pauseTrack(playBackObj);
       if (status) {
         setSoundObj(status);
+        setIsPlaying(false);
       }
       return;
     }
@@ -145,6 +123,7 @@ const MeditateProvider: React.FC<{ children: React.ReactNode }> = ({
       const status = await resumeTrack(playBackObj);
       if (status) {
         setSoundObj(status);
+        setIsPlaying(true);
       }
       return;
     }
@@ -156,30 +135,26 @@ const MeditateProvider: React.FC<{ children: React.ReactNode }> = ({
       if (status) {
         setCurrentAudio(track);
         setSoundObj(status);
+        setIsPlaying(true);
       }
     }
-    //! ref for ios playback, will need for later
-    // try {
-    //   await Audio.setAudioModeAsync({
-    //     allowsRecordingIOS: false,
-    //     staysActiveInBackground: true,
-    //     playsInSilentModeIOS: true,
-    //   });
-
-    //   const { sound } = await Audio.Sound.createAsync(
-    //     { uri: track.uri },
-    //     { shouldPlay: true }
-    //   );
-    //   await sound.playAsync();
-    // } catch (error) {
-    //   console.log("Error playing track:", error);
-    // }
   };
 
   const value = {
     tracks,
     currentAudio,
     onTrackPress,
+    isPlaying,
+    selectedDuration,
+    setSelectedDuration,
+    playBackObj,
+    totalAudioCount,
+    currentAudioIdx,
+    setCurrentAudio,
+    setPlaybackObj,
+    setSoundObj,
+    setIsPlaying,
+    setCurrentAudioIdx,
   };
 
   return (
