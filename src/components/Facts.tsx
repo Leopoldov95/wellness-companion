@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
+import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import facts from "@/src/data/facts.json";
 import { Fact } from "../types/fact";
 import { globalStyles } from "../styles/globals";
@@ -30,6 +31,20 @@ const Facts = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.countdown}>
+        <CountdownCircleTimer
+          isPlaying
+          duration={14.9}
+          colors={[Colors.light.secondary]}
+          size={30}
+          strokeWidth={3}
+          onComplete={() => {
+            // do your stuff here
+            return { shouldRepeat: true, delay: 0 }; // repeat animation in 1.5 seconds
+          }}
+        ></CountdownCircleTimer>
+      </View>
+
       <Text style={styles.title}>Did You Know?</Text>
       <View style={styles.fact}>
         <Text style={globalStyles.bodySm}>{randFact.fact}</Text>
@@ -62,6 +77,16 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.primary[300],
     fontSize: 12,
     fontStyle: "italic",
+  },
+  countdownText: {
+    fontFamily: Fonts.primary[600],
+    fontSize: 20,
+    color: Colors.light.secondary,
+  },
+  countdown: {
+    position: "absolute",
+    top: 10,
+    right: 16,
   },
 });
 

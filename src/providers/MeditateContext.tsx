@@ -39,6 +39,7 @@ const MeditateContext = createContext<MeditateContextType>({
   setSoundObj: () => {},
   setIsPlaying: () => {},
   setCurrentAudioIdx: () => {},
+  onMeditationEnd: () => {},
 });
 
 const MeditateProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -82,8 +83,6 @@ const MeditateProvider: React.FC<{ children: React.ReactNode }> = ({
     // ... rest of the onTrackPress logic
     // playing audio for the first time
     if (soundObj === null) {
-      console.log("playing audio...");
-
       const playBackObj = new Audio.Sound();
 
       const status = await playTrack(playBackObj, track.uri);
@@ -140,6 +139,19 @@ const MeditateProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const onMeditationEnd = async () => {
+    let status;
+    if (playBackObj) {
+      status = await pauseTrack(playBackObj);
+    }
+
+    if (status) {
+      setIsPlaying(false);
+      setSoundObj(null);
+      setCurrentAudio(null);
+    }
+  };
+
   const value = {
     tracks,
     currentAudio,
@@ -155,6 +167,7 @@ const MeditateProvider: React.FC<{ children: React.ReactNode }> = ({
     setSoundObj,
     setIsPlaying,
     setCurrentAudioIdx,
+    onMeditationEnd,
   };
 
   return (

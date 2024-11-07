@@ -42,3 +42,4 @@ expo-env.d.ts
 
 # test files
 /assets/tracks
+.todo.txt

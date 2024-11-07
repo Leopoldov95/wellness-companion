@@ -11,20 +11,22 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-
+import MoodProvider from "@/src/providers/MoodContext";
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
   return (
-    <SafeAreaProvider style={{ flex: 1, paddingTop: insets.top }}>
-      <Tabs
-        screenOptions={{
-          headerShown: false,
-        }}
-        tabBar={(props) => <TabBar {...props} />}
-      ></Tabs>
-    </SafeAreaProvider>
+    <MoodProvider>
+      <SafeAreaProvider style={{ flex: 1, paddingTop: insets.top }}>
+        <Tabs
+          screenOptions={{
+            headerShown: false,
+          }}
+          tabBar={(props) => <TabBar {...props} />}
+        ></Tabs>
+      </SafeAreaProvider>
+    </MoodProvider>
   );
 }

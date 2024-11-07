@@ -29,4 +29,5 @@ export type MeditateContextType = {
   setSoundObj: (obj: AVPlaybackStatus | null) => void;
   setIsPlaying: (isPlaying: boolean) => void;
   setCurrentAudioIdx: (idx: number) => void;
+  onMeditationEnd: () => void;
 };

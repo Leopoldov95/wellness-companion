@@ -5,6 +5,7 @@ import {
   FlatList,
   ListRenderItem,
   Pressable,
+  Image,
 } from "react-native";
 
 import Colors from "@/src/constants/Colors";
@@ -12,9 +13,6 @@ import Fonts from "@/src/constants/Fonts";
 import Feather from "@expo/vector-icons/Feather";
 import { useMeditate } from "@/src/providers/MeditateContext";
 import { globalStyles } from "@/src/styles/globals";
-import Button from "@/src/components/Button";
-import { useState } from "react";
-import DurationButton from "@/src/components/meditate/DurationButton";
 import { router } from "expo-router";
 import { TrackAsset } from "@/src/types/meditation";
 import { Picker } from "@react-native-picker/picker";
@@ -42,14 +40,24 @@ const MeditateScreen = () => {
   const renderItem: ListRenderItem<TrackAsset> = ({ item }) => {
     return (
       <View style={styles.track}>
-        <Text style={styles.trackName}>{item.name}</Text>
-        {/* !! This should redirect to another media player page */}
-        {/* ! changing func to test player screen */}
-        {/* <Pressable onPress={() => router.push("/(main)/meditate/player")}> */}
-        <Pressable onPress={() => onTrackSelect(item)}>
-          {/* change icon on play (separate screen) */}
-          <Feather name="play-circle" size={32} color={Colors.light.primary} />
-        </Pressable>
+        <Image
+          style={styles.trackImage}
+          source={require("@/assets/images/meditation/Earth.jpg")}
+          resizeMode="cover"
+        />
+        <View style={styles.trackDetails}>
+          <Text style={styles.trackName}>{item.name}</Text>
+          {/* ! changing func to test player screen */}
+          {/* <Pressable onPress={() => router.push("/(main)/meditate/player")}> */}
+          <Pressable onPress={() => onTrackSelect(item)}>
+            {/* change icon on play (separate screen) */}
+            <Feather
+              name="play-circle"
+              size={32}
+              color={Colors.light.primary}
+            />
+          </Pressable>
+        </View>
       </View>
     );
   };
@@ -93,12 +101,10 @@ const styles = StyleSheet.create({
     marginBottom: 100,
   },
   track: {
-    padding: 20,
     borderRadius: 25,
     backgroundColor: Colors.light.offWhite,
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
     // Box shadow for iOS
     shadowColor: "#000",
     shadowOffset: {
@@ -110,6 +116,20 @@ const styles = StyleSheet.create({
 
     // Box shadow for Android
     elevation: 2,
+  },
+  trackImage: {
+    width: 100,
+    height: 80,
+    borderTopLeftRadius: 25,
+    borderBottomLeftRadius: 25,
+  },
+  trackDetails: {
+    flex: 1,
+    padding: 20,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   trackName: {
     fontSize: 20,
@@ -127,9 +147,14 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   picker: {
-    width: 200,
+    width: "90%",
     height: 40,
     marginTop: 8,
+    marginHorizontal: "auto",
+    backgroundColor: "white",
+    borderColor: Colors.light.primary,
+    borderWidth: 1,
+    borderRadius: 8,
   },
 });
 

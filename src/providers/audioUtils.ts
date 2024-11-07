@@ -7,6 +7,7 @@ export async function loadTracks(): Promise<TrackAsset[]> {
   const audioModules: TrackModule = {
     track1: require("../../assets/tracks/Blessing.mp3"),
     track2: require("../../assets/tracks/Blossom.mp3"),
+    track9: require("../../assets/tracks/Deep.mp3"),
     track3: require("../../assets/tracks/Earth.mp3"),
     track4: require("../../assets/tracks/Floating.mp3"),
     track5: require("../../assets/tracks/Motion.mp3"),

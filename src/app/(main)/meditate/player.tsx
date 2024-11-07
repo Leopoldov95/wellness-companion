@@ -34,9 +34,8 @@ const PlayerScreen = () => {
     setSoundObj,
     setIsPlaying,
     setCurrentAudioIdx,
+    onMeditationEnd,
   } = useMeditate();
-
-  console.log(playBackObj);
 
   const handleNext = async () => {
     if (playBackObj) {
@@ -63,12 +62,17 @@ const PlayerScreen = () => {
     router.back();
   };
 
+  const handleMeditationEnd = () => {
+    onMeditationEnd();
+    onBackBtn();
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
           style={styles.audioBg}
-          source={require("@/assets/images/meditation/earth.jpg")}
+          source={require("@/assets/images/meditation/Earth.jpg")}
           resizeMode="cover"
         />
         <View style={styles.overlay} />
@@ -84,7 +88,8 @@ const PlayerScreen = () => {
         <View style={styles.timerContainer}>
           <CountdownCircleTimer
             isPlaying={isPlaying}
-            duration={selectedDuration * 60}
+            // duration={selectedDuration * 60}
+            duration={selectedDuration}
             strokeWidth={5}
             colors={[Colors.light.quinary]}
             size={250}
@@ -93,28 +98,27 @@ const PlayerScreen = () => {
               return { shouldRepeat: false, delay: 1 };
             }}
           >
-            {({ remainingTime }) => (
-              <Text style={styles.timerText}>
-                {`${Math.floor(remainingTime / 60)
-                  .toString()
-                  .padStart(2, "0")}:${(remainingTime % 60)
-                  .toString()
-                  .padStart(2, "0")}`}
-              </Text>
-            )}
+            {({ remainingTime }) => {
+              // once coundown reaches 0, need to handle a few things
+              if (remainingTime <= 0) {
+                handleMeditationEnd();
+              }
+
+              return (
+                <Text style={styles.timerText}>
+                  {`${Math.floor(remainingTime / 60)
+                    .toString()
+                    .padStart(2, "0")}:${(remainingTime % 60)
+                    .toString()
+                    .padStart(2, "0")}`}
+                </Text>
+              );
+            }}
           </CountdownCircleTimer>
         </View>
 
         {/* Player controls */}
         <View style={styles.bottomControls}>
-          <Slider
-            style={styles.slider}
-            maximumValue={1}
-            minimumValue={0}
-            minimumTrackTintColor={Colors.light.quaternary}
-            maximumTrackTintColor="#000000"
-            thumbTintColor={Colors.light.primary}
-          />
           <View style={styles.audioControllers}>
             <PlayerButton iconType="PREV" />
             <PlayerButton
@@ -171,9 +175,9 @@ const styles = StyleSheet.create({
   },
   bottomControls: {
     marginBottom: 100, // Adjust this value to move controls higher or lower
-    backgroundColor: "rgba(255, 255, 255, 0.65)",
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
     borderRadius: 24,
-    padding: 8,
+    paddingVertical: 20,
   },
   slider: {
     width: width - 50, // Subtract padding from width

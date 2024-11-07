@@ -12,8 +12,12 @@ import VeryHappy from "@/assets/images/emotions/very-happy.svg";
 import VerySad from "@/assets/images/emotions/very-sad.svg";
 import Meditate from "@/assets/images/activities/meditate.svg";
 import { Link } from "expo-router";
+import { moodType } from "@/src/types/mood";
+import { useMood } from "@/src/providers/MoodContext";
 
 const HomeScreen = () => {
+  const { onMoodPress, isMoodTracked } = useMood();
+
   const options: Intl.DateTimeFormatOptions = {
     weekday: "short", // 'Tue'
     year: "numeric", // '2025'
@@ -23,6 +27,7 @@ const HomeScreen = () => {
 
   const today = new Date();
   const formattedDate = today.toLocaleDateString("en-US", options);
+
   return (
     <View style={styles.container}>
       {/* User Profile */}
@@ -58,28 +63,30 @@ const HomeScreen = () => {
       <View style={styles.main}>
         {/* Mood Tracking */}
         {/* (?) We might want to make this it's own component */}
-        <View style={styles.moodContainer}>
-          <Text style={[globalStyles.subheader, { textAlign: "center" }]}>
-            How Was Your Mood Today?
-          </Text>
-          <View style={styles.moods}>
-            <Pressable>
-              <VerySad width={60} height={60} />
-            </Pressable>
-            <Pressable>
-              <Sad width={60} height={60} />
-            </Pressable>
-            <Pressable>
-              <Neutral width={60} height={60} />
-            </Pressable>
-            <Pressable>
-              <Happy width={60} height={60} />
-            </Pressable>
-            <Pressable>
-              <VeryHappy width={60} height={60} />
-            </Pressable>
+        {!isMoodTracked && (
+          <View style={styles.moodContainer}>
+            <Text style={[globalStyles.subheader, { textAlign: "center" }]}>
+              How Was Your Mood Today?
+            </Text>
+            <View style={styles.moods}>
+              <Pressable onPress={() => onMoodPress(1)}>
+                <VerySad width={60} height={60} />
+              </Pressable>
+              <Pressable onPress={() => onMoodPress(2)}>
+                <Sad width={60} height={60} />
+              </Pressable>
+              <Pressable onPress={() => onMoodPress(3)}>
+                <Neutral width={60} height={60} />
+              </Pressable>
+              <Pressable onPress={() => onMoodPress(4)}>
+                <Happy width={60} height={60} />
+              </Pressable>
+              <Pressable onPress={() => onMoodPress(5)}>
+                <VeryHappy width={60} height={60} />
+              </Pressable>
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Upcomming self care */}
         <View style={styles.upcomming}></View>
@@ -94,8 +101,8 @@ const HomeScreen = () => {
         {/* Meditate */}
         <Link href={"/(main)/meditate"} asChild>
           <Pressable style={styles.meditate}>
-            <Meditate width={60} height={60} />
-            <Text>Meditate</Text>
+            <Meditate width={100} height={100} />
+            <Text style={styles.menuOption}>Meditate</Text>
           </Pressable>
         </Link>
 
@@ -165,10 +172,17 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 20,
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     backgroundColor: Colors.light.warmYellow,
     borderRadius: 32,
     gap: 4,
+  },
+  menuOption: {
+    fontFamily: Fonts.seconday[600],
+    fontSize: 32,
+    color: "white",
   },
 });
 
