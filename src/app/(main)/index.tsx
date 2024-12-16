@@ -1,19 +1,23 @@
-import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Pressable,
+  ScrollView,
+} from "react-native";
 import React from "react";
 import Colors from "@/src/constants/Colors";
 import Feather from "@expo/vector-icons/Feather";
 import { globalStyles } from "@/src/styles/globals";
 import Fonts from "@/src/constants/Fonts";
-import Facts from "@/src/components/Facts";
-import Happy from "@/assets/images/emotions/happy.svg";
-import Sad from "@/assets/images/emotions/sad.svg";
-import Neutral from "@/assets/images/emotions/neutral.svg";
-import VeryHappy from "@/assets/images/emotions/very-happy.svg";
-import VerySad from "@/assets/images/emotions/very-sad.svg";
-import Meditate from "@/assets/images/activities/meditate.svg";
 import { Link } from "expo-router";
 import { moodType } from "@/src/types/mood";
 import { useMood } from "@/src/providers/MoodContext";
+import Meditate from "@/assets/images/activities/meditate.svg";
+import Journaling from "@/assets/images/activities/journaling.svg";
+import MoodSelector from "@/src/components/mood/MoodSelector";
+import Facts from "@/src/components/Facts";
 
 const HomeScreen = () => {
   const { onMoodPress, isMoodTracked } = useMood();
@@ -60,33 +64,14 @@ const HomeScreen = () => {
       </View>
 
       {/* Main Content */}
-      <View style={styles.main}>
+      <ScrollView
+        style={styles.main}
+        contentContainerStyle={styles.scrollViewContent}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Mood Tracking */}
         {/* (?) We might want to make this it's own component */}
-        {!isMoodTracked && (
-          <View style={styles.moodContainer}>
-            <Text style={[globalStyles.subheader, { textAlign: "center" }]}>
-              How Was Your Mood Today?
-            </Text>
-            <View style={styles.moods}>
-              <Pressable onPress={() => onMoodPress(1)}>
-                <VerySad width={60} height={60} />
-              </Pressable>
-              <Pressable onPress={() => onMoodPress(2)}>
-                <Sad width={60} height={60} />
-              </Pressable>
-              <Pressable onPress={() => onMoodPress(3)}>
-                <Neutral width={60} height={60} />
-              </Pressable>
-              <Pressable onPress={() => onMoodPress(4)}>
-                <Happy width={60} height={60} />
-              </Pressable>
-              <Pressable onPress={() => onMoodPress(5)}>
-                <VeryHappy width={60} height={60} />
-              </Pressable>
-            </View>
-          </View>
-        )}
+        <MoodSelector onMoodPress={onMoodPress} isMoodTracked={isMoodTracked} />
 
         {/* Upcomming self care */}
         <View style={styles.upcomming}></View>
@@ -107,7 +92,13 @@ const HomeScreen = () => {
         </Link>
 
         {/* Gratitude Journal */}
-      </View>
+        <Link href={"/(main)/journal"} asChild>
+          <Pressable style={styles.journaling}>
+            <Text style={styles.menuOption}>Journaling</Text>
+            <Journaling width={100} height={100} />
+          </Pressable>
+        </Link>
+      </ScrollView>
     </View>
   );
 };
@@ -151,20 +142,11 @@ const styles = StyleSheet.create({
   },
   main: {
     flex: 1,
+  },
+  scrollViewContent: {
     padding: 15,
     gap: 24,
-  },
-  moodContainer: {},
-  moods: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: Colors.light.quaternary,
-    borderRadius: 25,
-    paddingTop: 16,
-    paddingBottom: 8,
-    paddingHorizontal: 10,
+    paddingBottom: 120,
   },
   upcomming: {},
   progress: {},
@@ -176,6 +158,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     backgroundColor: Colors.light.warmYellow,
+    borderRadius: 32,
+    gap: 4,
+  },
+  journaling: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: Colors.light.softOrange,
     borderRadius: 32,
     gap: 4,
   },

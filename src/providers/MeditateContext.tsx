@@ -21,7 +21,7 @@ import {
   playNextTrack,
   pauseTrack,
   resumeTrack,
-} from "./audioUtils";
+} from "@/src/services/audioService";
 
 //* These are the states and functions I want exposed OUTSIDE the provider
 const MeditateContext = createContext<MeditateContextType>({

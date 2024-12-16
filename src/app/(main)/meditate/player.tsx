@@ -15,7 +15,7 @@ import { useMeditate } from "@/src/providers/MeditateContext";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { router } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
-import { playTrack, pauseTrack } from "@/src/providers/audioUtils";
+import { playTrack, pauseTrack } from "@/src/services/audioService";
 
 const { width, height } = Dimensions.get("window");
 

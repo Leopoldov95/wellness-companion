@@ -15,6 +15,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+const EXCLUDED_ROUTES = ["meditate", "journal"];
 
 export default function TabBar({
   state,
@@ -23,9 +24,11 @@ export default function TabBar({
 }: BottomTabBarProps) {
   const [dimensions, setDimensions] = useState({ height: 20, width: 100 });
 
+  //* removing pages from the navar index
   const filteredRoutes = state.routes.filter(
-    (route) => route.name !== "meditate"
-  );
+    (route) => EXCLUDED_ROUTES.indexOf(route.name) === -1
+);
+
   const buttonWidth = dimensions.width / filteredRoutes.length;
 
   // const buttonWidth = dimensions.width / state.routes.length;
