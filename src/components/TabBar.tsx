@@ -1,12 +1,6 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  LayoutChangeEvent,
-} from "react-native";
+import { View, StyleSheet, LayoutChangeEvent } from "react-native";
+import { usePathname } from "expo-router";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { Feather } from "@expo/vector-icons";
 import Colors from "@/src/constants/Colors";
 import TabBarButton from "./TabBarButton";
 import { useState } from "react";
@@ -22,12 +16,16 @@ export default function TabBar({
   descriptors,
   navigation,
 }: BottomTabBarProps) {
+  // get the current location to hide the navbar on specified pages
+  const pathname = usePathname();
+  const routeName = pathname.replace("/", "");
+
   const [dimensions, setDimensions] = useState({ height: 20, width: 100 });
 
-  //* removing pages from the navar index
+  //* removing pages from the navbar index so it will not appear as a Nav menu
   const filteredRoutes = state.routes.filter(
     (route) => EXCLUDED_ROUTES.indexOf(route.name) === -1
-);
+  );
 
   const buttonWidth = dimensions.width / filteredRoutes.length;
 
@@ -49,7 +47,13 @@ export default function TabBar({
   });
 
   return (
-    <View onLayout={onTabbarLayout} style={styles.tabBar}>
+    <View
+      onLayout={onTabbarLayout}
+      style={[
+        styles.tabBar,
+        EXCLUDED_ROUTES.includes(routeName) && styles.hide,
+      ]}
+    >
       <Animated.View
         style={[
           animatedStyle,
@@ -128,5 +132,8 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     shadowOpacity: 0.1,
     elevation: 5,
+  },
+  hide: {
+    display: "none",
   },
 });

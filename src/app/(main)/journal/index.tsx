@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, Dimensions, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Image,
+  Pressable,
+} from "react-native";
 import React from "react";
 import Colors from "@/src/constants/Colors";
 import { globalStyles } from "@/src/styles/globals";
@@ -6,6 +13,7 @@ const { width } = Dimensions.get("window");
 import { useJournal } from "@/src/providers/JournalContext";
 import Fonts from "@/src/constants/Fonts";
 import Journal from "@/src/components/journal/Journal";
+import Feather from "@expo/vector-icons/Feather";
 const SPIRAL_COUNT = 15;
 
 //*TODO
@@ -51,10 +59,24 @@ const JournalScreen = () => {
       )}
 
       <View style={styles.actionsContainer}>
-        {/* save the entry */}
-        {/* option to share anonmysously */}
-        {/* ??? Maybe ask the user to sare anonymously AFTER creating a graiue journal */}
         {/* View community posts */}
+        <Pressable style={styles.journalAction}>
+          <Feather name="users" size={24} color="black" />
+          <Text>Community</Text>
+        </Pressable>
+        {/* save the entry */}
+        {/*** MUST BE DISABLED IF NO ENTRY */}
+        {/* ??? Maybe ask the user to sare anonymously AFTER creating a graiue journal */}
+        <Pressable>
+          <Feather name="save" size={24} color="black" />
+          <Text>Save</Text>
+        </Pressable>
+        {/* option to share anonmysously */}
+        {/* See post history */}
+        <Pressable style={styles.journalAction}>
+          <Feather name="clock" size={24} color="black" />
+          <Text>History</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -91,6 +113,22 @@ const styles = StyleSheet.create({
   image: {
     width: 120,
     height: 120,
+  },
+  actionsContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  journalAction: {
+    display: "flex",
+    alignItems: "center",
+    textAlign: "center",
+    flexDirection: "column",
+    width: 80,
+    backgroundColor: "red",
+    borderRadius: 30,
+    padding: 10,
   },
 });
 

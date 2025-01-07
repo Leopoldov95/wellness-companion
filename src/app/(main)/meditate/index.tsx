@@ -66,6 +66,10 @@ const MeditateScreen = () => {
     <View style={styles.container}>
       <Text style={globalStyles.title}>Meditation</Text>
 
+      <Pressable style={styles.backBtn}>
+        <Feather name="arrow-left" size={48} color="#fff" />
+      </Pressable>
+
       {/* set the duration */}
       <View style={styles.duration}>
         <Text style={globalStyles.subheader}>Set Duration:</Text>
@@ -98,7 +102,13 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: Colors.light.greyBg,
-    marginBottom: 100,
+    marginBottom: 10,
+  },
+  backBtn: {
+    position: "absolute",
+    top: 26,
+    left: 20,
+    zIndex: 10,
   },
   track: {
     borderRadius: 25,

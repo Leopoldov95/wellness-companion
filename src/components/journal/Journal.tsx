@@ -34,6 +34,7 @@ const Journal = () => {
               placeholder={bullet === 1 ? todayPrompt : "Write Something..."}
               textAlignVertical="top"
               textAlign="left"
+              maxLength={50}
             />
           </View>
         ))}
