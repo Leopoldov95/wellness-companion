@@ -6,7 +6,7 @@ import {
   Image,
   Pressable,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Colors from "@/src/constants/Colors";
 import { globalStyles } from "@/src/styles/globals";
 const { width } = Dimensions.get("window");
@@ -14,6 +14,9 @@ import { useJournal } from "@/src/providers/JournalContext";
 import Fonts from "@/src/constants/Fonts";
 import Journal from "@/src/components/journal/Journal";
 import Feather from "@expo/vector-icons/Feather";
+import { router } from "expo-router";
+import Modal from "react-native-modal";
+
 const SPIRAL_COUNT = 15;
 
 //*TODO
@@ -36,19 +39,42 @@ const SPIRAL_COUNT = 15;
 // 2. Users can have 'avatars' for sharing as an additional bonus
 
 const JournalScreen = () => {
-  const { hasWrittenToday, entries } = useJournal();
+  const { hasWrittenToday } = useJournal();
+  //const { hasWrittenToday, entries } = useJournal();
+  const [isSaveModalVisible, setSaveModalVisible] = useState(false);
+
+  const toggleSaveModal = () => setSaveModalVisible(!isSaveModalVisible);
+
+  const [entries, setEntries] = useState({
+    entry1: "",
+    entry2: "",
+    entry3: "",
+  });
+
+  const handleInputChange = (text: string, index: number) => {
+    setEntries((prev) => ({
+      ...prev,
+      [`entry${index + 1}`]: text,
+    }));
+  };
+
+  const canSave = entries.entry1 && entries.entry2 && entries.entry3;
 
   return (
     <View style={styles.container}>
+      <Pressable style={styles.backBtn} onPress={() => router.back()}>
+        <Feather name="arrow-left" size={48} color={Colors.light.text} />
+      </Pressable>
+
       <Text style={globalStyles.title}>Gratitude Journal</Text>
 
       {/* Journal component */}
       {!hasWrittenToday ? (
-        <Journal />
+        <Journal entries={entries} onInputChange={handleInputChange} />
       ) : (
         <View style={styles.feedbackContainer}>
           <Text style={globalStyles.subheader}>
-            You already written your gratidue today!
+            You already written your gratitude today!
           </Text>
           <Image
             source={require("@/assets/images/journal/notebook.png")}
@@ -60,24 +86,62 @@ const JournalScreen = () => {
 
       <View style={styles.actionsContainer}>
         {/* View community posts */}
-        <Pressable style={styles.journalAction}>
-          <Feather name="users" size={24} color="black" />
-          <Text>Community</Text>
+        <Pressable style={styles.button}>
+          <Feather name="users" size={24} color="white" />
+          <Text style={styles.buttonText}>Shared</Text>
         </Pressable>
         {/* save the entry */}
         {/*** MUST BE DISABLED IF NO ENTRY */}
         {/* ??? Maybe ask the user to sare anonymously AFTER creating a graiue journal */}
-        <Pressable>
-          <Feather name="save" size={24} color="black" />
-          <Text>Save</Text>
+        <Pressable
+          style={[styles.saveBtn, !canSave && styles.disabledBtn]}
+          onPress={toggleSaveModal}
+          disabled={!canSave}
+        >
+          <Feather
+            name="save"
+            size={24}
+            color={canSave ? Colors.light.secondary : "lightgray"}
+          />
+          <Text
+            style={{ color: canSave ? Colors.light.secondary : "lightgray" }}
+          >
+            Save
+          </Text>
         </Pressable>
         {/* option to share anonmysously */}
         {/* See post history */}
-        <Pressable style={styles.journalAction}>
-          <Feather name="clock" size={24} color="black" />
-          <Text>History</Text>
+        <Pressable style={styles.button}>
+          <Feather name="clock" size={24} color="white" />
+          <Text style={styles.buttonText}>History</Text>
         </Pressable>
       </View>
+
+      <Modal
+        isVisible={isSaveModalVisible}
+        onBackdropPress={toggleSaveModal}
+        animationIn="slideInUp"
+        animationOut={"slideOutDown"}
+        style={styles.modal}
+      >
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>Great Job!</Text>
+          <Image
+            source={require("@/assets/images/journal/confetti.png")}
+            style={styles.image}
+            resizeMode="contain"
+          />
+          {/* share anonymously */}
+          <Pressable>
+            <Text>Share Anonomously</Text>
+          </Pressable>
+
+          {/* close */}
+          <Pressable style={styles.modalButton} onPress={toggleSaveModal}>
+            <Text style={styles.modalButtonText}>Close</Text>
+          </Pressable>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -85,8 +149,14 @@ const JournalScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 30,
+    paddingHorizontal: 30,
+    paddingTop: 60,
     backgroundColor: Colors.light.greyBg,
+  },
+  backBtn: {
+    position: "absolute",
+    top: 10,
+    left: 10,
   },
   feedbackContainer: {
     display: "flex",
@@ -118,17 +188,71 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginTop: 40,
+    gap: 10,
   },
-  journalAction: {
+  button: {
     display: "flex",
     alignItems: "center",
     textAlign: "center",
     flexDirection: "column",
-    width: 80,
-    backgroundColor: "red",
-    borderRadius: 30,
-    padding: 10,
+    flex: 1,
+    backgroundColor: Colors.light.quinary,
+    borderRadius: 32,
+    padding: 12,
+    gap: 8,
+  },
+  saveBtn: {
+    borderColor: Colors.light.secondary,
+    borderWidth: 2,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 32,
+    backgroundColor: "white",
+    display: "flex",
+    alignItems: "center",
+    textAlign: "center",
+    flexDirection: "column",
+    flex: 2,
+  },
+  saveBtnText: {
+    color: Colors.light.secondary,
+  },
+  buttonText: {
+    color: "white",
+  },
+  modal: {
+    margin: 0,
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    minHeight: "60%",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  modalButton: {
+    backgroundColor: Colors.light.secondary,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  modalButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  disabledBtn: {
+    opacity: 0.5,
+    borderColor: "lightgray",
   },
 });
 

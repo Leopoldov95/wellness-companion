@@ -7,8 +7,15 @@ import { useJournal } from "@/src/providers/JournalContext";
 import Fonts from "@/src/constants/Fonts";
 const SPIRAL_COUNT = 15;
 
-const Journal = () => {
-  const { todayPrompt, hasWrittenToday, entries } = useJournal();
+const Journal = ({
+  entries,
+  onInputChange,
+}: {
+  entries: { [key: string]: string };
+  onInputChange: (text: string, index: number) => void;
+}) => {
+  //const { todayPrompt, hasWrittenToday, entries } = useJournal();
+  const { todayPrompt, hasWrittenToday } = useJournal();
 
   return (
     <View style={styles.journal}>
@@ -25,7 +32,7 @@ const Journal = () => {
       {/* Notebook design end */}
       {/* User prompt */}
       <View style={styles.userInputContainer}>
-        {[1, 2, 3].map((bullet) => (
+        {[1, 2, 3].map((bullet, index) => (
           <View key={bullet} style={styles.bulletRow}>
             <Text style={styles.bullet}>{bullet}.</Text>
             <TextInput
@@ -35,6 +42,8 @@ const Journal = () => {
               textAlignVertical="top"
               textAlign="left"
               maxLength={50}
+              value={entries[`entry${bullet}`]}
+              onChangeText={(text) => onInputChange(text, index)}
             />
           </View>
         ))}
