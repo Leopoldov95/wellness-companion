@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import React from "react";
 import { globalStyles } from "@/src/styles/globals";
-import Button from "@/src/components/Button";
+// import Button from "@/src/components/Button";
+import { Button } from "react-native-paper";
 import { Link } from "expo-router";
 import Colors from "@/src/constants/Colors";
 import WelcomeGraphic from "@/assets/images/auth/welcome-graphic.svg";
@@ -29,9 +30,14 @@ const WelcomeScreen = () => {
       <WelcomeGraphic width={325} height={325} />
       <View>
         <Button
+          buttonColor={Colors.light.primary}
+          mode="contained"
+          style={globalStyles.button}
+          contentStyle={globalStyles.buttonContect}
           onPress={() => router.push("/(auth)/sign-in")}
-          text="Get Started"
-        />
+        >
+          Get Started
+        </Button>
         <Link href="/(auth)/sign-up" style={styles.link}>
           <Text style={globalStyles.linkText}>Already have an account?</Text>
         </Link>

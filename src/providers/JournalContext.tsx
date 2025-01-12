@@ -7,7 +7,14 @@ import React, {
 import { JournalContextType, GratitudeEntry } from "@/src/types/journal";
 import journalPrompts from "@/src/data/journal.json";
 //* These are the states and functions I want exposed OUTSIDE the provider
-const JournalContext = createContext<JournalContextType | undefined>(undefined);
+const JournalContext = createContext<JournalContextType>({
+  entries: [],
+  todayPrompt: null,
+  hasWrittenToday: false,
+  addEntry: () => {},
+  setTodayPrompt: (prompt: string) => {},
+  shareJournal: (entry: GratitudeEntry) => {},
+});
 
 const JournalProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -28,12 +35,19 @@ const JournalProvider: React.FC<{ children: React.ReactNode }> = ({
     setHasWrittenToday(true);
   };
 
+  // share the journal entry anonymously
+  const shareJournal = (entry: GratitudeEntry) => {
+    console.log("you want to share the gratidue");
+    // * Might be easiest to just set this as a flag in the DB
+  };
+
   const value = {
     entries,
     todayPrompt,
     hasWrittenToday,
     addEntry,
     setTodayPrompt,
+    shareJournal,
   };
 
   return (

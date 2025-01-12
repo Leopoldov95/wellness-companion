@@ -1,19 +1,17 @@
 export interface JournalContextType {
   entries: GratitudeEntry[];
-  todayPrompt: Prompt | null;
+  todayPrompt: string | null;
   hasWrittenToday: boolean;
   addEntry: (entry: GratitudeEntry) => void;
-  setTodayPrompt: (prompt: Prompt) => void;
+  setTodayPrompt: (prompt: string) => void;
+  shareJournal: (entry: GratitudeEntry) => void;
 }
 
 export type GratitudeEntry = {
-  id: string;
-  userId: string;
+  id: number;
+  userId: number;
   date: string;
-  items: Array<{
-    text: string;
-    timestamp: string;
-  }>;
+  items: [string, string, string]; // must have a length of 3
   isShared: boolean;
-  isAnonymous: boolean;
+  isFavorite: boolean;
 };

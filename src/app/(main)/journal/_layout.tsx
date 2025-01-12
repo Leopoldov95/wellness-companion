@@ -10,8 +10,8 @@ const JournalLayout = () => {
       <JournalProvider>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
-          {/* <Stack.Screen name="entries" options={{ headerShown: false }} />
-          <Stack.Screen name="community" options={{ headerShown: false }} /> */}
+          <Stack.Screen name="entries" options={{ presentation: "modal" }} />
+          {/* <Stack.Screen name="community" options={{ headerShown: false }} /> */}
         </Stack>
       </JournalProvider>
     </SafeAreaProvider>

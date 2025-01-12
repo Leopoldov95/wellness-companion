@@ -27,4 +27,11 @@ export const globalStyles = StyleSheet.create({
     fontFamily: Fonts.primary[300],
     color: Colors.light.tint,
   },
+  button: {
+    borderRadius: 100,
+    marginVertical: 10,
+  },
+  buttonContect: {
+    paddingVertical: 10,
+  },
 });

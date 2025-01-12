@@ -11,7 +11,7 @@ import Colors from "@/src/constants/Colors";
 import { globalStyles } from "@/src/styles/globals";
 const { width } = Dimensions.get("window");
 import { useJournal } from "@/src/providers/JournalContext";
-import Fonts from "@/src/constants/Fonts";
+import { Button } from "react-native-paper";
 import Journal from "@/src/components/journal/Journal";
 import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
@@ -39,7 +39,7 @@ const SPIRAL_COUNT = 15;
 // 2. Users can have 'avatars' for sharing as an additional bonus
 
 const JournalScreen = () => {
-  const { hasWrittenToday } = useJournal();
+  const { hasWrittenToday, shareJournal } = useJournal();
   //const { hasWrittenToday, entries } = useJournal();
   const [isSaveModalVisible, setSaveModalVisible] = useState(false);
 
@@ -111,7 +111,10 @@ const JournalScreen = () => {
         </Pressable>
         {/* option to share anonmysously */}
         {/* See post history */}
-        <Pressable style={styles.button}>
+        <Pressable
+          style={styles.button}
+          onPress={() => router.push("/(main)/journal/entries")}
+        >
           <Feather name="clock" size={24} color="white" />
           <Text style={styles.buttonText}>History</Text>
         </Pressable>
@@ -132,9 +135,20 @@ const JournalScreen = () => {
             resizeMode="contain"
           />
           {/* share anonymously */}
-          <Pressable>
-            <Text>Share Anonomously</Text>
-          </Pressable>
+          {/* TODO~ Flow */}
+          {/* 
+            1. On Save press the gratide entry gets saved to the DB
+            2. IF user clickes the share button, THEN it will share to community
+            3. Easiest would be to just use local entry state
+          */}
+          <Button
+            icon="share"
+            mode="contained"
+            onPress={shareJournal}
+            style={styles.shareButton}
+          >
+            Share Anonymously
+          </Button>
 
           {/* close */}
           <Pressable style={styles.modalButton} onPress={toggleSaveModal}>
@@ -230,7 +244,11 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    minHeight: "60%",
+    minHeight: "50%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 16,
   },
   modalTitle: {
     fontSize: 20,
@@ -244,6 +262,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     marginTop: 20,
+    width: "100%",
   },
   modalButtonText: {
     color: "white",
@@ -253,6 +272,12 @@ const styles = StyleSheet.create({
   disabledBtn: {
     opacity: 0.5,
     borderColor: "lightgray",
+  },
+  shareButton: {
+    backgroundColor: Colors.light.primary,
+    borderRadius: 8,
+    width: "100%",
+    marginTop: 10,
   },
 });
 
