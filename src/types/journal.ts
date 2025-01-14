@@ -5,6 +5,9 @@ export interface JournalContextType {
   addEntry: (entry: GratitudeEntry) => void;
   setTodayPrompt: (prompt: string) => void;
   shareJournal: (entry: GratitudeEntry) => void;
+  toggleFavorite: (entryId: number) => void;
+  toggleShare: (entryId: number) => void;
+  deleteEntry: (entryId: number) => void;
 }
 
 export type GratitudeEntry = {

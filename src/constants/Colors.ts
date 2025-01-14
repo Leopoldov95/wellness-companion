@@ -20,6 +20,7 @@ export default {
     warmYellow: "#f8e9a1",
     offWhite: "#f9f7f7",
     softOrange: "#f6d5a7",
+    red: "#FF6961",
   },
   dark: {
     text: "#fff",
