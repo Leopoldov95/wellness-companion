@@ -43,7 +43,10 @@ const JournalScreen = () => {
   //const { hasWrittenToday, entries } = useJournal();
   const [isSaveModalVisible, setSaveModalVisible] = useState(false);
 
-  const toggleSaveModal = () => setSaveModalVisible(!isSaveModalVisible);
+  const toggleSaveModal = () => {
+    saveJournal();
+    setSaveModalVisible(!isSaveModalVisible);
+  };
 
   const [entries, setEntries] = useState({
     entry1: "",
@@ -56,6 +59,11 @@ const JournalScreen = () => {
       ...prev,
       [`entry${index + 1}`]: text,
     }));
+  };
+
+  const saveJournal = (share: boolean = false) => {
+    const enryInputs = Object.values(entries);
+    // call the ctx save method here
   };
 
   const canSave = entries.entry1 && entries.entry2 && entries.entry3;
@@ -144,7 +152,7 @@ const JournalScreen = () => {
           <Button
             icon="share"
             mode="contained"
-            onPress={shareJournal}
+            onPress={() => saveJournal(true)}
             style={styles.shareButton}
           >
             Share Anonymously

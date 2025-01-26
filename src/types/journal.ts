@@ -1,4 +1,13 @@
-export interface JournalContextType {
+export type SortOptions = "newest" | "oldest" | "favorite" | "shared";
+
+export type DailyGraitudes = [string, string, string];
+
+export type FilterOptions = {
+  favorite: boolean;
+  shared: boolean;
+};
+
+export type JournalContextType = {
   entries: GratitudeEntry[];
   todayPrompt: string | null;
   hasWrittenToday: boolean;
@@ -8,13 +17,13 @@ export interface JournalContextType {
   toggleFavorite: (entryId: number) => void;
   toggleShare: (entryId: number) => void;
   deleteEntry: (entryId: number) => void;
-}
+};
 
 export type GratitudeEntry = {
   id: number;
   userId: number;
   date: string;
-  items: [string, string, string]; // must have a length of 3
+  items: DailyGraitudes;
   isShared: boolean;
   isFavorite: boolean;
 };

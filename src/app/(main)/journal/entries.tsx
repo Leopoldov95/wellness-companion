@@ -9,20 +9,67 @@
  * User can sort posts by Recent, Favorite, Shared, Unshared
  */
 
-import { FlatList, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
-import { GratitudeEntry } from "@/src/types/journal";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import Colors from "@/src/constants/Colors";
 import { globalStyles } from "@/src/styles/globals";
 import EntryThumb from "@/src/components/journal/EntryThumb";
 import EntryModal from "@/src/components/journal/EntryModal";
 import { useJournal } from "@/src/providers/JournalContext";
-import { Button, Snackbar } from "react-native-paper";
+import { Checkbox, Chip, Snackbar } from "react-native-paper";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import Modal from "react-native-modal";
+import Fonts from "@/src/constants/Fonts";
+import EntryFilter from "@/src/components/journal/EntryFilter";
+import {
+  FilterOptions,
+  GratitudeEntry,
+  SortOptions,
+} from "@/src/types/journal";
+import { filterEntries, sortEntries } from "@/src/services/journalService";
+import { useLocalSearchParams } from "expo-router";
 
 const EntriesScreen = () => {
   const { entries, toggleFavorite, toggleShare, deleteEntry } = useJournal();
+  const [filteredEntries, setFilteredEntries] = useState<GratitudeEntry[]>([]);
   const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+  const [selectedSort, setSelectedSort] = useState<SortOptions>("newest");
+  const [filters, setFilters] = useState<FilterOptions>({
+    favorite: false,
+    shared: false,
+  });
+
+  const { id } = useLocalSearchParams();
+
+  useEffect(() => {
+    // to avoid managing to much state management, let's update the filteredEntries whwnever there is an update to te entries
+    setFilteredEntries(entries);
+    // filter
+    setFilteredEntries(filterEntries(entries, filters));
+    // run the sort option
+    setFilteredEntries(sortEntries(entries, selectedSort));
+
+    //
+  }, [entries]);
+
+  // sorting
+  useEffect(() => {
+    console.log("sorting changed!");
+    console.log(selectedSort);
+    setFilteredEntries(sortEntries(entries, selectedSort));
+  }, [selectedSort]);
+
+  // filtering
+  useEffect(() => {
+    console.log("filtered updated");
+    console.log(filters);
+
+    setFilteredEntries(filterEntries(entries, filters));
+  }, [filters]);
+
+  const toggleFilterModal = () => setFilterModalVisible(!isFilterModalVisible);
 
   const onDismissSnackBar = () => {
     setMessage(null);
@@ -40,16 +87,27 @@ const EntriesScreen = () => {
   };
 
   const selectedEntry = selectedEntryId
-    ? entries.find((entry) => entry.id === selectedEntryId)
+    ? filteredEntries.find((entry) => entry.id === selectedEntryId)
     : null;
 
   return (
     <View style={styles.container}>
       <Text style={globalStyles.title}>Your Entriess</Text>
 
+      {/* user sort */}
+      <View style={styles.filterBtnContainer}>
+        <Pressable
+          onPress={toggleFilterModal}
+          style={styles.filterButton}
+          android_ripple={{ color: "rgba(0,0,0,0.1)" }}
+        >
+          <Ionicons name="filter" size={24} color={Colors.light.text} />
+        </Pressable>
+      </View>
+
       {/* thumbnails render */}
       <FlatList
-        data={entries}
+        data={filteredEntries}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
           <EntryThumb
@@ -59,7 +117,7 @@ const EntriesScreen = () => {
           />
         )}
         numColumns={2}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        contentContainerStyle={{ paddingBottom: 120, marginTop: 20 }}
       />
 
       {/* modal */}
@@ -83,6 +141,16 @@ const EntriesScreen = () => {
       >
         {message}
       </Snackbar>
+
+      {/* modal for filter */}
+      <EntryFilter
+        isFilterModalVisible={isFilterModalVisible}
+        toggleFilterModal={toggleFilterModal}
+        selectedSort={selectedSort}
+        setSelectedSort={setSelectedSort}
+        filters={filters}
+        setFilters={setFilters}
+      />
     </View>
   );
 };
@@ -93,6 +161,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingTop: 20,
     backgroundColor: Colors.light.greyBg,
+  },
+  filterButton: {
+    borderColor: Colors.light.text,
+    borderWidth: 1,
+    padding: 8,
+    display: "flex",
+    alignSelf: "flex-start",
+    borderRadius: 8,
+  },
+  filterBtnContainer: {
+    marginTop: 15,
   },
 });
 

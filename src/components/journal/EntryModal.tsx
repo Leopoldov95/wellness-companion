@@ -46,19 +46,23 @@ const EntryModal: React.FC<EntryModalProps> = ({
   };
 
   const onDelete = (entryId: number) => {
-    Alert.alert("Confirm", "Are you sure you want to delete this product?", [
-      {
-        text: "Cancel",
-      },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: () => {
-          deleteEntry(entryId);
-          closeModal("Entry deleted.");
+    Alert.alert(
+      "Confirm",
+      "Are you sure you want to delete this gratitude entry?",
+      [
+        {
+          text: "Cancel",
         },
-      },
-    ]);
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            deleteEntry(entryId);
+            closeModal("Entry deleted.");
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -66,7 +70,7 @@ const EntryModal: React.FC<EntryModalProps> = ({
       animationType="fade"
       transparent={true}
       visible={isModalVisible}
-      onRequestClose={closeModal}
+      onRequestClose={() => closeModal()}
     >
       <View style={styles.modalContainer}>
         <Image
@@ -121,7 +125,7 @@ const EntryModal: React.FC<EntryModalProps> = ({
             </Pressable>
             <Pressable
               android_ripple={{ color: "rgba(0,0,0,0.1)", radius: 30 }}
-              onPress={closeModal}
+              onPress={() => closeModal()}
               style={styles.modalButton}
             >
               <AntDesign name="close" size={32} color="black" />

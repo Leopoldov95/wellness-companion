@@ -31,9 +31,6 @@ const EntryThumb: React.FC<EntryThumbProps> = ({ item, index, onPress }) => {
   };
   const imageIndex = (index % 5) + 1;
 
-  const openModal = () => {
-    console.log("hello test");
-  };
   return (
     <View style={styles.entryContainer}>
       <Image
