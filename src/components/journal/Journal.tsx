@@ -3,7 +3,7 @@ import React from "react";
 import Colors from "@/src/constants/Colors";
 import { globalStyles } from "@/src/styles/globals";
 const { width } = Dimensions.get("window");
-import { useJournal } from "@/src/providers/JournalContext";
+import { useJournal } from "@/src/providers/JournalProvider";
 import Fonts from "@/src/constants/Fonts";
 const SPIRAL_COUNT = 15;
 

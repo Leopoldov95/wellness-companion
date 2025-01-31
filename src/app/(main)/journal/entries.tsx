@@ -15,7 +15,7 @@ import Colors from "@/src/constants/Colors";
 import { globalStyles } from "@/src/styles/globals";
 import EntryThumb from "@/src/components/journal/EntryThumb";
 import EntryModal from "@/src/components/journal/EntryModal";
-import { useJournal } from "@/src/providers/JournalContext";
+import { useJournal } from "@/src/providers/JournalProvider";
 import { Checkbox, Chip, Snackbar } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Modal from "react-native-modal";
@@ -27,7 +27,6 @@ import {
   SortOptions,
 } from "@/src/types/journal";
 import { filterEntries, sortEntries } from "@/src/services/journalService";
-import { useLocalSearchParams } from "expo-router";
 
 const EntriesScreen = () => {
   const { entries, toggleFavorite, toggleShare, deleteEntry } = useJournal();
@@ -40,8 +39,6 @@ const EntriesScreen = () => {
     favorite: false,
     shared: false,
   });
-
-  const { id } = useLocalSearchParams();
 
   useEffect(() => {
     // to avoid managing to much state management, let's update the filteredEntries whwnever there is an update to te entries

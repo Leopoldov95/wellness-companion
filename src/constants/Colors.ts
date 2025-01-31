@@ -13,7 +13,7 @@ export default {
     tertiary: "#5030af",
     quaternary: "#fad9ed",
     quinary: "#926dfc",
-    greyBg: "#f7f4f2",
+    greyBg: "#FAF9F6",
     textDark: "#100336",
     lightBlue: "#a8d0e6",
     softGreen: "#b8e1dd",

@@ -1,12 +1,18 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { Stack } from "expo-router";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import GoalsProvider from "@/src/providers/GoalsProvider";
 
 const GoalsLayout = () => {
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-    </Stack>
+    <SafeAreaProvider>
+      <GoalsProvider>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+        </Stack>
+      </GoalsProvider>
+    </SafeAreaProvider>
   );
 };
 

@@ -6,7 +6,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import MoodProvider from "@/src/providers/MoodContext";
+import MoodProvider from "@/src/providers/MoodProvider";
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 
 export default function TabLayout() {
@@ -17,6 +17,7 @@ export default function TabLayout() {
         <Tabs
           screenOptions={{
             headerShown: false,
+            tabBarHideOnKeyboard: true,
           }}
           tabBar={(props) => <TabBar {...props} />}
         ></Tabs>

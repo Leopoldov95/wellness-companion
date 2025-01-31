@@ -1,10 +1,9 @@
 import { View, Text, StyleSheet, TextInput } from "react-native";
 import React, { useState } from "react";
 import Colors from "@/src/constants/Colors";
-import { Link, Redirect, router, Stack } from "expo-router";
+import { Link, router, Stack } from "expo-router";
 import Button from "@/src/components/Button";
 import Feather from "@expo/vector-icons/Feather";
-import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { globalStyles } from "@/src/styles/globals";
 
 const SignUpScreen = () => {

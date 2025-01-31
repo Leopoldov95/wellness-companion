@@ -13,7 +13,7 @@ import { globalStyles } from "@/src/styles/globals";
 import Fonts from "@/src/constants/Fonts";
 import { Link } from "expo-router";
 import { moodType } from "@/src/types/mood";
-import { useMood } from "@/src/providers/MoodContext";
+import { useMood } from "@/src/providers/MoodProvider";
 import Meditate from "@/assets/images/activities/meditate.svg";
 import Journaling from "@/assets/images/activities/journaling.svg";
 import MoodSelector from "@/src/components/mood/MoodSelector";

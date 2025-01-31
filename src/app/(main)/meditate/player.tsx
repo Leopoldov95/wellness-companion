@@ -11,7 +11,7 @@ import Slider from "@react-native-community/slider";
 import PlayerButton from "@/src/components/meditate/PlayerButton";
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
-import { useMeditate } from "@/src/providers/MeditateContext";
+import { useMeditate } from "@/src/providers/MeditateProvider";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import { router } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";

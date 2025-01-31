@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import Colors from "@/src/constants/Colors";
 import { globalStyles } from "@/src/styles/globals";
 const { width } = Dimensions.get("window");
-import { useJournal } from "@/src/providers/JournalContext";
+import { useJournal } from "@/src/providers/JournalProvider";
 import { Button } from "react-native-paper";
 import Journal from "@/src/components/journal/Journal";
 import Feather from "@expo/vector-icons/Feather";

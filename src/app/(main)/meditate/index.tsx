@@ -11,7 +11,7 @@ import {
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
 import Feather from "@expo/vector-icons/Feather";
-import { useMeditate } from "@/src/providers/MeditateContext";
+import { useMeditate } from "@/src/providers/MeditateProvider";
 import { globalStyles } from "@/src/styles/globals";
 import { router } from "expo-router";
 import { TrackAsset } from "@/src/types/meditation";

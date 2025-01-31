@@ -1,9 +1,9 @@
-import { View, StyleSheet, LayoutChangeEvent } from "react-native";
+import { View, StyleSheet, LayoutChangeEvent, Keyboard } from "react-native";
 import { usePathname } from "expo-router";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import Colors from "@/src/constants/Colors";
 import TabBarButton from "./TabBarButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -16,6 +16,24 @@ export default function TabBar({
   descriptors,
   navigation,
 }: BottomTabBarProps) {
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
   // get the current location to hide the navbar on specified pages
   const pathname = usePathname();
   const routeName = pathname.replace("/", "");
@@ -52,6 +70,7 @@ export default function TabBar({
       style={[
         styles.tabBar,
         EXCLUDED_ROUTES.includes(routeName) && styles.hide,
+        keyboardVisible && { display: "none" }, // Hide tab bar when keyboard is visible
       ]}
     >
       <Animated.View
@@ -119,19 +138,19 @@ export default function TabBar({
 const styles = StyleSheet.create({
   tabBar: {
     position: "absolute",
-    bottom: 20,
+    bottom: 14,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "white",
     marginHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 10,
     borderRadius: 35,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowRadius: 10,
     shadowOpacity: 0.1,
-    elevation: 5,
+    elevation: 4,
   },
   hide: {
     display: "none",
