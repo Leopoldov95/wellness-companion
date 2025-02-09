@@ -6,7 +6,7 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Colors from "@/src/constants/Colors";
 import { globalStyles } from "@/src/styles/globals";
 
@@ -17,68 +17,8 @@ import { Button } from "react-native-paper";
 import WeeklyCard from "@/src/components/goal/WeeklyCard";
 import Feather from "@expo/vector-icons/Feather";
 import Wave from "@/assets/images/goals/wave.svg";
-
-type GoalsProps = {
-  category: Category;
-  title: string;
-  dueDate: string;
-  progress: number;
-};
-
-type WeeklyCardProps = {
-  title: string;
-  category: Category;
-  parent: string; //? Might need to be an ID pointing to parent
-  progress: number;
-};
-
-const DUMMY: GoalsProps[] = [
-  {
-    category: "cooking", // Must match one of the `Category` values
-    title: "I Like cooking",
-    progress: 34,
-    dueDate: "Aug 2027",
-  },
-  {
-    category: "hobbies", // Must match one of the `Category` values
-    title: "Some Hobby With an extra ong name test more even more",
-    progress: 67,
-    dueDate: "Mar 2029",
-  },
-  {
-    category: "cooking", // Must match one of the `Category` values
-    title: "I Like cooking",
-    progress: 34,
-    dueDate: "Aug 2025",
-  },
-];
-
-const WEEKLY: WeeklyCardProps[] = [
-  {
-    title: "Go to gym x times",
-    category: "fitness",
-    progress: 57,
-    parent: "Gym",
-  },
-  {
-    title: "Go to gym x times",
-    category: "fitness",
-    progress: 57,
-    parent: "Gym",
-  },
-  {
-    title: "Go to gym x times",
-    category: "fitness",
-    progress: 57,
-    parent: "Gym",
-  },
-  {
-    title: "Go to gym x times",
-    category: "fitness",
-    progress: 57,
-    parent: "Gym",
-  },
-];
+import { useGoals } from "@/src/providers/GoalsProvider";
+import CreateGoal from "@/src/components/goal/CreateGoal";
 
 /**
  * Think about what users want for goals. We don't want this to just be a "to-do" list
@@ -86,13 +26,17 @@ const WEEKLY: WeeklyCardProps[] = [
  * Then, the user can determine what weekly goals they want to focus on
  * There could be a qizard that helps users figure out how this system works
  * For each long term goal, there abould be a streak counter
- * ?? Should we have like an achivement for the long term goals achieved??
+ * ?? Should we have like an achivement for the long term goals achieved?
  * Goals will need to be categorized
  * Each main goal will have 1 weekly goal at a time
- * ? How do we ties the weekly goals to main ones?
+ * ? How do we ties the weekly goals to main ones
+ * TODO ~ Might want to see a history of completed goals
  */
 
 const GoalsScreen = () => {
+  const { goals, weeklyGoals, createGoal } = useGoals();
+  const [goalModalVisible, setGoalModalVisible] = useState(false);
+
   return (
     <View style={styles.container}>
       <View style={styles.background}>
@@ -107,7 +51,7 @@ const GoalsScreen = () => {
       {/* TODO ~ caraousel for other goals, MAX number of lng term goals is 10 */}
       <View>
         <FlatList
-          data={DUMMY}
+          data={goals}
           renderItem={GoalCard}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -121,7 +65,7 @@ const GoalsScreen = () => {
       <View style={{ height: "50%" }}>
         <Text style={styles.subtitle}>Weekly Goals</Text>
         <FlatList
-          data={WEEKLY}
+          data={weeklyGoals}
           renderItem={WeeklyCard}
           showsVerticalScrollIndicator={true}
           nestedScrollEnabled={true}
@@ -133,8 +77,6 @@ const GoalsScreen = () => {
         />
       </View>
 
-      {/* some calendar functionality */}
-
       {/* ability to create goals */}
       <View style={styles.btnContainer}>
         <Pressable
@@ -142,11 +84,21 @@ const GoalsScreen = () => {
           android_ripple={{
             borderless: true,
           }}
+          onPress={() => setGoalModalVisible(true)}
         >
           <Feather name="plus" size={24} color="white" />
           <Text style={styles.goalText}>Add Goal</Text>
         </Pressable>
       </View>
+
+      {/* Create Goal Modal */}
+      {goalModalVisible && (
+        <CreateGoal
+          visiblity={goalModalVisible}
+          setVisibility={setGoalModalVisible}
+          createGoal={createGoal}
+        />
+      )}
     </View>
   );
 };

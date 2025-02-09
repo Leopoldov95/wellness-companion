@@ -30,3 +30,28 @@ export default {
     tabIconSelected: tintColorDark,
   },
 };
+
+export const GoalColors = {
+  purple: "#6942d9",
+  pink: "#ecb9d8",
+  lightBlue: "#a8d0e6",
+  softGreen: "#b8e1dd",
+  warmYellow: "#f8e9a1",
+  offWhite: "#f9f7f7",
+  softOrange: "#f6d5a7",
+  red: "#FF6961",
+  deepPurple: "#5834a3",
+  lavender: "#c8a2c8",
+  blushPink: "#f3c1c6",
+  skyBlue: "#89c2d9",
+  mintGreen: "#a5d6a7",
+  goldenYellow: "#f4c542",
+  peach: "#f4b393",
+  coral: "#ff9a8c",
+  softTeal: "#80cbc4",
+  mutedRose: "#d8a1a7",
+  maroon: "#7C444F",
+  brownGrey: "#A59D84",
+  pastelNavy: "#295F98",
+  vintageOrange: "#E16A54",
+};

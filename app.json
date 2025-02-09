@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.leo.ortega.WellnessCompanion"
     },
     "web": {
       "bundler": "metro",
@@ -34,6 +35,14 @@
     "experiments": {
       "typedRoutes": true,
       "tsconfigPaths": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "e56e2d39-be34-4d29-9e3f-c281fe45046a"
+      }
     }
   }
 }

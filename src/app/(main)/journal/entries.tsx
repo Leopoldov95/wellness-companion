@@ -16,10 +16,8 @@ import { globalStyles } from "@/src/styles/globals";
 import EntryThumb from "@/src/components/journal/EntryThumb";
 import EntryModal from "@/src/components/journal/EntryModal";
 import { useJournal } from "@/src/providers/JournalProvider";
-import { Checkbox, Chip, Snackbar } from "react-native-paper";
+import { Snackbar } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Modal from "react-native-modal";
-import Fonts from "@/src/constants/Fonts";
 import EntryFilter from "@/src/components/journal/EntryFilter";
 import {
   FilterOptions,

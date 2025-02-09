@@ -16,7 +16,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Colors from "@/src/constants/Colors";
 import { Feather } from "@expo/vector-icons";
 
-interface EntryModalProps {
+type EntryModalProps = {
   entry: GratitudeEntry;
   isModalVisible: boolean;
   closeModal: (message?: string) => void;
@@ -24,7 +24,7 @@ interface EntryModalProps {
   toggleShare: (entryId: number) => void;
   deleteEntry: (entryId: number) => void;
   setSelectedEntryId: React.Dispatch<React.SetStateAction<number | null>>;
-}
+};
 
 const EntryModal: React.FC<EntryModalProps> = ({
   entry,
