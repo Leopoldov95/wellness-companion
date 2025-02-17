@@ -1,24 +1,23 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  Pressable,
-} from "react-native";
+import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
 import React, { useState } from "react";
 import Colors from "@/src/constants/Colors";
 import { globalStyles } from "@/src/styles/globals";
-
 import Fonts from "@/src/constants/Fonts";
 import GoalCard from "@/src/components/goal/GoalCard";
-import { Category } from "@/src/types/goals";
-import { Button } from "react-native-paper";
 import WeeklyCard from "@/src/components/goal/WeeklyCard";
-import Feather from "@expo/vector-icons/Feather";
 import Wave from "@/assets/images/goals/wave.svg";
 import { useGoals } from "@/src/providers/GoalsProvider";
 import CreateGoal from "@/src/components/goal/CreateGoal";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import {
+  Drawer,
+  SegmentedButtons,
+  Switch,
+  ToggleButton,
+} from "react-native-paper";
+import Modal from "react-native-modal";
+import { Link } from "expo-router";
+import WeeklyCardList from "@/src/components/goal/WeeklyCardList";
 
 /**
  * Think about what users want for goals. We don't want this to just be a "to-do" list
@@ -29,13 +28,18 @@ import CreateGoal from "@/src/components/goal/CreateGoal";
  * ?? Should we have like an achivement for the long term goals achieved?
  * Goals will need to be categorized
  * Each main goal will have 1 weekly goal at a time
- * ? How do we ties the weekly goals to main ones
+ * ? How do we ties the weekly goals to main ones??
  * TODO ~ Might want to see a history of completed goals
  */
 
 const GoalsScreen = () => {
   const { goals, weeklyGoals, createGoal } = useGoals();
   const [goalModalVisible, setGoalModalVisible] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
+  const [goalView, setGoalView] = useState("normal");
+
+  const onArchiveSwitch = () => setShowArchived(!showArchived);
 
   return (
     <View style={styles.container}>
@@ -46,13 +50,36 @@ const GoalsScreen = () => {
           height={200}
         />
       </View>
-      <Text style={[globalStyles.title, { color: "white" }]}>Your Goals</Text>
+      <View style={styles.header}>
+        {/* ability to create goals */}
+
+        <Pressable
+          android_ripple={{
+            borderless: true,
+          }}
+          onPress={() => setGoalModalVisible(true)}
+        >
+          <AntDesign name="plussquareo" size={36} color="white" />
+        </Pressable>
+
+        <Text style={[globalStyles.title, { color: "white" }]}>Your Goals</Text>
+
+        {/* menu button */}
+        <Pressable onPress={() => setMenuVisible(true)}>
+          <AntDesign name="menu-unfold" size={36} color="white" />
+        </Pressable>
+      </View>
+
       {/* Goal overview */}
       {/* TODO ~ caraousel for other goals, MAX number of lng term goals is 10 */}
       <View>
         <FlatList
-          data={goals}
-          renderItem={GoalCard}
+          data={
+            !showArchived ? goals.filter((goal) => !goal.is_archived) : goals
+          }
+          renderItem={({ item }) => (
+            <GoalCard goal={item} goalView={goalView} />
+          )}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.goalCardContainer}
@@ -62,33 +89,9 @@ const GoalsScreen = () => {
       {/* weekly goals */}
       {/* TODO ~ Will be a flatlist */}
 
-      <View style={{ height: "50%" }}>
+      <View style={{ height: `${goalView === "normal" ? "55%" : "70%"}` }}>
         <Text style={styles.subtitle}>Weekly Goals</Text>
-        <FlatList
-          data={weeklyGoals}
-          renderItem={WeeklyCard}
-          showsVerticalScrollIndicator={true}
-          nestedScrollEnabled={true}
-          contentContainerStyle={{
-            paddingHorizontal: 8,
-            paddingVertical: 4,
-            marginTop: 8,
-          }}
-        />
-      </View>
-
-      {/* ability to create goals */}
-      <View style={styles.btnContainer}>
-        <Pressable
-          style={styles.goalBtn}
-          android_ripple={{
-            borderless: true,
-          }}
-          onPress={() => setGoalModalVisible(true)}
-        >
-          <Feather name="plus" size={24} color="white" />
-          <Text style={styles.goalText}>Add Goal</Text>
-        </Pressable>
+        <WeeklyCardList weeklyGoals={weeklyGoals} />
       </View>
 
       {/* Create Goal Modal */}
@@ -99,6 +102,73 @@ const GoalsScreen = () => {
           createGoal={createGoal}
         />
       )}
+
+      {/* Drawer Modal */}
+      <Modal
+        isVisible={menuVisible}
+        onBackdropPress={() => setMenuVisible(false)} // Close when tapping outside
+        animationIn="slideInRight" // Slide in from the right
+        animationOut="slideOutRight" // Slide out to the right
+        useNativeDriver={true}
+        style={{
+          margin: 0,
+          justifyContent: "flex-end",
+          alignItems: "flex-end",
+        }} // Align right
+      >
+        <View
+          style={{
+            width: "65%",
+            height: "100%",
+            backgroundColor: "white",
+            padding: 20,
+          }}
+        >
+          <Drawer.Section>
+            <Pressable
+              style={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "flex-end",
+                flexDirection: "row",
+                marginBottom: 10,
+              }}
+              onPress={() => setMenuVisible(false)}
+            >
+              <AntDesign name="menu-fold" size={32} color="black" />
+            </Pressable>
+          </Drawer.Section>
+          <Drawer.Section style={styles.menuContainer}>
+            <View style={styles.toggle}>
+              <Text style={styles.linkText}>Show Archive</Text>
+              <Switch value={showArchived} onValueChange={onArchiveSwitch} />
+            </View>
+
+            <View>
+              <Text style={styles.linkText}>Goal View</Text>
+              <SegmentedButtons
+                value={goalView}
+                style={styles.menuButtons}
+                onValueChange={setGoalView}
+                buttons={[
+                  {
+                    value: "normal",
+                    label: "Normal",
+                  },
+                  {
+                    value: "compact",
+                    label: "Compact",
+                  },
+                ]}
+              />
+            </View>
+
+            <Link href="/(main)/goals/history">
+              <Text style={globalStyles.linkText}>Past Goals</Text>
+            </Link>
+          </Drawer.Section>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -109,6 +179,15 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     width: "100%",
+  },
+  header: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    paddingHorizontal: 10,
+    marginVertical: 8,
   },
   container: {
     flex: 1,
@@ -128,27 +207,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
   },
-  btnContainer: {
-    borderRadius: 20,
-    overflow: "hidden",
-    margin: "auto",
-  },
-  goalBtn: {
-    backgroundColor: Colors.light.quinary,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    margin: "auto",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    borderRadius: 20,
-  },
   goalText: {
     color: "white",
     fontFamily: Fonts.seconday[600],
     fontSize: 16,
     letterSpacing: 1,
+  },
+  toggle: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  menuContainer: {
+    display: "flex",
+    gap: 10,
+    paddingVertical: 10,
+  },
+  linkText: {
+    fontFamily: Fonts.primary[400],
+  },
+  menuButtons: {
+    marginVertical: 8,
   },
 });
 

@@ -12,7 +12,7 @@ import { Category } from "@/src/types/goals";
 import { WeeklyGoal } from "@/src/types/goals";
 
 const WeeklyCard: ListRenderItem<WeeklyGoal> = ({ item }) => {
-  const { id, title, category, parent, progress } = item;
+  const { id, title, category, parent, progress, color } = item;
   return (
     <View style={styles.container}>
       <Pressable
@@ -27,7 +27,12 @@ const WeeklyCard: ListRenderItem<WeeklyGoal> = ({ item }) => {
         </View>
         <Text style={styles.parentGoal}>{parent}</Text>
         <View style={styles.bar}>
-          <View style={[styles.progress, { width: `${progress}%` }]}></View>
+          <View
+            style={[
+              styles.progress,
+              { width: `${progress}%`, backgroundColor: color },
+            ]}
+          ></View>
         </View>
       </Pressable>
     </View>
@@ -85,7 +90,8 @@ const styles = StyleSheet.create({
     height: 10,
     left: 0,
     top: 0,
-    backgroundColor: Colors.light.secondary,
+    borderTopRightRadius: 4,
+    borderBottomRightRadius: 4,
   },
   task: {
     fontFamily: Fonts.primary[600],

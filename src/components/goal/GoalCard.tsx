@@ -9,12 +9,26 @@ import React from "react";
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
 import { Goal } from "@/src/types/goals";
-import { Category } from "@/src/types/goals";
 import { Link } from "expo-router";
 import { GetCategoryImage } from "./GetCategoryImage";
+import { Feather } from "@expo/vector-icons";
 
-const GoalCard: ListRenderItem<Goal> = ({ item }) => {
-  const { id, category, title, dueDate, progress } = item;
+type GoalCardProps = {
+  goal: Goal;
+  goalView: string;
+};
+
+const GoalCard: React.FC<GoalCardProps> = ({ goal, goalView }) => {
+  const {
+    id,
+    category,
+    title,
+    dueDate,
+    progress,
+    color,
+    is_paused,
+    is_archived,
+  } = goal;
 
   return (
     // TODO ~ Make the goals cards pressable
@@ -22,27 +36,48 @@ const GoalCard: ListRenderItem<Goal> = ({ item }) => {
       <Link href={`/(main)/goals/${id}`} asChild>
         <Pressable
           android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
-          style={styles.card}
-          onPress={() => console.log("click on goal")}
+          style={{
+            ...styles.card,
+            ...(is_paused || is_archived ? { opacity: 0.3 } : {}),
+            ...(is_archived && { backgroundColor: Colors.light.warmYellow }),
+          }}
         >
-          {GetCategoryImage(category)}
+          {goalView === "normal" && GetCategoryImage(category)}
 
           <Text numberOfLines={2} ellipsizeMode="clip" style={styles.title}>
             {title}
           </Text>
           {/* progress bar */}
           <View style={styles.bar}>
-            <View style={[styles.progress, { width: `${progress}%` }]}></View>
+            <View
+              style={[
+                styles.progress,
+                { width: `${progress}%` },
+                { backgroundColor: `${color}` },
+              ]}
+            ></View>
           </View>
 
           <View style={styles.detail}>
             {/* <View style={styles.chip}>
           <Text style={styles.chipText}>{category}</Text>
         </View> */}
-            <Text style={styles.date}>{dueDate}</Text>
+            <Text style={styles.date}>{dueDate.toLocaleString()}</Text>
           </View>
         </Pressable>
       </Link>
+      {/* Show pauch icon over goal when paused */}
+      {is_paused && (
+        <View style={styles.iconWrapper} pointerEvents="none">
+          <Feather name="pause" size={64} color="#333" />
+        </View>
+      )}
+      {/* Show Archived overlay */}
+      {is_archived && (
+        <View style={styles.iconWrapper} pointerEvents="none">
+          <Feather name="archive" size={64} color="#333" />
+        </View>
+      )}
     </View>
   );
 };
@@ -86,7 +121,6 @@ const styles = StyleSheet.create({
     height: 10,
     left: 0,
     top: 0,
-    backgroundColor: Colors.light.secondary,
   },
   title: {
     fontSize: 14,
@@ -117,5 +151,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: Fonts.primary[400],
     textAlign: "center",
+  },
+  iconWrapper: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    top: 0,
+    left: 0,
+    zIndex: 10,
   },
 });

@@ -3,9 +3,12 @@ export type Goal = {
   id: number;
   category: Category;
   title: string;
-  dueDate: string;
+  dueDate: Date;
   progress: number;
   color: string;
+  is_paused: boolean;
+  is_archived: boolean;
+  children?: WeeklyGoal[]; // useful for managing frontend
 };
 
 export type GoalForm = {
@@ -20,10 +23,12 @@ export type WeeklyGoal = {
   goal_id: number;
   title: string;
   category: Category;
-  parent: string; //? Might need to be an ID pointing to parent?
+  parent?: string; //? Might need to be an ID pointing to parent?
   progress: number;
   startDate: string;
   endDate: string;
+  color?: string;
+  status: "completed" | "active" | "upcoming";
 };
 
 export type Category =
@@ -88,4 +93,8 @@ export type GoalsContextType = {
   goals: Goal[];
   weeklyGoals: WeeklyGoal[];
   createGoal: (formDate: GoalForm) => void;
+  updateGoal: (id: number, formData: GoalForm) => void;
+  pauseGoal: (id: number) => void;
+  archiveGoal: (id: number) => void;
+  getWeeklyGoalsById: (id: number) => WeeklyGoal[];
 };

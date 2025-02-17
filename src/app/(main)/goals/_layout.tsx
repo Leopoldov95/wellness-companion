@@ -1,4 +1,3 @@
-import { View, Text } from "react-native";
 import React from "react";
 import { Stack } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -10,6 +9,8 @@ const GoalsLayout = () => {
       <GoalsProvider>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="history" options={{ headerShown: false }} />
+          <Stack.Screen name="[id]/index" options={{ headerShown: false }} />
         </Stack>
       </GoalsProvider>
     </SafeAreaProvider>

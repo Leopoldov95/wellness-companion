@@ -14,6 +14,7 @@ export const globalStyles = StyleSheet.create({
     fontFamily: Fonts.seconday[500],
     fontSize: 18,
     color: Colors.light.tertiary,
+    textAlign: "center",
   },
   body: {
     fontSize: 16,
