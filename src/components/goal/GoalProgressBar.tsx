@@ -25,7 +25,7 @@ const GoalProgressBar: React.FC<GoalProgressBarProps> = ({
           style={[
             styles.progressText,
             progress > 20
-              ? { color: "white" }
+              ? { color: "white", marginRight: 8 }
               : { marginRight: -25, color: "black" }, // Fix incorrect variable name
           ]}
         >
@@ -40,7 +40,7 @@ export default GoalProgressBar;
 
 const styles = StyleSheet.create({
   progress: {
-    width: "90%",
+    width: "100%",
     height: 20,
     backgroundColor: "white",
     borderRadius: 12,

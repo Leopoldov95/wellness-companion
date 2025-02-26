@@ -9,7 +9,7 @@ const WeeklyCardList: React.FC<{ weeklyGoals: WeeklyGoal[] }> = ({
   return (
     <FlatList
       data={weeklyGoals}
-      renderItem={WeeklyCard}
+      renderItem={({ item }) => <WeeklyCard weeklyGoal={item} />}
       showsVerticalScrollIndicator={true}
       nestedScrollEnabled={true}
       contentContainerStyle={{

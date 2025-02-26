@@ -23,6 +23,8 @@ const GoalsContext = createContext<GoalsContextType>({
   pauseGoal: (id: number) => {},
   archiveGoal: (id: number) => {},
   getWeeklyGoalsById: (id: number): WeeklyGoal[] => [],
+  getUpcommingWeeklyGoal: (): WeeklyGoal | null => null,
+  completeWeeklyTask: (id: number, date: string) => {},
 });
 
 const DUMMY_GOALS: Goal[] = [
@@ -66,96 +68,148 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
   {
     id: 100,
     goal_id: 0,
+    num_tasks: 3,
     title: "Learn basic knife skills",
     category: "cooking",
-    progress: 30,
     startDate: "2024-01-01",
     endDate: "2024-01-07",
     status: "completed",
+    dailyTasks: [],
   },
   {
     id: 101,
     goal_id: 0,
+    num_tasks: 3,
     title: "Master 5 foundational recipes",
     category: "cooking",
-    progress: 70,
     startDate: "2024-01-08",
     endDate: "2024-01-14",
     status: "active",
+    dailyTasks: [
+      {
+        date: "2024-01-09",
+        completed: true,
+      },
+      {
+        date: "2024-01-11",
+        completed: true,
+      },
+    ],
   },
   {
     id: 102,
     goal_id: 0,
+    num_tasks: 3,
     title: "Host a dinner party",
     category: "cooking",
-    progress: 0,
     startDate: "2024-01-15",
     endDate: "2024-01-21",
     status: "upcoming",
+    dailyTasks: [],
   },
 
   // Parent Goal 1 (Hobbies)
   {
     id: 103,
     goal_id: 1,
+    num_tasks: 5,
     title: "Photography basics course",
     category: "hobbies",
-    progress: 100,
     startDate: "2024-02-01",
     endDate: "2024-02-07",
     status: "completed",
+    dailyTasks: [],
   },
   {
     id: 104,
     goal_id: 1,
+    num_tasks: 5,
     title: "Weekend hiking trip",
     category: "hobbies",
-    progress: 30,
     startDate: "2024-02-08",
     endDate: "2024-02-14",
     status: "completed",
+    dailyTasks: [],
   },
   {
     id: 105,
     goal_id: 1,
+    num_tasks: 5,
     title: "Watercolor painting workshop",
     category: "hobbies",
-    progress: 70,
     startDate: "2024-02-15",
     endDate: "2024-02-21",
     status: "active",
+    dailyTasks: [
+      {
+        date: "2024-02-15",
+        completed: true,
+      },
+      {
+        date: "2024-02-16",
+        completed: true,
+      },
+      {
+        date: "2024-02-18",
+        completed: true,
+      },
+      {
+        date: "2024-02-20",
+        completed: true,
+      },
+    ],
   },
 
   // Parent Goal 2 (Cooking)
   {
     id: 106,
     goal_id: 2,
+    num_tasks: 4,
     title: "Meal prep mastery",
     category: "cooking",
-    progress: 50,
     startDate: "2024-03-01",
     endDate: "2024-03-07",
     status: "active",
+    dailyTasks: [
+      {
+        date: "2024-03-01",
+        completed: true,
+      },
+      {
+        date: "2024-03-03",
+        completed: true,
+      },
+      {
+        date: "2024-03-05",
+        completed: true,
+      },
+      {
+        date: "2024-03-06",
+        completed: true,
+      },
+    ],
   },
   {
     id: 107,
     goal_id: 2,
+    num_tasks: 4,
     title: "Advanced baking techniques",
     category: "cooking",
-    progress: 20,
     startDate: "2024-03-08",
     endDate: "2024-03-14",
     status: "upcoming",
+    dailyTasks: [],
   },
   {
     id: 108,
     goal_id: 2,
+    num_tasks: 4,
     title: "International cuisine week",
     category: "cooking",
-    progress: 90,
     startDate: "2024-03-15",
     endDate: "2024-03-21",
     status: "upcoming",
+    dailyTasks: [],
   },
 ];
 
@@ -172,7 +226,7 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }: PropsWithChildren) => {
   const [goals, setGoals] = useState<Goal[]>([]);
-  const [weeklyGoals, setWeeklGoals] = useState<WeeklyGoal[]>([]);
+  const [weeklyGoals, setWeeklyGoals] = useState<WeeklyGoal[]>([]);
 
   useEffect(() => {
     // use dummy data
@@ -183,7 +237,7 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
       const parent = DUMMY_GOALS.find((parent) => parent.id === goal.goal_id);
     });
 
-    setWeeklGoals(getActiveWeeklyGoals);
+    setWeeklyGoals(getActiveWeeklyGoals);
   }, []);
 
   useEffect(() => {
@@ -196,7 +250,7 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
         goal.category = parent.category;
       }
     });
-    setWeeklGoals(getActiveWeeklyGoals);
+    setWeeklyGoals(getActiveWeeklyGoals);
   }, [goals]);
 
   const getActiveWeeklyGoals = () => {
@@ -268,6 +322,37 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const updateWeeklyGoal = () => {};
 
+  const completeWeeklyTask = (id: number, date: string) => {
+    console.log("task completed");
+    console.log(id);
+
+    console.log(date);
+
+    setWeeklyGoals((prevWeeklyGoals) =>
+      prevWeeklyGoals.map((goal) =>
+        goal.id === id
+          ? {
+              ...goal,
+              dailyTasks: [...goal.dailyTasks, { date: date, completed: true }], // Push the new task to dailyTasks
+            }
+          : goal
+      )
+    );
+  };
+
+  // Get the first upcomming weekly goal
+  const getUpcommingWeeklyGoal = () => {
+    const weeklyGoal = weeklyGoals
+      .filter((goal) => goal.status === "active" || goal.status === "upcoming") // Ignore completed goals
+      .sort(
+        (a, b) =>
+          new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+      ) // Sort by earliest startDate
+      .at(0);
+
+    return weeklyGoal ? weeklyGoal : null;
+  };
+
   const value = {
     goals,
     weeklyGoals,
@@ -276,6 +361,8 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
     pauseGoal,
     archiveGoal,
     getWeeklyGoalsById,
+    getUpcommingWeeklyGoal,
+    completeWeeklyTask,
   };
 
   return (

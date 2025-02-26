@@ -28,6 +28,10 @@ export const globalStyles = StyleSheet.create({
     fontFamily: Fonts.primary[300],
     color: Colors.light.tint,
   },
+  labelText: {
+    fontFamily: Fonts.primary[500],
+    color: Colors.light.textDark,
+  },
   button: {
     borderRadius: 100,
     marginVertical: 10,

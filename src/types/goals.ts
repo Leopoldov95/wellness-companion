@@ -24,11 +24,17 @@ export type WeeklyGoal = {
   title: string;
   category: Category;
   parent?: string; //? Might need to be an ID pointing to parent?
-  progress: number;
-  startDate: string;
-  endDate: string;
+  startDate: string; // ISO string
+  endDate: string; // ISO string
   color?: string;
   status: "completed" | "active" | "upcoming";
+  num_tasks: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  dailyTasks: DailyTasks[];
+};
+
+export type DailyTasks = {
+  date: string; // ISO string
+  completed: boolean;
 };
 
 export type Category =
@@ -97,4 +103,6 @@ export type GoalsContextType = {
   pauseGoal: (id: number) => void;
   archiveGoal: (id: number) => void;
   getWeeklyGoalsById: (id: number) => WeeklyGoal[];
+  getUpcommingWeeklyGoal: () => WeeklyGoal | null;
+  completeWeeklyTask: (id: number, date: string) => void;
 };

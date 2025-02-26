@@ -10,14 +10,27 @@ import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
 import { Category } from "@/src/types/goals";
 import { WeeklyGoal } from "@/src/types/goals";
+import WeeklyDailyActions from "./weekly/WeeklyDailyActions";
 
-const WeeklyCard: ListRenderItem<WeeklyGoal> = ({ item }) => {
-  const { id, title, category, parent, progress, color } = item;
+const WeeklyCard: React.FC<{
+  weeklyGoal: WeeklyGoal;
+  completeWeeklyTask: (id: number, date: string) => void;
+}> = ({ weeklyGoal, completeWeeklyTask }) => {
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const { id, title, category, parent, num_tasks, dailyTasks, color } =
+    weeklyGoal;
+
+  const progress =
+    dailyTasks.length > 0
+      ? Math.round((dailyTasks.length / num_tasks) * 100)
+      : 0;
+
   return (
     <View style={styles.container}>
       <Pressable
         android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
         style={styles.card}
+        onPress={() => setIsModalVisible(true)}
       >
         <View style={styles.detail}>
           <Text style={styles.task}>{title}</Text>
@@ -35,6 +48,15 @@ const WeeklyCard: ListRenderItem<WeeklyGoal> = ({ item }) => {
           ></View>
         </View>
       </Pressable>
+
+      {isModalVisible && weeklyGoal.status === "active" && (
+        <WeeklyDailyActions
+          goal={weeklyGoal}
+          isModalVisible
+          completeWeeklyTask={completeWeeklyTask}
+          closeModal={() => setIsModalVisible(false)}
+        />
+      )}
     </View>
   );
 };

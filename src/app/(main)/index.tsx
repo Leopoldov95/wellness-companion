@@ -6,7 +6,7 @@ import {
   Pressable,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Colors from "@/src/constants/Colors";
 import Feather from "@expo/vector-icons/Feather";
 import { globalStyles } from "@/src/styles/globals";
@@ -18,9 +18,39 @@ import Meditate from "@/assets/images/activities/meditate.svg";
 import Journaling from "@/assets/images/activities/journaling.svg";
 import MoodSelector from "@/src/components/mood/MoodSelector";
 import Facts from "@/src/components/Facts";
+import { useGoals } from "@/src/providers/GoalsProvider";
+import { WeeklyGoal } from "@/src/types/goals";
+import WeeklyCard from "@/src/components/goal/WeeklyCard";
 
 const HomeScreen = () => {
   const { onMoodPress, isMoodTracked } = useMood();
+  const { getUpcommingWeeklyGoal, completeWeeklyTask, weeklyGoals } =
+    useGoals();
+  // const [upcommingGoal, setUpcommingGoal] = useState<WeeklyGoal | null>(null);
+
+  const upcommingGoal = React.useMemo(
+    () => getUpcommingWeeklyGoal(),
+    [weeklyGoals]
+  );
+
+  // const fetchUpcommingGoal = () => {
+  //   const goal = getUpcommingWeeklyGoal();
+  //   if (goal) {
+  //     setUpcommingGoal(goal);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchUpcommingGoal();
+  // }, []);
+
+  // // update upcomming goal details on task completion
+  // useEffect(() => {
+  //   console.log("weekly goals was updated");
+  //   console.log(weeklyGoals);
+
+  //   fetchUpcommingGoal();
+  // }, [weeklyGoals]);
 
   const options: Intl.DateTimeFormatOptions = {
     weekday: "short", // 'Tue'
@@ -73,14 +103,24 @@ const HomeScreen = () => {
         {/* (?) We might want to make this it's own component */}
         <MoodSelector onMoodPress={onMoodPress} isMoodTracked={isMoodTracked} />
 
+        {/* Fun mental health facts */}
+        <Facts />
+
         {/* Upcomming self care */}
-        <View style={styles.upcomming}></View>
+        <View style={styles.upcomming}>
+          {upcommingGoal && (
+            <React.Fragment>
+              <Text style={globalStyles.subheader}>Upcomming Goal</Text>
+              <WeeklyCard
+                completeWeeklyTask={completeWeeklyTask}
+                weeklyGoal={upcommingGoal}
+              />
+            </React.Fragment>
+          )}
+        </View>
 
         {/* weeekly progress of self care goals */}
         <View style={styles.progress}></View>
-
-        {/* Fun mental health facts */}
-        <Facts />
 
         {/*** Quick Links ***/}
         {/* Meditate */}
