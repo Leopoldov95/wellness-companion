@@ -1,7 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import React from "react";
 import Modal from "react-native-modal";
-import GoalFormInput from "./GoalForm";
 import { GoalForm } from "@/src/types/goals";
 import CreateGoalForm from "./CreateGoalForm";
 

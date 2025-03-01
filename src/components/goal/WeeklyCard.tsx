@@ -1,28 +1,21 @@
-import {
-  ListRenderItem,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
-import { Category } from "@/src/types/goals";
 import { WeeklyGoal } from "@/src/types/goals";
 import WeeklyDailyActions from "./weekly/WeeklyDailyActions";
 
 const WeeklyCard: React.FC<{
   weeklyGoal: WeeklyGoal;
-  completeWeeklyTask: (id: number, date: string) => void;
+  completeWeeklyTask: (id: number, date: Date) => void;
 }> = ({ weeklyGoal, completeWeeklyTask }) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const { id, title, category, parent, num_tasks, dailyTasks, color } =
+  const { id, title, category, parent, numTasks, dailyTasks, color } =
     weeklyGoal;
 
   const progress =
     dailyTasks.length > 0
-      ? Math.round((dailyTasks.length / num_tasks) * 100)
+      ? Math.round((dailyTasks.length / numTasks) * 100)
       : 0;
 
   return (

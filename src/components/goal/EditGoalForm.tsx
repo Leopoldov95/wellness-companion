@@ -65,7 +65,7 @@ const EditGoalForm: React.FC<EditGoalFormProps> = ({
           mode="outlined"
           onPress={onPause}
         >
-          {initialData.is_paused ? "Unpause" : "Pause"}
+          {initialData.isPaused ? "Unpause" : "Pause"}
         </Button>
         <Button
           buttonColor="#fff4e5"
@@ -75,7 +75,7 @@ const EditGoalForm: React.FC<EditGoalFormProps> = ({
           onPress={onArchive}
           mode="outlined"
         >
-          {initialData.is_archived ? "Unarchive" : "Archive"}
+          {initialData.isArchived ? "Unarchive" : "Archive"}
         </Button>
       </View>
 

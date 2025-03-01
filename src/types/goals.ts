@@ -1,13 +1,18 @@
+// TODO ~ in the databse might want a JOIN table for duplicate dependat properties (colors, numTasks, etc)
 export type Goal = {
-  user_id: number;
+  userId: number;
   id: number;
   category: Category;
   title: string;
   dueDate: Date;
+  created: Date;
   progress: number;
   color: string;
-  is_paused: boolean;
-  is_archived: boolean;
+  isPaused: boolean;
+  isArchived: boolean;
+  lastUpdated: Date;
+  completedTasks: number;
+  numTasks: 1 | 2 | 3 | 4 | 5 | 6 | 7;
   children?: WeeklyGoal[]; // useful for managing frontend
 };
 
@@ -20,21 +25,16 @@ export type GoalForm = {
 
 export type WeeklyGoal = {
   id: number;
-  goal_id: number;
+  goalId: number;
   title: string;
   category: Category;
   parent?: string; //? Might need to be an ID pointing to parent?
-  startDate: string; // ISO string
-  endDate: string; // ISO string
+  startDate: Date;
+  endDate: Date;
   color?: string;
-  status: "completed" | "active" | "upcoming";
-  num_tasks: 1 | 2 | 3 | 4 | 5 | 6 | 7;
-  dailyTasks: DailyTasks[];
-};
-
-export type DailyTasks = {
-  date: string; // ISO string
-  completed: boolean;
+  status: "completed" | "active" | "upcoming" | "missed";
+  numTasks: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  dailyTasks: Date[];
 };
 
 export type Category =
@@ -104,5 +104,5 @@ export type GoalsContextType = {
   archiveGoal: (id: number) => void;
   getWeeklyGoalsById: (id: number) => WeeklyGoal[];
   getUpcommingWeeklyGoal: () => WeeklyGoal | null;
-  completeWeeklyTask: (id: number, date: string) => void;
+  completeWeeklyTask: (id: number, date: Date) => void;
 };

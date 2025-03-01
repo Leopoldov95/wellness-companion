@@ -20,11 +20,9 @@ import Fonts from "@/src/constants/Fonts";
 type WeeklyDailyActionsProps = {
   goal: WeeklyGoal;
   isModalVisible: boolean;
-  completeWeeklyTask: (id: number, date: string) => void;
+  completeWeeklyTask: (id: number, date: Date) => void;
   closeModal: () => void;
 };
-
-// ! progress is redundat, calc using num_tasks and compl tasks
 
 const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
   goal,
@@ -37,7 +35,7 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
     title,
     category,
     parent,
-    num_tasks,
+    numTasks,
     dailyTasks,
     color,
     startDate,
@@ -61,7 +59,7 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
     const date = new Date();
     // TODO ~ remember to Date transform this
 
-    completeWeeklyTask(id, "2024-01-12");
+    completeWeeklyTask(id, new Date("2024-01-12"));
   };
 
   // Interpolating colors for animation
@@ -69,13 +67,12 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
     inputRange: [0, 1],
     outputRange: [Colors.light.tertiary, "green"], // Purple to Green
   });
-
-  const getWeekDays = (start: string) => {
+  const getWeekDays = (start: Date) => {
     const days = [];
-    let currentDate = new Date(startDate);
     for (let i = 0; i < 7; i++) {
-      days.push(formatDate(currentDate));
-      currentDate.setDate(currentDate.getDate() + 1);
+      days.push(new Date(start.getTime()));
+      start = new Date(start.getTime());
+      start.setDate(start.getDate() + 1); // Mutating start affects future iterations
     }
     return days;
   };
@@ -103,13 +100,15 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
 
           <View style={styles.calendar}>
             {weekDays.map((day, index) => {
-              const task = dailyTasks.find((task) => task.date === day); // Find the task for that day
+              const task = dailyTasks.find(
+                (task) => task.getTime() === day.getTime()
+              ); // Find the task for that day
 
               return (
                 <View key={index} style={styles.dayContainer}>
                   <Text style={styles.dayLabel}>{formatDateShort(day)}</Text>
                   <View style={styles.checkmarkContainer}>
-                    {task?.completed ? (
+                    {task ? (
                       <Feather name="check-circle" size={20} color="green" />
                     ) : (
                       <Feather name="circle" size={20} color="gray" />
@@ -127,7 +126,7 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
               progress={
                 dailyTasks.length > 0
                   ? parseFloat(
-                      ((dailyTasks.length / num_tasks) * 100).toFixed(2)
+                      ((dailyTasks.length / numTasks) * 100).toFixed(2)
                     )
                   : 0
               }

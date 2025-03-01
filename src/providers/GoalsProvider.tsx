@@ -24,42 +24,54 @@ const GoalsContext = createContext<GoalsContextType>({
   archiveGoal: (id: number) => {},
   getWeeklyGoalsById: (id: number): WeeklyGoal[] => [],
   getUpcommingWeeklyGoal: (): WeeklyGoal | null => null,
-  completeWeeklyTask: (id: number, date: string) => {},
+  completeWeeklyTask: (id: number, date: Date) => {},
 });
 
 const DUMMY_GOALS: Goal[] = [
   {
-    user_id: 0,
+    userId: 0,
     id: 0,
     category: "cooking", // Must match one of the `Category` values
-    title: "I Like cooking",
+    title: "I Like Cooking",
     progress: 34,
-    dueDate: new Date(),
+    dueDate: new Date("2024-04-30"), // Due in the future
+    created: new Date("2024-01-01"), // Created at the start of the year
+    lastUpdated: new Date("2024-02-15"), // Last updated mid-February
     color: "red",
-    is_archived: false,
-    is_paused: false,
+    isArchived: false,
+    isPaused: false,
+    completedTasks: 5, // Example: 5 tasks done
+    numTasks: 3, // Weekly goal is to complete 7 tasks
   },
   {
-    user_id: 0,
+    userId: 0,
     id: 1,
     category: "hobbies", // Must match one of the `Category` values
-    title: "Some Hobby With an extra ong name test more even more",
+    title: "Learn Guitar",
     progress: 67,
-    dueDate: new Date(),
+    dueDate: new Date("2024-06-15"), // Long-term goal (mid-year)
+    created: new Date("2024-01-10"), // Created in early January
+    lastUpdated: new Date("2024-03-01"), // Updated recently
     color: "blue",
-    is_archived: false,
-    is_paused: false,
+    isArchived: false,
+    isPaused: false,
+    completedTasks: 20, // Example: 20 tasks completed
+    numTasks: 3, // Goal requires 30 tasks over time
   },
   {
-    user_id: 0,
+    userId: 0,
     id: 2,
-    category: "cooking", // Must match one of the `Category` values
-    title: "I Like cooking",
-    progress: 34,
-    dueDate: new Date(),
+    category: "fitness", // Changed category for variety
+    title: "Run 100 Miles",
+    progress: 50,
+    dueDate: new Date("2025-05-01"), // Due soon
+    created: new Date("2024-12-01"), // Created last year
+    lastUpdated: new Date("2025-02-28"), // Last update at end of February
     color: "green",
-    is_archived: false,
-    is_paused: false,
+    isArchived: false,
+    isPaused: false,
+    completedTasks: 20, // Halfway done
+    numTasks: 4, // Total goal is 100 tasks (e.g., miles run)
   },
 ];
 
@@ -67,43 +79,34 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
   // Parent Goal 0 (Cooking)
   {
     id: 100,
-    goal_id: 0,
-    num_tasks: 3,
+    goalId: 0,
+    numTasks: 3,
     title: "Learn basic knife skills",
     category: "cooking",
-    startDate: "2024-01-01",
-    endDate: "2024-01-07",
+    startDate: new Date("2024-01-01"),
+    endDate: new Date("2024-01-07"),
     status: "completed",
     dailyTasks: [],
   },
   {
     id: 101,
-    goal_id: 0,
-    num_tasks: 3,
+    goalId: 0,
+    numTasks: 3,
     title: "Master 5 foundational recipes",
     category: "cooking",
-    startDate: "2024-01-08",
-    endDate: "2024-01-14",
+    startDate: new Date("2024-01-08"),
+    endDate: new Date("2024-01-14"),
     status: "active",
-    dailyTasks: [
-      {
-        date: "2024-01-09",
-        completed: true,
-      },
-      {
-        date: "2024-01-11",
-        completed: true,
-      },
-    ],
+    dailyTasks: [new Date("2024-01-09"), new Date("2024-01-11")],
   },
   {
     id: 102,
-    goal_id: 0,
-    num_tasks: 3,
+    goalId: 0,
+    numTasks: 3,
     title: "Host a dinner party",
     category: "cooking",
-    startDate: "2024-01-15",
-    endDate: "2024-01-21",
+    startDate: new Date("2024-01-15"),
+    endDate: new Date("2024-01-21"),
     status: "upcoming",
     dailyTasks: [],
   },
@@ -111,103 +114,79 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
   // Parent Goal 1 (Hobbies)
   {
     id: 103,
-    goal_id: 1,
-    num_tasks: 5,
+    goalId: 1,
+    numTasks: 5,
     title: "Photography basics course",
     category: "hobbies",
-    startDate: "2024-02-01",
-    endDate: "2024-02-07",
+    startDate: new Date("2024-02-01"),
+    endDate: new Date("2024-02-07"),
     status: "completed",
     dailyTasks: [],
   },
   {
     id: 104,
-    goal_id: 1,
-    num_tasks: 5,
+    goalId: 1,
+    numTasks: 5,
     title: "Weekend hiking trip",
     category: "hobbies",
-    startDate: "2024-02-08",
-    endDate: "2024-02-14",
+    startDate: new Date("2024-02-08"),
+    endDate: new Date("2024-02-14"),
     status: "completed",
     dailyTasks: [],
   },
   {
     id: 105,
-    goal_id: 1,
-    num_tasks: 5,
+    goalId: 1,
+    numTasks: 5,
     title: "Watercolor painting workshop",
     category: "hobbies",
-    startDate: "2024-02-15",
-    endDate: "2024-02-21",
+    startDate: new Date("2024-02-15"),
+    endDate: new Date("2024-02-21"),
     status: "active",
     dailyTasks: [
-      {
-        date: "2024-02-15",
-        completed: true,
-      },
-      {
-        date: "2024-02-16",
-        completed: true,
-      },
-      {
-        date: "2024-02-18",
-        completed: true,
-      },
-      {
-        date: "2024-02-20",
-        completed: true,
-      },
+      new Date("2024-02-15"),
+      new Date("2024-02-16"),
+      new Date("2024-02-18"),
+      new Date("2024-02-20"),
     ],
   },
 
   // Parent Goal 2 (Cooking)
   {
     id: 106,
-    goal_id: 2,
-    num_tasks: 4,
+    goalId: 2,
+    numTasks: 4,
     title: "Meal prep mastery",
     category: "cooking",
-    startDate: "2024-03-01",
-    endDate: "2024-03-07",
+    startDate: new Date("2024-03-01"),
+    endDate: new Date("2024-03-07"),
     status: "active",
     dailyTasks: [
-      {
-        date: "2024-03-01",
-        completed: true,
-      },
-      {
-        date: "2024-03-03",
-        completed: true,
-      },
-      {
-        date: "2024-03-05",
-        completed: true,
-      },
-      {
-        date: "2024-03-06",
-        completed: true,
-      },
+      new Date("2024-03-01"),
+      new Date("2024-03-03"),
+      new Date("2024-03-05"),
+      new Date("2024-03-06"),
     ],
   },
   {
     id: 107,
-    goal_id: 2,
-    num_tasks: 4,
+    goalId: 2,
+    numTasks: 4,
     title: "Advanced baking techniques",
     category: "cooking",
-    startDate: "2024-03-08",
-    endDate: "2024-03-14",
+    startDate: new Date("2024-03-08"),
+    endDate: new Date("2024-03-14"),
     status: "upcoming",
     dailyTasks: [],
   },
   {
     id: 108,
-    goal_id: 2,
-    num_tasks: 4,
+    goalId: 2,
+    numTasks: 4,
     title: "International cuisine week",
     category: "cooking",
-    startDate: "2024-03-15",
-    endDate: "2024-03-21",
+    startDate: new Date("2024-03-15"),
+    endDate: new Date("2024-03-21"),
     status: "upcoming",
     dailyTasks: [],
   },
@@ -234,7 +213,7 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // TODO ~ not ideal, but manually update WEEKLY DATA to add colors and parent title
     DUMMY_WEEKLY.forEach((goal) => {
-      const parent = DUMMY_GOALS.find((parent) => parent.id === goal.goal_id);
+      const parent = DUMMY_GOALS.find((parent) => parent.id === goal.goalId);
     });
 
     setWeeklyGoals(getActiveWeeklyGoals);
@@ -243,7 +222,7 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     // TODO ~ not ideal, but manually update WEEKLY DATA to add colors and parent title
     DUMMY_WEEKLY.forEach((goal) => {
-      const parent = goals.find((parent) => parent.id === goal.goal_id);
+      const parent = goals.find((parent) => parent.id === goal.goalId);
       if (parent) {
         goal.parent = parent?.title;
         goal.color = parent?.color;
@@ -258,22 +237,26 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const getWeeklyGoalsById = (id: number): WeeklyGoal[] => {
-    return DUMMY_WEEKLY.filter((goal) => goal.goal_id === id);
+    return DUMMY_WEEKLY.filter((goal) => goal.goalId === id);
   };
 
   const createGoal = (formData: GoalForm) => {
     const { category, color, title, dueDate } = formData;
     // create a new goal
     const goal: Goal = {
-      user_id: 0,
+      userId: 0,
       id: 12,
       category,
       color,
       title,
       dueDate,
+      created: new Date(),
+      lastUpdated: new Date(),
       progress: 0,
-      is_archived: false,
-      is_paused: false,
+      numTasks: 1,
+      completedTasks: 0,
+      isArchived: false,
+      isPaused: false,
     };
     // add to the DUMMY stack
     DUMMY_GOALS.push(goal);
@@ -300,7 +283,7 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
     setGoals((prevGoals) =>
       prevGoals.map((goal) =>
         goal.id === id
-          ? { ...goal, is_paused: !goal.is_paused } // Update only the necessary fields
+          ? { ...goal, isPaused: !goal.isPaused } // Update only the necessary fields
           : goal
       )
     );
@@ -310,19 +293,45 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
     setGoals((prevGoals) =>
       prevGoals.map((goal) =>
         goal.id === id
-          ? { ...goal, is_archived: !goal.is_archived } // Update only the necessary fields
+          ? { ...goal, isArchived: !goal.isArchived } // Update only the necessary fields
           : goal
       )
     );
+  };
+
+  //TODO ~ if past goals marked as "complete" then just count it as numTasks
+  const calculateGoalProgress = (goal: Goal) => {
+    // first need to get the count of weekly goals
+    const start = new Date(goal.created);
+    const end = new Date(goal.dueDate);
+
+    const numWeeks = Math.floor(
+      (end.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000)
+    );
+
+    // get percentage
+    const percent =
+      goal.completedTasks /
+      parseInt(((goal.completedTasks / numWeeks) * 100).toFixed(2));
+
+    return percent;
   };
 
   // for any updates
   //? not sure how DB edits will be?
   const updateGoalDetails = (id: number, form: Goal) => {};
 
+  /***********************/
+  /**** WEEKLY GOALS *****/
+  /***********************/
+
+  // method to update weekly goal status's, mainly or when users have been inactive for a long time
+  //? Is this really needed?
+  const updateUserWeekly = () => {};
+
   const updateWeeklyGoal = () => {};
 
-  const completeWeeklyTask = (id: number, date: string) => {
+  const completeWeeklyTask = (id: number, date: Date) => {
     console.log("task completed");
     console.log(id);
 
@@ -333,14 +342,23 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
         goal.id === id
           ? {
               ...goal,
-              dailyTasks: [...goal.dailyTasks, { date: date, completed: true }], // Push the new task to dailyTasks
+              dailyTasks: [...goal.dailyTasks, date], // Push the new task to dailyTasks
             }
           : goal
       )
     );
+
+    // TODO
+    /** TODO - much to do
+     * update lastUpdate and completedTasks in Goal
+     * SINCE daily task is completed for that day, cycle to NEXT upcomming task
+     * ! only for the home page though, otherwise do nothing, but on the Goal page button should be disabled
+     * IF task is completed, update it's status
+     */
   };
 
   // Get the first upcomming weekly goal
+  // TODO ~ will need to display a message when no more weekly tasks are active for a given week
   const getUpcommingWeeklyGoal = () => {
     const weeklyGoal = weeklyGoals
       .filter((goal) => goal.status === "active" || goal.status === "upcoming") // Ignore completed goals

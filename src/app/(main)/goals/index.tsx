@@ -75,7 +75,7 @@ const GoalsScreen = () => {
       <View>
         <FlatList
           data={
-            !showArchived ? goals.filter((goal) => !goal.is_archived) : goals
+            !showArchived ? goals.filter((goal) => !goal.isArchived) : goals
           }
           renderItem={({ item }) => (
             <GoalCard goal={item} goalView={goalView} />

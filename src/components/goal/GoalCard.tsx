@@ -26,8 +26,8 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, goalView }) => {
     dueDate,
     progress,
     color,
-    is_paused,
-    is_archived,
+    isPaused,
+    isArchived,
   } = goal;
 
   return (
@@ -38,8 +38,8 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, goalView }) => {
           android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
           style={{
             ...styles.card,
-            ...(is_paused || is_archived ? { opacity: 0.3 } : {}),
-            ...(is_archived && { backgroundColor: Colors.light.warmYellow }),
+            ...(isPaused || isArchived ? { opacity: 0.3 } : {}),
+            ...(isArchived && { backgroundColor: Colors.light.warmYellow }),
           }}
         >
           {goalView === "normal" && GetCategoryImage(category)}
@@ -67,13 +67,13 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, goalView }) => {
         </Pressable>
       </Link>
       {/* Show pauch icon over goal when paused */}
-      {is_paused && (
+      {isPaused && (
         <View style={styles.iconWrapper} pointerEvents="none">
           <Feather name="pause" size={64} color="#333" />
         </View>
       )}
       {/* Show Archived overlay */}
-      {is_archived && (
+      {isArchived && (
         <View style={styles.iconWrapper} pointerEvents="none">
           <Feather name="archive" size={64} color="#333" />
         </View>
