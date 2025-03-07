@@ -17,6 +17,7 @@ export function formatDate(inputDate: string | Date): string {
   return `${year}-${month}-${day}`;
 }
 
+// Converts date to MM/DD
 export function formatDateShort(inputDate: string | Date): string {
   const date = new Date(inputDate);
 
@@ -25,4 +26,9 @@ export function formatDateShort(inputDate: string | Date): string {
   }
 
   return date.toLocaleString("en-US", { month: "short", day: "numeric" });
+}
+
+// converts date to YYYY-MM string for easy comparison
+export function dateToYearMonth(date: Date): string {
+  return date.toISOString().slice(0, 7);
 }

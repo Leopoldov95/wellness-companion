@@ -42,11 +42,20 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
     endDate,
   } = goal;
 
-  const [completed, setCompleted] = useState(false);
-  const backgroundColor = useRef(new Animated.Value(0)).current;
+  const DUMMY_DATE = "2024-01-10";
+
+  const isTaskCompleted = dailyTasks.some(
+    (task) => formatDate(task.date) === formatDate(new Date(DUMMY_DATE))
+  );
+
+  const backgroundColor = useRef(
+    new Animated.Value(isTaskCompleted ? 1 : 0)
+  ).current;
 
   const handlePress = () => {
-    setCompleted(true);
+    // console.log(`Has completed? ${completed}`);
+
+    // setCompleted(true);
 
     // Animate background change
     Animated.timing(backgroundColor, {
@@ -59,7 +68,7 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
     const date = new Date();
     // TODO ~ remember to Date transform this
 
-    completeWeeklyTask(id, new Date("2024-01-12"));
+    completeWeeklyTask(id, new Date(DUMMY_DATE));
   };
 
   // Interpolating colors for animation
@@ -67,6 +76,7 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
     inputRange: [0, 1],
     outputRange: [Colors.light.tertiary, "green"], // Purple to Green
   });
+
   const getWeekDays = (start: Date) => {
     const days = [];
     for (let i = 0; i < 7; i++) {
@@ -101,7 +111,7 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
           <View style={styles.calendar}>
             {weekDays.map((day, index) => {
               const task = dailyTasks.find(
-                (task) => task.getTime() === day.getTime()
+                (task) => formatDate(task.date) === formatDate(day)
               ); // Find the task for that day
 
               return (
@@ -121,7 +131,9 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
 
           {/* progress */}
           <View style={styles.progress}>
-            <Text style={globalStyles.labelText}>Week Progress</Text>
+            <Text style={globalStyles.labelText}>
+              Week Progress: {goal.dailyTasks.length} / {goal.numTasks}
+            </Text>
             <GoalProgressBar
               progress={
                 dailyTasks.length > 0
@@ -148,23 +160,16 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
               style={{
                 borderRadius: 8,
               }}
-              textColor="white"
-              disabled={completed} // Disable after completion
-            >
-              {completed ? (
-                <>
-                  <Text
-                    style={{
-                      color: "white",
-                    }}
-                  >
-                    Task Completed!
-                  </Text>
+              disabled={isTaskCompleted}
+              labelStyle={{ color: "white" }}
+              textColor="#fff"
+              icon={() =>
+                isTaskCompleted ? (
                   <Feather name="check-circle" size={20} color="white" />
-                </>
-              ) : (
-                "Complete Task"
-              )}
+                ) : null
+              }
+            >
+              {isTaskCompleted ? "Task Completed!" : "Complete Taskgg"}
             </Button>
           </Animated.View>
 

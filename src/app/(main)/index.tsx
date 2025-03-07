@@ -21,36 +21,19 @@ import Facts from "@/src/components/Facts";
 import { useGoals } from "@/src/providers/GoalsProvider";
 import { WeeklyGoal } from "@/src/types/goals";
 import WeeklyCard from "@/src/components/goal/WeeklyCard";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const HomeScreen = () => {
   const { onMoodPress, isMoodTracked } = useMood();
   const { getUpcommingWeeklyGoal, completeWeeklyTask, weeklyGoals } =
     useGoals();
   // const [upcommingGoal, setUpcommingGoal] = useState<WeeklyGoal | null>(null);
+  const DUMMY_DATE = "2024-01-10";
 
   const upcommingGoal = React.useMemo(
-    () => getUpcommingWeeklyGoal(),
+    () => getUpcommingWeeklyGoal(new Date(DUMMY_DATE)),
     [weeklyGoals]
   );
-
-  // const fetchUpcommingGoal = () => {
-  //   const goal = getUpcommingWeeklyGoal();
-  //   if (goal) {
-  //     setUpcommingGoal(goal);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchUpcommingGoal();
-  // }, []);
-
-  // // update upcomming goal details on task completion
-  // useEffect(() => {
-  //   console.log("weekly goals was updated");
-  //   console.log(weeklyGoals);
-
-  //   fetchUpcommingGoal();
-  // }, [weeklyGoals]);
 
   const options: Intl.DateTimeFormatOptions = {
     weekday: "short", // 'Tue'
@@ -108,14 +91,25 @@ const HomeScreen = () => {
 
         {/* Upcomming self care */}
         <View style={styles.upcomming}>
-          {upcommingGoal && (
-            <React.Fragment>
-              <Text style={globalStyles.subheader}>Upcomming Goal</Text>
-              <WeeklyCard
-                completeWeeklyTask={completeWeeklyTask}
-                weeklyGoal={upcommingGoal}
+          <Text style={[globalStyles.subheader, { marginBottom: 10 }]}>
+            Upcomming Goal
+          </Text>
+          {upcommingGoal ? (
+            <WeeklyCard
+              completeWeeklyTask={completeWeeklyTask}
+              weeklyGoal={upcommingGoal}
+            />
+          ) : (
+            <View style={styles.noGoal}>
+              <Text style={[globalStyles.labelText, { textAlign: "center" }]}>
+                All Caught Up!
+              </Text>
+              <MaterialCommunityIcons
+                name="party-popper"
+                size={24}
+                color="black"
               />
-            </React.Fragment>
+            </View>
           )}
         </View>
 
@@ -216,6 +210,20 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.seconday[600],
     fontSize: 32,
     color: "white",
+  },
+  noGoal: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    textAlign: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    borderColor: Colors.light.lightBlue,
+    borderWidth: 2,
   },
 });
 

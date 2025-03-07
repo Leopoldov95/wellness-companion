@@ -2,6 +2,14 @@ export type moodType = 1 | 2 | 3 | 4 | 5;
 
 export type MoodContextType = {
   mood: moodType;
+  moods: MoodEntry[];
   onMoodPress: (mood: moodType) => Promise<void>;
   isMoodTracked: boolean;
+};
+
+export type MoodEntry = {
+  id: number;
+  userId: number;
+  mood: moodType;
+  timestamp: Date;
 };

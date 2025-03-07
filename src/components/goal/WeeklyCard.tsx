@@ -4,6 +4,7 @@ import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
 import { WeeklyGoal } from "@/src/types/goals";
 import WeeklyDailyActions from "./weekly/WeeklyDailyActions";
+import { isActiveWeeklyGoal } from "@/src/services/goalsService";
 
 const WeeklyCard: React.FC<{
   weeklyGoal: WeeklyGoal;
@@ -12,6 +13,8 @@ const WeeklyCard: React.FC<{
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const { id, title, category, parent, numTasks, dailyTasks, color } =
     weeklyGoal;
+
+  const DUMMY_DATE = "2024-01-10";
 
   const progress =
     dailyTasks.length > 0
@@ -41,15 +44,17 @@ const WeeklyCard: React.FC<{
           ></View>
         </View>
       </Pressable>
-
-      {isModalVisible && weeklyGoal.status === "active" && (
-        <WeeklyDailyActions
-          goal={weeklyGoal}
-          isModalVisible
-          completeWeeklyTask={completeWeeklyTask}
-          closeModal={() => setIsModalVisible(false)}
-        />
-      )}
+      {/* TODO will need to redo this logic, grey out card when goal is completed */}
+      {/* (ONLY FOR GOALS page) */}
+      {isModalVisible &&
+        isActiveWeeklyGoal(weeklyGoal, new Date(DUMMY_DATE), true) && (
+          <WeeklyDailyActions
+            goal={weeklyGoal}
+            isModalVisible
+            completeWeeklyTask={completeWeeklyTask}
+            closeModal={() => setIsModalVisible(false)}
+          />
+        )}
     </View>
   );
 };

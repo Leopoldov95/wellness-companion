@@ -28,13 +28,19 @@ export type WeeklyGoal = {
   goalId: number;
   title: string;
   category: Category;
-  parent?: string; //? Might need to be an ID pointing to parent?
+  parent?: string; // TODO ~ must come from parent DB
   startDate: Date;
   endDate: Date;
-  color?: string;
-  status: "completed" | "active" | "upcoming" | "missed";
+  color?: string; // TODO ~ must come from parent DB
   numTasks: 1 | 2 | 3 | 4 | 5 | 6 | 7;
-  dailyTasks: Date[];
+  dailyTasks: WeeklyGoalTask[];
+};
+
+export type WeeklyGoalTask = {
+  id: number;
+  weeklyGoalId: number;
+  date: Date;
+  completed: boolean;
 };
 
 export type Category =
@@ -103,6 +109,6 @@ export type GoalsContextType = {
   pauseGoal: (id: number) => void;
   archiveGoal: (id: number) => void;
   getWeeklyGoalsById: (id: number) => WeeklyGoal[];
-  getUpcommingWeeklyGoal: () => WeeklyGoal | null;
+  getUpcommingWeeklyGoal: (date: Date) => WeeklyGoal | null;
   completeWeeklyTask: (id: number, date: Date) => void;
 };
