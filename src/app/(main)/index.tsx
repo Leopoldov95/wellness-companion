@@ -22,6 +22,8 @@ import { useGoals } from "@/src/providers/GoalsProvider";
 import { WeeklyGoal } from "@/src/types/goals";
 import WeeklyCard from "@/src/components/goal/WeeklyCard";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Animated, { FadeOut } from "react-native-reanimated";
+import GoalProgressBar from "@/src/components/goal/GoalProgressBar";
 
 const HomeScreen = () => {
   const { onMoodPress, isMoodTracked } = useMood();
@@ -83,8 +85,16 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         {/* Mood Tracking */}
-        {/* (?) We might want to make this it's own component */}
-        <MoodSelector onMoodPress={onMoodPress} isMoodTracked={isMoodTracked} />
+        {!isMoodTracked ? (
+          <MoodSelector onMoodPress={onMoodPress} />
+        ) : (
+          <Animated.View
+            style={styles.moodMessage}
+            exiting={FadeOut.duration(800)}
+          >
+            <Text>Mood Tracked Today</Text>
+          </Animated.View>
+        )}
 
         {/* Fun mental health facts */}
         <Facts />
@@ -114,7 +124,13 @@ const HomeScreen = () => {
         </View>
 
         {/* weeekly progress of self care goals */}
-        <View style={styles.progress}></View>
+        {/* TODO ~ this could be used to track number of DAILY tasks */}
+        <View style={styles.progress}>
+          <Text style={globalStyles.labelText}>Daily Progress:</Text>
+          <View style={{ flex: 1 }}>
+            <GoalProgressBar progress={50} color="pink" />
+          </View>
+        </View>
 
         {/*** Quick Links ***/}
         {/* Meditate */}
@@ -183,7 +199,11 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   upcomming: {},
-  progress: {},
+  progress: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 10,
+  },
   meditate: {
     display: "flex",
     flexDirection: "row",
@@ -224,6 +244,16 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderColor: Colors.light.lightBlue,
     borderWidth: 2,
+  },
+  moodMessage: {
+    height: 80,
+    borderColor: Colors.light.primary,
+    borderWidth: 2,
+    borderRadius: 16,
+    backgroundColor: "#fff",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

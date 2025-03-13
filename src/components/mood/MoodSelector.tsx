@@ -12,20 +12,11 @@ import Colors from "@/src/constants/Colors";
 
 interface MoodTrackerProps {
   onMoodPress: (mood: moodType) => void;
-  isMoodTracked: boolean;
 }
 
-const MoodSelector: React.FC<MoodTrackerProps> = ({
-  onMoodPress,
-  isMoodTracked,
-}) => {
-  if (isMoodTracked) return null;
+const MoodSelector: React.FC<MoodTrackerProps> = ({ onMoodPress }) => {
   return (
-    <Animated.View
-      entering={FadeIn.duration(500)}
-      exiting={FadeOut.duration(500)}
-      style={styles.moodContainer}
-    >
+    <Animated.View exiting={FadeOut.duration(800)} style={styles.moodContainer}>
       <Text style={[globalStyles.subheader, styles.subheader]}>
         How Was Your Mood Today?
       </Text>

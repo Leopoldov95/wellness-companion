@@ -80,7 +80,7 @@ const PlayerScreen = () => {
       {/* custom back button */}
       {/* TODO ~ need to PAUSE when going back */}
       <Pressable style={styles.backBtn} onPress={onBackBtn}>
-        <Feather name="arrow-left" size={48} color="#fff" />
+        <Feather name="chevron-left" size={32} color="#fff" />
       </Pressable>
       <View style={styles.content}>
         <Text style={styles.trackName}>{currentAudio?.name}</Text>
@@ -88,8 +88,8 @@ const PlayerScreen = () => {
         <View style={styles.timerContainer}>
           <CountdownCircleTimer
             isPlaying={isPlaying}
-            // duration={selectedDuration * 60}
-            duration={selectedDuration}
+            duration={selectedDuration * 60}
+            // duration={selectedDuration}
             strokeWidth={5}
             colors={[Colors.light.quinary]}
             size={250}
