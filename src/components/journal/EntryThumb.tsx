@@ -43,12 +43,6 @@ const EntryThumb: React.FC<EntryThumbProps> = ({ item, index, onPress }) => {
         android_ripple={{ color: "rgba(0,0,0,0.1)" }}
         style={styles.entryContent}
       >
-        {/* favorite action */}
-        {/* ! Moving to Modal */}
-        {/* <Pressable style={styles.entryFavorite}>
-          <AntDesign name="heart" size={16} color={Colors.light.red} />
-          <AntDesign name="hearto" size={24} color={Colors.light.red} />
-        </Pressable> */}
         <FlatList
           data={item.items}
           renderItem={({ item, index }) => (

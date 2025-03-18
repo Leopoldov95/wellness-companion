@@ -4,6 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import Colors from "@/src/constants/Colors";
 import { TrackAsset } from "@/src/types/meditation";
 import Fonts from "@/src/constants/Fonts";
+import { IMG_PATH } from "@/src/constants/Meditate";
 
 type TrackProps = {
   track: TrackAsset;
@@ -11,13 +12,11 @@ type TrackProps = {
 };
 
 const Track: React.FC<TrackProps> = ({ track, onPress }) => {
+  const imgSrc = IMG_PATH[track?.name as string] || IMG_PATH["Earth"];
+
   return (
     <View style={styles.track}>
-      <Image
-        style={styles.trackImage}
-        source={require("@/assets/images/meditation/Earth.jpg")}
-        resizeMode="cover"
-      />
+      <Image style={styles.trackImage} source={imgSrc} resizeMode="cover" />
       <View style={styles.trackDetails}>
         <Text style={styles.trackName}>{track.name}</Text>
         {/* ! changing func to test player screen */}

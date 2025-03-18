@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   card: {
     width: "100%",
     padding: 10,
-    backgroundColor: Colors.light.greyBg,
+    backgroundColor: "white",
   },
   detail: {
     display: "flex",

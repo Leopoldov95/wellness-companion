@@ -16,6 +16,7 @@ import Journal from "@/src/components/journal/Journal";
 import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import Modal from "react-native-modal";
+import BackButton from "@/src/components/BackButton";
 
 const SPIRAL_COUNT = 15;
 
@@ -70,9 +71,7 @@ const JournalScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Pressable style={styles.backBtn} onPress={() => router.back()}>
-        <Feather name="arrow-left" size={48} color={Colors.light.text} />
-      </Pressable>
+      <BackButton onPress={() => router.back()} />
 
       <Text style={globalStyles.title}>Gratitude Journal</Text>
 
@@ -94,7 +93,10 @@ const JournalScreen = () => {
 
       <View style={styles.actionsContainer}>
         {/* View community posts */}
-        <Pressable style={styles.button}>
+        <Pressable
+          style={styles.button}
+          onPress={() => router.push("/(main)/journal/shared")}
+        >
           <Feather name="users" size={24} color="white" />
           <Text style={styles.buttonText}>Shared</Text>
         </Pressable>

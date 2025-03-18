@@ -1,21 +1,22 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Image,
-  Pressable,
-} from "react-native";
-import React, { useState } from "react";
-import Slider from "@react-native-community/slider";
+import React from "react";
 import PlayerButton from "@/src/components/meditate/PlayerButton";
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
 import { useMeditate } from "@/src/providers/MeditateProvider";
-import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { router } from "expo-router";
+import { playTrack } from "@/src/services/audioService";
 import Feather from "@expo/vector-icons/Feather";
-import { playTrack, pauseTrack } from "@/src/services/audioService";
+import { router } from "expo-router";
+import {
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
+import { IMG_PATH } from "@/src/constants/Meditate";
+import BackButton from "@/src/components/BackButton";
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,11 +30,6 @@ const PlayerScreen = () => {
     selectedDuration,
     totalAudioCount,
     currentAudioIdx,
-    setCurrentAudio,
-    setPlaybackObj,
-    setSoundObj,
-    setIsPlaying,
-    setCurrentAudioIdx,
     onMeditationEnd,
   } = useMeditate();
 
@@ -67,21 +63,17 @@ const PlayerScreen = () => {
     onBackBtn();
   };
 
+  const imgSrc = IMG_PATH[currentAudio?.name as string] || IMG_PATH["Earth"];
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image
-          style={styles.audioBg}
-          source={require("@/assets/images/meditation/Earth.jpg")}
-          resizeMode="cover"
-        />
+        <Image style={styles.audioBg} source={imgSrc} resizeMode="cover" />
         <View style={styles.overlay} />
       </View>
       {/* custom back button */}
       {/* TODO ~ need to PAUSE when going back */}
-      <Pressable style={styles.backBtn} onPress={onBackBtn}>
-        <Feather name="chevron-left" size={32} color="#fff" />
-      </Pressable>
+      <BackButton inverted={true} onPress={onBackBtn} />
       <View style={styles.content}>
         <Text style={styles.trackName}>{currentAudio?.name}</Text>
         {/* Timer controls */}

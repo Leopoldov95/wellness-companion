@@ -1,4 +1,16 @@
-import { Asset } from "expo-asset";
+import {
+  loadTracks,
+  pauseTrack,
+  playNextTrack,
+  playTrack,
+  resumeTrack,
+  setupAudioMode,
+} from "@/src/services/audioService";
+import {
+  DurationType,
+  MeditateContextType,
+  TrackAsset,
+} from "@/src/types/meditation";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import { Sound } from "expo-av/build/Audio";
 import {
@@ -8,20 +20,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import {
-  MeditateContextType,
-  TrackAsset,
-  DurationType,
-  TrackModule,
-} from "@/src/types/meditation";
-import {
-  setupAudioMode,
-  loadTracks,
-  playTrack,
-  playNextTrack,
-  pauseTrack,
-  resumeTrack,
-} from "@/src/services/audioService";
 
 //* These are the states and functions I want exposed OUTSIDE the provider
 const MeditateContext = createContext<MeditateContextType>({
@@ -76,6 +74,13 @@ const MeditateProvider: React.FC<{ children: React.ReactNode }> = ({
         setSoundObj(status);
         setIsPlaying(true);
         setCurrentAudioIdx(track.id);
+
+        // Listen for track completion and repeat if necessary
+        playBackObj.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.isLoaded && status.didJustFinish) {
+            await playTrack(playBackObj, track.uri); // Restart track
+          }
+        });
       }
       return;
     }

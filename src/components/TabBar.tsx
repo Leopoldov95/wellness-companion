@@ -9,7 +9,12 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-const EXCLUDED_ROUTES = ["meditate", "journal", "journal/entries"];
+const EXCLUDED_ROUTES = [
+  "meditate",
+  "journal",
+  "journal/entries",
+  "journal/shared",
+];
 
 export default function TabBar({
   state,

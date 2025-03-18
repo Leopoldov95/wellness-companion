@@ -10,13 +10,9 @@ export const sortEntries = (
 ): GratitudeEntry[] => {
   switch (type) {
     case "newest":
-      return [...entries].sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
+      return [...entries].sort((a, b) => b.date.getTime() - a.date.getTime());
     case "oldest":
-      return [...entries].sort(
-        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-      );
+      return [...entries].sort((a, b) => a.date.getTime() - b.date.getTime());
     case "favorite":
       return [...entries].sort(
         (a, b) => Number(b.isFavorite) - Number(a.isFavorite)

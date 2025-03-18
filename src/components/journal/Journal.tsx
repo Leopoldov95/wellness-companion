@@ -1,8 +1,5 @@
 import { View, Text, StyleSheet, Dimensions, TextInput } from "react-native";
 import React from "react";
-import Colors from "@/src/constants/Colors";
-import { globalStyles } from "@/src/styles/globals";
-const { width } = Dimensions.get("window");
 import { useJournal } from "@/src/providers/JournalProvider";
 import Fonts from "@/src/constants/Fonts";
 const SPIRAL_COUNT = 15;
@@ -38,7 +35,7 @@ const Journal = ({
             <TextInput
               style={styles.input}
               multiline={true}
-              placeholder={bullet === 1 ? todayPrompt : "Write Something..."}
+              placeholder={bullet === 1 ? todayPrompt! : "Write Something..."}
               textAlignVertical="top"
               textAlign="left"
               maxLength={50}
@@ -129,7 +126,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    lineHeight: 40, // Adjust to match the height of your notebook lines
+    lineHeight: 25, // Adjust to match the height of your notebook lines
     fontFamily: Fonts.primary[500],
     padding: 0,
     height: 65,

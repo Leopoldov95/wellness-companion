@@ -9,38 +9,36 @@ import Colors from "@/src/constants/Colors";
 
 const Facts = () => {
   const [randFact, setRandFact] = useState<Fact | null>(null);
+  const [key, setKey] = useState(0);
 
   useEffect(() => {
-    const fetchRandomFact = () => {
-      const randIdx = Math.floor(Math.random() * facts.length);
-      setRandFact(facts[randIdx]);
-    };
-
-    fetchRandomFact(); // Fetch initial random fact
-
-    const intervalId = setInterval(fetchRandomFact, 15000); // Fetch new fact every 10 seconds
-
-    return () => {
-      clearInterval(intervalId); // Clear interval on component unmount
-    };
+    const randIdx = Math.floor(Math.random() * facts.length);
+    setRandFact(facts[randIdx]);
   }, []);
 
+  const updateFact = () => {
+    const randIdx = Math.floor(Math.random() * facts.length);
+    setRandFact(facts[randIdx]);
+    setKey((prev) => prev + 1); // Increment key to reset timer
+  };
+
   if (!randFact) {
-    return null; // Return null if randFact is not yet loaded
+    return null;
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.countdown}>
         <CountdownCircleTimer
+          key={key}
           isPlaying
-          duration={14.9}
+          duration={15}
           colors={[Colors.light.secondary]}
           size={30}
           strokeWidth={3}
           onComplete={() => {
-            // do your stuff here
-            return { shouldRepeat: true, delay: 0 }; // repeat animation in 1.5 seconds
+            updateFact();
+            return { shouldRepeat: false };
           }}
         ></CountdownCircleTimer>
       </View>

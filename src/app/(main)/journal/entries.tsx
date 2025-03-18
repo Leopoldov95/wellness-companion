@@ -25,6 +25,8 @@ import {
   SortOptions,
 } from "@/src/types/journal";
 import { filterEntries, sortEntries } from "@/src/services/journalService";
+import BackButton from "@/src/components/BackButton";
+import { router } from "expo-router";
 
 const EntriesScreen = () => {
   const { entries, toggleFavorite, toggleShare, deleteEntry } = useJournal();
@@ -51,16 +53,11 @@ const EntriesScreen = () => {
 
   // sorting
   useEffect(() => {
-    console.log("sorting changed!");
-    console.log(selectedSort);
     setFilteredEntries(sortEntries(entries, selectedSort));
   }, [selectedSort]);
 
   // filtering
   useEffect(() => {
-    console.log("filtered updated");
-    console.log(filters);
-
     setFilteredEntries(filterEntries(entries, filters));
   }, [filters]);
 
@@ -87,7 +84,8 @@ const EntriesScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={globalStyles.title}>Your Entriess</Text>
+      <BackButton onPress={() => router.back()} />
+      <Text style={globalStyles.title}>Your Entries</Text>
 
       {/* user sort */}
       <View style={styles.filterBtnContainer}>
@@ -153,7 +151,7 @@ const EntriesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
     paddingTop: 20,
     backgroundColor: Colors.light.greyBg,
   },

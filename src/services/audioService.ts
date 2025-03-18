@@ -55,6 +55,12 @@ export async function setupAudioMode() {
 
 export const playTrack = async (playback: Sound, uri: string) => {
   try {
+    const status = await playback.getStatusAsync();
+
+    if (status.isLoaded) {
+      await playback.unloadAsync(); // Unload current track before loading a new one
+    }
+
     return await playback.loadAsync({ uri }, { shouldPlay: true });
   } catch (error) {
     console.error("error inside play method", error);
