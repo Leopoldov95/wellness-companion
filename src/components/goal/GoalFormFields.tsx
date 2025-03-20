@@ -11,7 +11,7 @@ import {
 } from "@react-native-community/datetimepicker";
 import { Feather } from "@expo/vector-icons";
 import Collapsible from "react-native-collapsible";
-import { GoalColors } from "@/src/constants/Colors";
+import Colors, { GoalColors } from "@/src/constants/Colors";
 
 const GOAL_COLORS = [
   {
@@ -72,6 +72,16 @@ const GOAL_COLORS = [
   },
 ];
 
+const NUM_TASKS_OPTIONS = [
+  { label: "1", value: 1 },
+  { label: "2", value: 2 },
+  { label: "3", value: 3 },
+  { label: "4", value: 4 },
+  { label: "5", value: 5 },
+  { label: "6", value: 6 },
+  { label: "7", value: 7 },
+];
+
 type GoalFormFieldProps = {
   form: GoalForm;
   handleChange: (field: keyof GoalForm, value: string | Date) => void;
@@ -85,7 +95,6 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
   form,
   handleChange,
 }) => {
-  const [isFocus, setIsFocus] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
 
   const onChange = (
@@ -121,7 +130,7 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
         {form.category.length > 0 && GetCategoryImage(form.category, 180)}
       </View>
 
-      {/* dropdown here */}
+      {/* Category Dropdown */}
       <View>
         <Text style={styles.label}>Category</Text>
         <Dropdown
@@ -135,14 +144,10 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
           maxHeight={300}
           labelField="label"
           valueField="value"
-          placeholder={!isFocus ? "Select item" : "..."}
           searchPlaceholder="Search..."
           value={form.category}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => setIsFocus(false)}
           onChange={(item) => {
             handleChange("category", item.value);
-            setIsFocus(false);
           }}
         />
       </View>
@@ -153,10 +158,28 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
         value={form.title}
         mode="outlined"
         maxLength={30}
+        outlineStyle={{ borderRadius: 8 }}
         onChangeText={(text) => handleChange("title", text)}
         style={styles.titleField}
       />
-
+      {/* Category Dropdown */}
+      <View>
+        <Text style={styles.label}>Tasks Per Week</Text>
+        <Dropdown
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          iconStyle={styles.iconStyle}
+          data={NUM_TASKS_OPTIONS}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          value={form.numTasks}
+          onChange={(item) => {
+            handleChange("numTasks", item.value);
+          }}
+        />
+      </View>
       {/* Calendar Date Picker */}
       <View>
         <Button
@@ -165,7 +188,7 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
           mode="contained"
           onPress={showDatePicker}
         >
-          Choose Date
+          Target End Date
         </Button>
         <Text style={[styles.label, { textAlign: "center", marginTop: 6 }]}>
           {form.dueDate ? form.dueDate.toDateString() : "Target Goal Date"}
@@ -252,6 +275,7 @@ const styles = StyleSheet.create({
   titleField: {
     height: 45,
     marginTop: -10,
+    backgroundColor: "transparent",
   },
   active: {
     borderColor: "#333",

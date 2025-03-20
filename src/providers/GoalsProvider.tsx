@@ -19,6 +19,7 @@ type GoalAction = "Delete" | "Pause" | "Archive";
 
 const GoalsContext = createContext<GoalsContextType>({
   goals: [],
+  today: new Date(),
   weeklyGoals: [],
   createGoal: (formData: GoalForm) => {},
   updateGoal: (id: number, formData: GoalForm) => {},
@@ -270,7 +271,7 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
 }: PropsWithChildren) => {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [weeklyGoals, setWeeklyGoals] = useState<WeeklyGoal[]>([]);
-  const TEST_DATE = "2024-01-10";
+  const today = new Date("2024-01-10");
 
   useEffect(() => {
     // use dummy data
@@ -281,7 +282,7 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
       const parent = DUMMY_GOALS.find((parent) => parent.id === goal.goalId);
     });
 
-    setWeeklyGoals(getActiveWeeklyGoals(new Date(TEST_DATE)));
+    setWeeklyGoals(getActiveWeeklyGoals(new Date(today)));
   }, []);
 
   useEffect(() => {
@@ -294,7 +295,7 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
         goal.category = parent.category;
       }
     });
-    setWeeklyGoals(getActiveWeeklyGoals(new Date(TEST_DATE)));
+    setWeeklyGoals(getActiveWeeklyGoals(new Date(today)));
   }, [goals]);
 
   // get first upcomming weekly goal based on date and not yet having completed tasks
@@ -456,6 +457,7 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const value = {
     goals,
+    today,
     weeklyGoals,
     createGoal,
     updateGoal,

@@ -19,9 +19,13 @@ const CreateGoalForm: React.FC<CreateGoalFormProps> = ({
     title: "",
     dueDate: new Date(),
     color: "",
+    numTasks: 1,
   });
 
-  const handleChange = (field: keyof GoalForm, value: string | Date) => {
+  const handleChange = (
+    field: keyof GoalForm,
+    value: string | Date | number
+  ) => {
     setForm((prev) => ({
       ...prev,
       [field]: value,

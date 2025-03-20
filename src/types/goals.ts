@@ -1,3 +1,5 @@
+type NumTasks = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
 // TODO ~ in the databse might want a JOIN table for duplicate dependat properties (colors, numTasks, etc)
 export type Goal = {
   userId: number;
@@ -12,7 +14,7 @@ export type Goal = {
   isArchived: boolean;
   lastUpdated: Date;
   completedTasks: number;
-  numTasks: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  numTasks: NumTasks;
   children?: WeeklyGoal[]; // useful for managing frontend
 };
 
@@ -21,6 +23,7 @@ export type GoalForm = {
   title: string;
   dueDate: Date;
   color: string;
+  numTasks: NumTasks;
 };
 
 export type WeeklyGoal = {
@@ -32,11 +35,11 @@ export type WeeklyGoal = {
   startDate: Date;
   endDate: Date;
   color?: string; // TODO ~ must come from parent DB
-  numTasks: 1 | 2 | 3 | 4 | 5 | 6 | 7;
-  dailyTasks: WeeklyGoalTask[];
+  numTasks: NumTasks;
+  dailyTasks: DailyTask[];
 };
 
-export type WeeklyGoalTask = {
+export type DailyTask = {
   id: number;
   weeklyGoalId: number;
   date: Date;
@@ -103,6 +106,7 @@ export const categoryData: CategoryItem[] = [
 
 export type GoalsContextType = {
   goals: Goal[];
+  today: Date;
   weeklyGoals: WeeklyGoal[];
   createGoal: (formDate: GoalForm) => void;
   updateGoal: (id: number, formData: GoalForm) => void;
