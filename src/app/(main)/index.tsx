@@ -70,7 +70,7 @@ const HomeScreen = () => {
             <Text style={styles.name}>John Doe</Text>
           </View>
         </View>
-        <View style={styles.profileContentRight}>
+        <View>
           <Image
             style={styles.avatar}
             source={require("@/assets/images/placeholder/profile.png")}
@@ -100,7 +100,7 @@ const HomeScreen = () => {
         <Facts />
 
         {/* Upcomming self care */}
-        <View style={styles.upcomming}>
+        <View>
           <Text style={[globalStyles.subheader, { marginBottom: 10 }]}>
             Upcomming Goal
           </Text>
@@ -133,21 +133,32 @@ const HomeScreen = () => {
         </View>
 
         {/*** Quick Links ***/}
-        {/* Meditate */}
-        <Link href={"/(main)/meditate"} asChild>
-          <Pressable style={styles.meditate}>
-            <Meditate width={100} height={100} />
-            <Text style={styles.menuOption}>Meditate</Text>
-          </Pressable>
-        </Link>
-
-        {/* Gratitude Journal */}
-        <Link href={"/(main)/journal"} asChild>
-          <Pressable style={styles.journaling}>
-            <Text style={styles.menuOption}>Journaling</Text>
-            <Journaling width={100} height={100} />
-          </Pressable>
-        </Link>
+        <View style={styles.links}>
+          {/* Meditate */}
+          <Link href={"/(main)/meditate"} asChild>
+            <Pressable
+              style={{
+                ...styles.cardLink,
+                ...{ backgroundColor: Colors.light.warmYellow },
+              }}
+            >
+              <Text style={styles.menuOption}>Meditate</Text>
+              <Meditate width={100} height={100} />
+            </Pressable>
+          </Link>
+          {/* Gratitude Journal */}
+          <Link href={"/(main)/journal"} asChild>
+            <Pressable
+              style={{
+                ...styles.cardLink,
+                ...{ backgroundColor: Colors.light.softOrange },
+              }}
+            >
+              <Text style={styles.menuOption}>Journaling</Text>
+              <Journaling width={100} height={100} />
+            </Pressable>
+          </Link>
+        </View>
       </ScrollView>
     </View>
   );
@@ -183,7 +194,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 16,
   },
-  profileContentRight: {},
   dateContainer: {
     display: "flex",
     flexDirection: "row",
@@ -198,15 +208,14 @@ const styles = StyleSheet.create({
     gap: 24,
     paddingBottom: 120,
   },
-  upcomming: {},
   progress: {
     display: "flex",
     flexDirection: "row",
     gap: 10,
   },
-  meditate: {
+  cardLink: {
     display: "flex",
-    flexDirection: "row",
+    flex: 1,
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
@@ -215,16 +224,10 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     gap: 4,
   },
-  journaling: {
+  links: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: Colors.light.softOrange,
-    borderRadius: 32,
-    gap: 4,
+    gap: 10,
   },
   menuOption: {
     fontFamily: Fonts.seconday[600],

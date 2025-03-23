@@ -1,6 +1,7 @@
 import { WeeklyGoal } from "@/src/types/goals";
 import { formatDate } from "@/src/utils/dateUtils";
 
+// get goals for the current week
 export const isActiveWeeklyGoal = (
   goal: WeeklyGoal,
   date: Date,

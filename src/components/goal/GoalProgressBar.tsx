@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
+import Colors from "@/src/constants/Colors";
 
 type GoalProgressBarProps = {
   progress: number;
@@ -26,7 +27,7 @@ const GoalProgressBar: React.FC<GoalProgressBarProps> = ({
             styles.progressText,
             progress > 20
               ? { color: "white", marginRight: 8 }
-              : { marginRight: -25, color: "black" }, // Fix incorrect variable name
+              : { marginRight: -30, color: Colors.light.textDark }, // Fix incorrect variable name
           ]}
         >
           {progress ?? 0}%

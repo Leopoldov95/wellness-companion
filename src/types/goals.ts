@@ -10,10 +10,7 @@ export type Goal = {
   created: Date;
   progress: number;
   color: string;
-  isPaused: boolean;
-  isArchived: boolean;
   lastUpdated: Date;
-  completedTasks: number;
   numTasks: NumTasks;
   children?: WeeklyGoal[]; // useful for managing frontend
 };
@@ -30,11 +27,8 @@ export type WeeklyGoal = {
   id: number;
   goalId: number;
   title: string;
-  category: Category;
-  parent?: string; // TODO ~ must come from parent DB
   startDate: Date;
   endDate: Date;
-  color?: string; // TODO ~ must come from parent DB
   numTasks: NumTasks;
   dailyTasks: DailyTask[];
 };
@@ -110,8 +104,7 @@ export type GoalsContextType = {
   weeklyGoals: WeeklyGoal[];
   createGoal: (formDate: GoalForm) => void;
   updateGoal: (id: number, formData: GoalForm) => void;
-  pauseGoal: (id: number) => void;
-  archiveGoal: (id: number) => void;
+  deleteGoal: (id: number) => void;
   getWeeklyGoalsById: (id: number) => WeeklyGoal[];
   getUpcommingWeeklyGoal: (date: Date) => WeeklyGoal | null;
   completeWeeklyTask: (id: number, date: Date) => void;

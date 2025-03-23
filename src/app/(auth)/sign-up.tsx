@@ -143,7 +143,7 @@ const SignUpScreen = () => {
         onPress={signInWithEmail}
         text={loading ? "Creating Account..." : "Create Account"}
       />
-      <Link href="/(auth)/sign-up" style={styles.link}>
+      <Link href="/(auth)/sign-in" style={styles.link}>
         <Text style={styles.linkText}>Already have an account?</Text>
       </Link>
     </View>

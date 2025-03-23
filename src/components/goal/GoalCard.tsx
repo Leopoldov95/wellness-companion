@@ -12,6 +12,7 @@ import { Goal } from "@/src/types/goals";
 import { Link } from "expo-router";
 import { GetCategoryImage } from "./GetCategoryImage";
 import { Feather } from "@expo/vector-icons";
+import { dateToReadible } from "@/src/utils/dateUtils";
 
 type GoalCardProps = {
   goal: Goal;
@@ -19,16 +20,7 @@ type GoalCardProps = {
 };
 
 const GoalCard: React.FC<GoalCardProps> = ({ goal, goalView }) => {
-  const {
-    id,
-    category,
-    title,
-    dueDate,
-    progress,
-    color,
-    isPaused,
-    isArchived,
-  } = goal;
+  const { id, category, title, dueDate, progress, color } = goal;
 
   return (
     // TODO ~ Make the goals cards pressable
@@ -36,11 +28,7 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, goalView }) => {
       <Link href={`/(main)/goals/goal/${id}`} asChild>
         <Pressable
           android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
-          style={{
-            ...styles.card,
-            ...(isPaused || isArchived ? { opacity: 0.3 } : {}),
-            ...(isArchived && { backgroundColor: Colors.light.warmYellow }),
-          }}
+          style={styles.card}
         >
           {goalView === "normal" && GetCategoryImage(category)}
 
@@ -62,22 +50,11 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, goalView }) => {
             {/* <View style={styles.chip}>
           <Text style={styles.chipText}>{category}</Text>
         </View> */}
-            <Text style={styles.date}>{dueDate.toLocaleString()}</Text>
+            <Text>End Date:</Text>
+            <Text style={styles.date}>{dateToReadible(dueDate)}</Text>
           </View>
         </Pressable>
       </Link>
-      {/* Show pauch icon over goal when paused */}
-      {isPaused && (
-        <View style={styles.iconWrapper} pointerEvents="none">
-          <Feather name="pause" size={64} color="#333" />
-        </View>
-      )}
-      {/* Show Archived overlay */}
-      {isArchived && (
-        <View style={styles.iconWrapper} pointerEvents="none">
-          <Feather name="archive" size={64} color="#333" />
-        </View>
-      )}
     </View>
   );
 };
@@ -131,7 +108,10 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   detail: {
-    textAlign: "center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
     width: "100%",
     marginTop: 8,
   },
@@ -149,18 +129,7 @@ const styles = StyleSheet.create({
   date: {
     color: Colors.light.text,
     fontSize: 12,
-    fontFamily: Fonts.primary[400],
+    fontFamily: Fonts.primary[600],
     textAlign: "center",
-  },
-  iconWrapper: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    top: 0,
-    left: 0,
-    zIndex: 10,
   },
 });

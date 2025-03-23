@@ -32,3 +32,12 @@ export function formatDateShort(inputDate: string | Date): string {
 export function dateToYearMonth(date: Date): string {
   return date.toISOString().slice(0, 7);
 }
+
+// converts date to MMM/DD/YYY
+export function dateToReadible(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  });
+}

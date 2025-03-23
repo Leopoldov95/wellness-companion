@@ -5,16 +5,19 @@ import Fonts from "@/src/constants/Fonts";
 import { WeeklyGoal } from "@/src/types/goals";
 import WeeklyDailyActions from "./weekly/WeeklyDailyActions";
 import { isActiveWeeklyGoal } from "@/src/services/goalsService";
+import { dateToReadible } from "@/src/utils/dateUtils";
 
 const WeeklyCard: React.FC<{
   weeklyGoal: WeeklyGoal;
   completeWeeklyTask: (id: number, date: Date) => void;
 }> = ({ weeklyGoal, completeWeeklyTask }) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const { id, title, category, parent, numTasks, dailyTasks, color } =
+  const { id, title, category, parent, numTasks, dailyTasks, color, endDate } =
     weeklyGoal;
 
   const DUMMY_DATE = "2024-01-10";
+
+  const isActive = isActiveWeeklyGoal(weeklyGoal, new Date(DUMMY_DATE), true);
 
   const progress =
     dailyTasks.length > 0
@@ -22,7 +25,7 @@ const WeeklyCard: React.FC<{
       : 0;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, !isActive && { opacity: 0.6 }]}>
       <Pressable
         android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
         style={styles.card}
@@ -34,7 +37,11 @@ const WeeklyCard: React.FC<{
             <Text style={styles.chipText}>{category}</Text>
           </View>
         </View>
-        <Text style={styles.parentGoal}>{parent}</Text>
+        <View style={styles.detail}>
+          <Text style={styles.parentGoal}>{parent}</Text>
+          <Text style={styles.date}>{dateToReadible(endDate)}</Text>
+        </View>
+
         <View style={styles.bar}>
           <View
             style={[
@@ -46,15 +53,14 @@ const WeeklyCard: React.FC<{
       </Pressable>
       {/* TODO will need to redo this logic, grey out card when goal is completed */}
       {/* (ONLY FOR GOALS page) */}
-      {isModalVisible &&
-        isActiveWeeklyGoal(weeklyGoal, new Date(DUMMY_DATE), true) && (
-          <WeeklyDailyActions
-            goal={weeklyGoal}
-            isModalVisible
-            completeWeeklyTask={completeWeeklyTask}
-            closeModal={() => setIsModalVisible(false)}
-          />
-        )}
+      {isModalVisible && isActive && (
+        <WeeklyDailyActions
+          goal={weeklyGoal}
+          isModalVisible
+          completeWeeklyTask={completeWeeklyTask}
+          closeModal={() => setIsModalVisible(false)}
+        />
+      )}
     </View>
   );
 };
@@ -119,5 +125,10 @@ const styles = StyleSheet.create({
   parentGoal: {
     fontSize: 12,
     color: "lightgrey",
+  },
+  date: {
+    fontFamily: Fonts.primary[600],
+    marginTop: 6,
+    marginBottom: 4,
   },
 });

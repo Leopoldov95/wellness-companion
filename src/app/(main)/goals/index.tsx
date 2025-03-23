@@ -36,10 +36,7 @@ const GoalsScreen = () => {
   const { goals, weeklyGoals, createGoal } = useGoals();
   const [goalModalVisible, setGoalModalVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [showArchived, setShowArchived] = useState(false);
   const [goalView, setGoalView] = useState("normal");
-
-  const onArchiveSwitch = () => setShowArchived(!showArchived);
 
   return (
     <View style={styles.container}>
@@ -74,9 +71,7 @@ const GoalsScreen = () => {
       {/* TODO ~ caraousel for other goals, MAX number of lng term goals is 10 */}
       <View>
         <FlatList
-          data={
-            !showArchived ? goals.filter((goal) => !goal.isArchived) : goals
-          }
+          data={goals}
           renderItem={({ item }) => (
             <GoalCard goal={item} goalView={goalView} />
           )}
@@ -139,11 +134,6 @@ const GoalsScreen = () => {
             </Pressable>
           </Drawer.Section>
           <Drawer.Section style={styles.menuContainer}>
-            <View style={styles.toggle}>
-              <Text style={styles.linkText}>Show Archive</Text>
-              <Switch value={showArchived} onValueChange={onArchiveSwitch} />
-            </View>
-
             <View>
               <Text style={styles.linkText}>Goal View</Text>
               <SegmentedButtons
@@ -212,12 +202,6 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.seconday[600],
     fontSize: 16,
     letterSpacing: 1,
-  },
-  toggle: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
   },
   menuContainer: {
     display: "flex",
