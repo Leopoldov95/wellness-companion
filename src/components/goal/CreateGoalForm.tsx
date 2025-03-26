@@ -7,11 +7,13 @@ import { globalStyles } from "@/src/styles/globals";
 
 type CreateGoalFormProps = {
   onSubmit: (formData: GoalForm) => void;
+  selectedGoalColors: string[];
   onCancel: () => void;
 };
 
 const CreateGoalForm: React.FC<CreateGoalFormProps> = ({
   onSubmit,
+  selectedGoalColors,
   onCancel,
 }) => {
   const [form, setForm] = useState<GoalForm>({
@@ -36,7 +38,11 @@ const CreateGoalForm: React.FC<CreateGoalFormProps> = ({
     <View style={styles.container}>
       <Text style={globalStyles.subheader}>Create Goal</Text>
 
-      <GoalFormFields form={form} handleChange={handleChange} />
+      <GoalFormFields
+        selectedGoalColors={selectedGoalColors}
+        form={form}
+        handleChange={handleChange}
+      />
 
       <View style={styles.actions}>
         <Button mode="contained" onPress={() => onSubmit(form)}>

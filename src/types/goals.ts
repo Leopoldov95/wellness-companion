@@ -40,6 +40,11 @@ export type DailyTask = {
   completed: boolean;
 };
 
+export type ValidDateType = {
+  startDate: Date;
+  endDate: Date;
+};
+
 export type Category =
   | "cooking"
   | "creative arts"
@@ -102,6 +107,7 @@ export type GoalsContextType = {
   goals: Goal[];
   today: Date;
   weeklyGoals: WeeklyGoal[];
+  selectedGoalColors: string[];
   createGoal: (formDate: GoalForm) => void;
   updateGoal: (id: number, formData: GoalForm) => void;
   deleteGoal: (id: number) => void;

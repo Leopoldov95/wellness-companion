@@ -2,22 +2,29 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
-import { WeeklyGoal } from "@/src/types/goals";
+import { Goal, WeeklyGoal } from "@/src/types/goals";
 import WeeklyDailyActions from "./weekly/WeeklyDailyActions";
-import { isActiveWeeklyGoal } from "@/src/services/goalsService";
+import { isActiveWeeklyGoal } from "@/src/utils/goalsUtils";
 import { dateToReadible } from "@/src/utils/dateUtils";
 
-const WeeklyCard: React.FC<{
+type WeeklyCardProps = {
   weeklyGoal: WeeklyGoal;
+  parentGoal: Goal; // needed to get parent details
   completeWeeklyTask: (id: number, date: Date) => void;
-}> = ({ weeklyGoal, completeWeeklyTask }) => {
+  currentDate: Date;
+};
+
+const WeeklyCard: React.FC<WeeklyCardProps> = ({
+  weeklyGoal,
+  parentGoal,
+  currentDate,
+  completeWeeklyTask,
+}) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const { id, title, category, parent, numTasks, dailyTasks, color, endDate } =
-    weeklyGoal;
+  const { id, title, numTasks, dailyTasks, endDate } = weeklyGoal;
+  const { category, title: parentTitle, color } = parentGoal;
 
-  const DUMMY_DATE = "2024-01-10";
-
-  const isActive = isActiveWeeklyGoal(weeklyGoal, new Date(DUMMY_DATE), true);
+  const isActive = isActiveWeeklyGoal(weeklyGoal, currentDate, true);
 
   const progress =
     dailyTasks.length > 0
@@ -38,7 +45,7 @@ const WeeklyCard: React.FC<{
           </View>
         </View>
         <View style={styles.detail}>
-          <Text style={styles.parentGoal}>{parent}</Text>
+          <Text style={styles.parentGoal}>{parentTitle}</Text>
           <Text style={styles.date}>{dateToReadible(endDate)}</Text>
         </View>
 
@@ -57,6 +64,7 @@ const WeeklyCard: React.FC<{
         <WeeklyDailyActions
           goal={weeklyGoal}
           isModalVisible
+          currentDate={currentDate}
           completeWeeklyTask={completeWeeklyTask}
           closeModal={() => setIsModalVisible(false)}
         />

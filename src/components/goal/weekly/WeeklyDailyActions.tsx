@@ -20,6 +20,7 @@ import Fonts from "@/src/constants/Fonts";
 type WeeklyDailyActionsProps = {
   goal: WeeklyGoal;
   isModalVisible: boolean;
+  currentDate: Date;
   completeWeeklyTask: (id: number, date: Date) => void;
   closeModal: () => void;
 };
@@ -29,23 +30,12 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
   isModalVisible,
   closeModal,
   completeWeeklyTask,
+  currentDate,
 }) => {
-  const {
-    id,
-    title,
-    category,
-    parent,
-    numTasks,
-    dailyTasks,
-    color,
-    startDate,
-    endDate,
-  } = goal;
-
-  const DUMMY_DATE = "2024-01-10";
+  const { id, title, numTasks, dailyTasks, color, startDate, endDate } = goal;
 
   const isTaskCompleted = dailyTasks.some(
-    (task) => formatDate(task.date) === formatDate(new Date(DUMMY_DATE))
+    (task) => formatDate(task.date) === formatDate(new Date(currentDate))
   );
 
   const backgroundColor = useRef(
@@ -68,7 +58,7 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
     const date = new Date();
     // TODO ~ remember to Date transform this
 
-    completeWeeklyTask(id, new Date(DUMMY_DATE));
+    completeWeeklyTask(id, new Date(currentDate));
   };
 
   // Interpolating colors for animation

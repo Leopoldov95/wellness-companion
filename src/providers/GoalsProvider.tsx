@@ -12,8 +12,8 @@ import {
   WeeklyGoal,
   GoalForm,
 } from "@/src/types/goals";
-import { isActiveWeeklyGoal } from "../services/goalsService";
-import { formatDate } from "../utils/dateUtils";
+import { isActiveWeeklyGoal } from "@/src/utils/goalsUtils";
+import { formatDate } from "@/src/utils/dateUtils";
 
 type GoalAction = "Delete" | "Pause" | "Archive";
 
@@ -21,6 +21,7 @@ const GoalsContext = createContext<GoalsContextType>({
   goals: [],
   today: new Date(),
   weeklyGoals: [],
+  selectedGoalColors: [],
   createGoal: (formData: GoalForm) => {},
   updateGoal: (id: number, formData: GoalForm) => {},
   getWeeklyGoalsById: (id: number): WeeklyGoal[] => [],
@@ -39,7 +40,7 @@ const DUMMY_GOALS: Goal[] = [
     dueDate: new Date("2024-03-15"), // Due in the future
     created: new Date("2024-01-01"), // Created at the start of the year
     lastUpdated: new Date("2024-02-15"), // Last updated mid-February
-    color: "red",
+    color: "#f6d5a7",
     numTasks: 3, // Weekly goal is to complete 7 tasks
   },
   {
@@ -51,7 +52,7 @@ const DUMMY_GOALS: Goal[] = [
     dueDate: new Date("2024-04-15"), // Long-term goal (mid-year)
     created: new Date("2024-01-10"), // Created in early January
     lastUpdated: new Date("2024-03-01"), // Updated recently
-    color: "blue",
+    color: "#80cbc4",
     numTasks: 3, // Goal requires 30 tasks over time
   },
   {
@@ -60,10 +61,10 @@ const DUMMY_GOALS: Goal[] = [
     category: "fitness", // Changed category for variety
     title: "Run 100 Miles",
     progress: 0,
-    dueDate: new Date("2025-03-01"), // Due soon
-    created: new Date("2024-12-01"), // Created last year
-    lastUpdated: new Date("2025-02-28"), // Last update at end of February
-    color: "green",
+    dueDate: new Date("2024-03-01"), // Due soon
+    created: new Date("2024-01-01"), // Created last year
+    lastUpdated: new Date("2024-02-28"), // Last update at end of February
+    color: "#A59D84",
     numTasks: 4, // Total goal is 100 tasks (e.g., miles run)
   },
 ];
@@ -115,6 +116,12 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
       {
         id: 2,
         weeklyGoalId: 101,
+        date: new Date("2024-01-10"),
+        completed: true,
+      },
+      {
+        id: 2,
+        weeklyGoalId: 101,
         date: new Date("2024-01-11"),
         completed: true,
       },
@@ -127,7 +134,126 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
     startDate: new Date("2024-01-15"),
     endDate: new Date("2024-01-21"),
     numTasks: 3,
-    dailyTasks: [],
+    dailyTasks: [
+      {
+        id: 1,
+        weeklyGoalId: 101,
+        date: new Date("2024-01-16"),
+        completed: true,
+      },
+      {
+        id: 2,
+        weeklyGoalId: 101,
+        date: new Date("2024-01-18"),
+        completed: true,
+      },
+      {
+        id: 2,
+        weeklyGoalId: 101,
+        date: new Date("2024-01-20"),
+        completed: true,
+      },
+    ],
+  },
+  {
+    id: 102,
+    goalId: 0,
+    title: "Host a dinner party",
+    startDate: new Date("2024-01-22"),
+    endDate: new Date("2024-01-28"),
+    numTasks: 3,
+    dailyTasks: [
+      {
+        id: 1,
+        weeklyGoalId: 101,
+        date: new Date("2024-01-24"),
+        completed: true,
+      },
+      {
+        id: 2,
+        weeklyGoalId: 101,
+        date: new Date("2024-01-25"),
+        completed: true,
+      },
+      {
+        id: 2,
+        weeklyGoalId: 101,
+        date: new Date("2024-01-26"),
+        completed: true,
+      },
+    ],
+  },
+  {
+    id: 102,
+    goalId: 0,
+    title: "Host a dinner party",
+    startDate: new Date("2024-01-29"),
+    endDate: new Date("2024-02-04"),
+    numTasks: 3,
+    dailyTasks: [
+      {
+        id: 1,
+        weeklyGoalId: 101,
+        date: new Date("2024-01-29"),
+        completed: true,
+      },
+      {
+        id: 2,
+        weeklyGoalId: 101,
+        date: new Date("2024-02-02"),
+        completed: true,
+      },
+      {
+        id: 2,
+        weeklyGoalId: 101,
+        date: new Date("2024-02-03"),
+        completed: true,
+      },
+    ],
+  },
+  {
+    id: 102,
+    goalId: 0,
+    title: "Host a dinner party",
+    startDate: new Date("2024-02-05"),
+    endDate: new Date("2024-02-11"),
+    numTasks: 3,
+    dailyTasks: [
+      {
+        id: 1,
+        weeklyGoalId: 101,
+        date: new Date("2024-02-07"),
+        completed: true,
+      },
+      {
+        id: 2,
+        weeklyGoalId: 101,
+        date: new Date("2024-02-09"),
+        completed: true,
+      },
+      {
+        id: 2,
+        weeklyGoalId: 101,
+        date: new Date("2024-02-10"),
+        completed: true,
+      },
+    ],
+  },
+  {
+    id: 202,
+    goalId: 0,
+    title: "Host a dinner party",
+    startDate: new Date("2024-02-12"),
+    endDate: new Date("2024-02-18"),
+    numTasks: 3,
+    dailyTasks: [
+      {
+        id: 1,
+        weeklyGoalId: 101,
+        date: new Date("2024-02-13"),
+        completed: true,
+      },
+    ],
   },
 
   // Parent Goal 1 (Hobbies)
@@ -252,8 +378,9 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }: PropsWithChildren) => {
   const [goals, setGoals] = useState<Goal[]>([]);
+  const [selectedGoalColors, setSelectedGoalColors] = useState<string[]>([]);
   const [weeklyGoals, setWeeklyGoals] = useState<WeeklyGoal[]>([]);
-  const today = new Date("2024-01-10");
+  const today = new Date("2024-02-15");
 
   useEffect(() => {
     // use dummy data
@@ -280,15 +407,16 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
     //   }
     // });
 
-    console.log(`we have goals...`);
-    console.log(goals);
-
     goals.forEach((goal) => {
       goal.progress = calculateGoalProgress(
         goal,
         DUMMY_WEEKLY.filter((wkGoal) => wkGoal.goalId === goal.id)
       );
+
+      // set the already selected goal colors to prevent users freom having duplicate colors
+      setSelectedGoalColors((prev) => [...prev, goal.color]);
     });
+
     setWeeklyGoals(getActiveWeeklyGoals(new Date(today)));
   }, [goals]);
 
@@ -433,10 +561,13 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
     return weeklyGoal ? weeklyGoal : null;
   };
 
+  //* Note to self, getting parent goal using db query seems excessive
+
   const value = {
     goals,
     today,
     weeklyGoals,
+    selectedGoalColors,
     createGoal,
     updateGoal,
     deleteGoal,

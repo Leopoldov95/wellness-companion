@@ -33,7 +33,14 @@ import WeeklyCardList from "@/src/components/goal/WeeklyCardList";
  */
 
 const GoalsScreen = () => {
-  const { goals, weeklyGoals, createGoal } = useGoals();
+  const {
+    goals,
+    weeklyGoals,
+    selectedGoalColors,
+    createGoal,
+    today,
+    completeWeeklyTask,
+  } = useGoals();
   const [goalModalVisible, setGoalModalVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [goalView, setGoalView] = useState("normal");
@@ -86,12 +93,18 @@ const GoalsScreen = () => {
 
       <View style={{ height: `${goalView === "normal" ? "55%" : "70%"}` }}>
         <Text style={styles.subtitle}>Weekly Goals</Text>
-        <WeeklyCardList weeklyGoals={weeklyGoals} />
+        <WeeklyCardList
+          goals={goals}
+          currentDate={today}
+          completeWeeklyTask={completeWeeklyTask}
+          weeklyGoals={weeklyGoals}
+        />
       </View>
 
       {/* Create Goal Modal */}
       {goalModalVisible && (
         <CreateGoal
+          selectedGoalColors={selectedGoalColors}
           visiblity={goalModalVisible}
           setVisibility={setGoalModalVisible}
           createGoal={createGoal}

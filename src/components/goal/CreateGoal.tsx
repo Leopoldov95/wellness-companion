@@ -6,6 +6,7 @@ import CreateGoalForm from "./CreateGoalForm";
 
 type CreateGoalProps = {
   visiblity: boolean;
+  selectedGoalColors: string[];
   setVisibility: React.Dispatch<React.SetStateAction<boolean>>;
   createGoal: (formData: GoalForm) => void;
 };
@@ -13,6 +14,7 @@ type CreateGoalProps = {
 const CreateGoal: React.FC<CreateGoalProps> = ({
   visiblity,
   setVisibility,
+  selectedGoalColors,
   createGoal,
 }) => {
   return (
@@ -25,6 +27,7 @@ const CreateGoal: React.FC<CreateGoalProps> = ({
     >
       <View style={styles.content}>
         <CreateGoalForm
+          selectedGoalColors={selectedGoalColors}
           onSubmit={(form) => {
             createGoal(form);
             setVisibility(false);

@@ -4,6 +4,7 @@ import React from "react";
 
 /**
  * TODO - Behavior
+ * ! 03/22 - this might be redundant
  * We want a way to edit the weekly goal, shit we'll need to set how many action items per week (max once per day)
  * We need a way to create or modify a weekly goal (we'll need a way to link this from the goal screen)
  * ** Maybe make a pop-up on goal creation to handle this?

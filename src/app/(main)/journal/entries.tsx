@@ -24,7 +24,7 @@ import {
   GratitudeEntry,
   SortOptions,
 } from "@/src/types/journal";
-import { filterEntries, sortEntries } from "@/src/services/journalService";
+import { filterEntries, sortEntries } from "@/src/utils/journalUtils";
 import BackButton from "@/src/components/BackButton";
 import { router } from "expo-router";
 

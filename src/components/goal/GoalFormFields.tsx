@@ -1,75 +1,33 @@
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
-import { Dropdown } from "react-native-element-dropdown";
+import { GoalColors } from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
-import { Button, TextInput } from "react-native-paper";
-import { GetCategoryImage } from "./GetCategoryImage";
-import { categoryData, GoalForm } from "@/src/types/goals";
+import { categoryData, GoalForm, ValidDateType } from "@/src/types/goals";
+import { Feather } from "@expo/vector-icons";
 import {
   DateTimePickerAndroid,
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import { Feather } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import Collapsible from "react-native-collapsible";
-import Colors, { GoalColors } from "@/src/constants/Colors";
+import { Dropdown } from "react-native-element-dropdown";
+import { Button, TextInput } from "react-native-paper";
+import { GetCategoryImage } from "./GetCategoryImage";
 
 const GOAL_COLORS = [
-  {
-    id: 0,
-    color: GoalColors.purple,
-  },
-  {
-    id: 1,
-    color: GoalColors.pink,
-  },
-  {
-    id: 2,
-    color: GoalColors.softOrange,
-  },
-  {
-    id: 3,
-    color: GoalColors.lavender,
-  },
-  {
-    id: 4,
-    color: GoalColors.softTeal,
-  },
-  {
-    id: 5,
-    color: GoalColors.coral,
-  },
-  {
-    id: 6,
-    color: GoalColors.lightBlue,
-  },
-  {
-    id: 7,
-    color: GoalColors.goldenYellow,
-  },
-  {
-    id: 8,
-    color: GoalColors.mintGreen,
-  },
-  {
-    id: 9,
-    color: GoalColors.peach,
-  },
-  {
-    id: 10,
-    color: GoalColors.maroon,
-  },
-  {
-    id: 11,
-    color: GoalColors.brownGrey,
-  },
-  {
-    id: 12,
-    color: GoalColors.pastelNavy,
-  },
-  {
-    id: 13,
-    color: GoalColors.vintageOrange,
-  },
+  GoalColors.purple,
+  GoalColors.pink,
+  GoalColors.softOrange,
+  GoalColors.lavender,
+  GoalColors.softTeal,
+  GoalColors.coral,
+  GoalColors.lightBlue,
+  GoalColors.goldenYellow,
+  GoalColors.mintGreen,
+  GoalColors.peach,
+  GoalColors.maroon,
+  GoalColors.brownGrey,
+  GoalColors.pastelNavy,
+  GoalColors.vintageOrange,
 ];
 
 const NUM_TASKS_OPTIONS = [
@@ -84,15 +42,19 @@ const NUM_TASKS_OPTIONS = [
 
 type GoalFormFieldProps = {
   form: GoalForm;
+  selectedGoalColors: string[];
   handleChange: (field: keyof GoalForm, value: string | Date) => void;
+  validDates?: ValidDateType;
 };
 
-const getFutureDataByMonth = (month: number) => {
+const getFutureDateByMonth = (month: number) => {
   return new Date(new Date().setMonth(new Date().getMonth() + month));
 };
 
 const GoalFormFields: React.FC<GoalFormFieldProps> = ({
   form,
+  selectedGoalColors,
+  validDates,
   handleChange,
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -109,13 +71,22 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
   };
 
   const showDatePicker = () => {
+    let minDate, maxDate;
+    if (validDates) {
+      minDate = validDates.startDate;
+      maxDate = validDates.endDate;
+    } else {
+      minDate = getFutureDateByMonth(1);
+      maxDate = getFutureDateByMonth(7);
+    }
+
     DateTimePickerAndroid.open({
       value: form.dueDate,
       onChange,
       mode: "date",
       is24Hour: true,
-      minimumDate: getFutureDataByMonth(1),
-      maximumDate: getFutureDataByMonth(7),
+      minimumDate: minDate,
+      maximumDate: maxDate,
     });
   };
 
@@ -207,25 +178,25 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
           />
         </Pressable>
         <Collapsible collapsed={!isExpanded}>
-          <FlatList
-            data={GOAL_COLORS}
-            keyExtractor={(item) => item.id.toString()}
-            numColumns={7}
-            nestedScrollEnabled={true}
-            scrollEnabled={false}
-            renderItem={({ item }) => (
-              <Pressable
-                // TODO will need to disable if other goal has color selected
-                style={[
-                  styles.colorButton,
-                  { backgroundColor: item.color },
-                  form.color === item.color && styles.active,
-                ]}
-                onPress={() => handleChange("color", item.color)}
-              />
-            )}
-            contentContainerStyle={styles.colorWrapper}
-          />
+          <View style={styles.colorWrapper}>
+            {GOAL_COLORS.map((color, idx) => {
+              const isUsed = selectedGoalColors.includes(color);
+              return (
+                <Pressable
+                  key={idx}
+                  disabled={isUsed}
+                  // TODO will need to disable if other goal has color selected
+                  style={[
+                    styles.colorButton,
+                    { backgroundColor: color },
+                    form.color === color && styles.active,
+                    isUsed && styles.disabled,
+                  ]}
+                  onPress={() => handleChange("color", color)}
+                />
+              );
+            })}
+          </View>
         </Collapsible>
       </View>
     </React.Fragment>
@@ -237,10 +208,10 @@ export default GoalFormFields;
 const styles = StyleSheet.create({
   imageWrapper: {
     marginTop: -18,
-    marginBottom: -10,
+    marginBottom: -20,
   },
   colorContainer: {
-    marginTop: -6,
+    marginTop: -20,
     overflow: "hidden",
   },
   dropdown: {
@@ -289,7 +260,10 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   colorWrapper: {
-    paddingVertical: 0,
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginHorizontal: "auto",
   },
   colorButton: {
     width: 38,
@@ -304,5 +278,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 12,
+  },
+  disabled: {
+    opacity: 0.1,
   },
 });

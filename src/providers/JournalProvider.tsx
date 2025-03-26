@@ -14,7 +14,7 @@ import {
   SharedEntry,
 } from "@/src/types/journal";
 import journalPrompts from "@/src/data/journal.json";
-import { filterEntries, sortEntries } from "@/src/services/journalService";
+import { filterEntries, sortEntries } from "@/src/utils/journalUtils";
 
 /*** DUMMY DATA START ***/
 const DUMMYDATA: GratitudeEntry[] = [

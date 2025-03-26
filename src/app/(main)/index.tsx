@@ -27,13 +27,17 @@ import GoalProgressBar from "@/src/components/goal/GoalProgressBar";
 
 const HomeScreen = () => {
   const { onMoodPress, isMoodTracked } = useMood();
-  const { getUpcommingWeeklyGoal, completeWeeklyTask, weeklyGoals } =
-    useGoals();
+  const {
+    getUpcommingWeeklyGoal,
+    completeWeeklyTask,
+    weeklyGoals,
+    goals,
+    today,
+  } = useGoals();
   // const [upcommingGoal, setUpcommingGoal] = useState<WeeklyGoal | null>(null);
-  const DUMMY_DATE = "2024-01-10";
 
   const upcommingGoal = React.useMemo(
-    () => getUpcommingWeeklyGoal(new Date(DUMMY_DATE)),
+    () => getUpcommingWeeklyGoal(new Date(today)),
     [weeklyGoals]
   );
 
@@ -44,7 +48,7 @@ const HomeScreen = () => {
     day: "numeric", // '25'
   };
 
-  const today = new Date();
+  // const today = new Date();
   const formattedDate = today.toLocaleDateString("en-US", options);
 
   return (
@@ -106,6 +110,10 @@ const HomeScreen = () => {
           </Text>
           {upcommingGoal ? (
             <WeeklyCard
+              parentGoal={
+                goals.filter((goal) => goal.id === upcommingGoal.goalId)[0]
+              }
+              currentDate={today}
               completeWeeklyTask={completeWeeklyTask}
               weeklyGoal={upcommingGoal}
             />

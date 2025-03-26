@@ -1,18 +1,17 @@
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Goal, GoalForm, WeeklyGoal, ValidDateType } from "@/src/types/goals";
 import React, { useState } from "react";
-import GoalFormFields from "./GoalFormFields";
+import { StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
-import { Goal, GoalForm, WeeklyGoal } from "@/src/types/goals";
-import { globalStyles } from "@/src/styles/globals";
-import GoalProgressBar from "./GoalProgressBar";
-import WeeklyCardList from "./WeeklyCardList";
+import GoalFormFields from "./GoalFormFields";
 
 type EditGoalFormProps = {
   initialData: Goal;
   onSubmit: (formData: GoalForm) => void;
   onDelete: (formData: number) => void;
   onCancel: () => void;
+  selectedGoalColors: string[];
   weeklyGoals: WeeklyGoal[];
+  validDates: ValidDateType;
 };
 
 const EditGoalForm: React.FC<EditGoalFormProps> = ({
@@ -20,7 +19,9 @@ const EditGoalForm: React.FC<EditGoalFormProps> = ({
   onSubmit,
   onCancel,
   onDelete,
+  selectedGoalColors,
   weeklyGoals,
+  validDates,
 }) => {
   const [form, setForm] = useState<GoalForm>({ ...initialData });
 
@@ -33,7 +34,12 @@ const EditGoalForm: React.FC<EditGoalFormProps> = ({
 
   return (
     <View style={styles.container}>
-      <GoalFormFields form={form} handleChange={handleChange} />
+      <GoalFormFields
+        selectedGoalColors={selectedGoalColors}
+        form={form}
+        handleChange={handleChange}
+        validDates={validDates}
+      />
 
       <View style={styles.actions}>
         <Button mode="contained" onPress={() => onSubmit(form)}>
