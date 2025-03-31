@@ -5,14 +5,21 @@ import Colors from "@/src/constants/Colors";
 type GoalProgressBarProps = {
   progress: number;
   color: string;
+  compact?: boolean;
 };
 
 const GoalProgressBar: React.FC<GoalProgressBarProps> = ({
   progress,
   color,
+  compact,
 }) => {
   return (
-    <View style={styles.progress}>
+    <View
+      style={[
+        styles.progress,
+        compact && { backgroundColor: Colors.light.greyBg },
+      ]}
+    >
       <View
         style={[
           styles.bar,
@@ -28,6 +35,7 @@ const GoalProgressBar: React.FC<GoalProgressBarProps> = ({
             progress > 20
               ? { color: "white", marginRight: 8 }
               : { marginRight: -30, color: Colors.light.textDark }, // Fix incorrect variable name
+            compact && { fontSize: 12, paddingTop: 2 },
           ]}
         >
           {progress ?? 0}%

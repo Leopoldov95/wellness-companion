@@ -16,10 +16,9 @@ import { dateToReadible } from "@/src/utils/dateUtils";
 
 type GoalCardProps = {
   goal: Goal;
-  goalView: string;
 };
 
-const GoalCard: React.FC<GoalCardProps> = ({ goal, goalView }) => {
+const GoalCard: React.FC<GoalCardProps> = ({ goal }) => {
   const { id, category, title, dueDate, progress, color } = goal;
 
   return (
@@ -30,7 +29,7 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, goalView }) => {
           android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
           style={styles.card}
         >
-          {goalView === "normal" && GetCategoryImage(category)}
+          {GetCategoryImage(category)}
 
           <Text numberOfLines={2} ellipsizeMode="clip" style={styles.title}>
             {title}

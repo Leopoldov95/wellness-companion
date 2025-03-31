@@ -11,6 +11,7 @@ import {
   GoalsContextType,
   WeeklyGoal,
   GoalForm,
+  NumTasks,
 } from "@/src/types/goals";
 import { isActiveWeeklyGoal } from "@/src/utils/goalsUtils";
 import { formatDate } from "@/src/utils/dateUtils";
@@ -25,7 +26,7 @@ const GoalsContext = createContext<GoalsContextType>({
   createGoal: (formData: GoalForm) => {},
   updateGoal: (id: number, formData: GoalForm) => {},
   getWeeklyGoalsById: (id: number): WeeklyGoal[] => [],
-  getUpcommingWeeklyGoal: (date: Date): WeeklyGoal | null => null,
+  getUpcommingWeeklyGoal: (): WeeklyGoal[] => [], //? Might want this to be a state
   completeWeeklyTask: (id: number, date: Date) => {},
   deleteGoal: (id: number) => {},
 });
@@ -37,11 +38,12 @@ const DUMMY_GOALS: Goal[] = [
     category: "cooking", // Must match one of the `Category` values
     title: "I Like Cooking",
     progress: 0,
-    dueDate: new Date("2024-03-15"), // Due in the future
-    created: new Date("2024-01-01"), // Created at the start of the year
-    lastUpdated: new Date("2024-02-15"), // Last updated mid-February
+    dueDate: new Date(2024, 1, 18), // February 18, 2024
+    created: new Date(2024, 0, 1), // January 1, 2024
+    lastUpdated: new Date(2024, 1, 13), // February 13, 2024
     color: "#f6d5a7",
     numTasks: 3, // Weekly goal is to complete 7 tasks
+    status: "active",
   },
   {
     userId: 0,
@@ -49,11 +51,12 @@ const DUMMY_GOALS: Goal[] = [
     category: "hobbies", // Must match one of the `Category` values
     title: "Learn Guitar",
     progress: 0,
-    dueDate: new Date("2024-04-15"), // Long-term goal (mid-year)
-    created: new Date("2024-01-10"), // Created in early January
-    lastUpdated: new Date("2024-03-01"), // Updated recently
+    dueDate: new Date(2024, 3, 15), // April 15, 2024
+    created: new Date(2024, 0, 10), // January 10, 2024
+    lastUpdated: new Date(2024, 2, 1), // March 1, 2024
     color: "#80cbc4",
     numTasks: 3, // Goal requires 30 tasks over time
+    status: "active",
   },
   {
     userId: 0,
@@ -61,11 +64,25 @@ const DUMMY_GOALS: Goal[] = [
     category: "fitness", // Changed category for variety
     title: "Run 100 Miles",
     progress: 0,
-    dueDate: new Date("2024-03-01"), // Due soon
-    created: new Date("2024-01-01"), // Created last year
-    lastUpdated: new Date("2024-02-28"), // Last update at end of February
+    dueDate: new Date(2024, 2, 1), // March 1, 2024
+    created: new Date(2024, 0, 1), // January 1, 2024
+    lastUpdated: new Date(2024, 1, 28), // February 28, 2024
     color: "#A59D84",
     numTasks: 4, // Total goal is 100 tasks (e.g., miles run)
+    status: "active",
+  },
+  {
+    userId: 0,
+    id: 3,
+    category: "hiking", // Changed category for variety
+    title: "Hike 2 national parks",
+    progress: 0,
+    dueDate: new Date(2024, 0, 30), // March 1, 2024
+    created: new Date(2024, 0, 1), // January 1, 2024
+    lastUpdated: new Date(2024, 0, 29), // February 28, 2024
+    color: "#f3c1c6",
+    numTasks: 2, // Total goal is 100 tasks (e.g., miles run)
+    status: "active",
   },
 ];
 
@@ -75,26 +92,26 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
     id: 100,
     goalId: 0,
     title: "Learn basic knife skills",
-    startDate: new Date("2024-01-01"),
-    endDate: new Date("2024-01-07"),
+    startDate: new Date(2024, 0, 1),
+    endDate: new Date(2024, 0, 7),
     numTasks: 3,
     dailyTasks: [
       {
         id: 21,
         weeklyGoalId: 101,
-        date: new Date("2024-01-02"),
+        date: new Date(2024, 0, 2),
         completed: true,
       },
       {
         id: 22,
         weeklyGoalId: 101,
-        date: new Date("2024-01-4"),
+        date: new Date(2024, 0, 4),
         completed: true,
       },
       {
         id: 23,
         weeklyGoalId: 101,
-        date: new Date("2024-01-06"),
+        date: new Date(2024, 0, 6),
         completed: true,
       },
     ],
@@ -103,26 +120,21 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
     id: 101,
     goalId: 0,
     title: "Master 5 foundational recipes",
-    startDate: new Date("2024-01-08"),
-    endDate: new Date("2024-01-14"),
+    startDate: new Date(2024, 0, 8),
+    endDate: new Date(2024, 0, 14),
     numTasks: 3,
     dailyTasks: [
-      {
-        id: 1,
-        weeklyGoalId: 101,
-        date: new Date("2024-01-09"),
-        completed: true,
-      },
+      { id: 1, weeklyGoalId: 101, date: new Date(2024, 0, 9), completed: true },
       {
         id: 2,
         weeklyGoalId: 101,
-        date: new Date("2024-01-10"),
+        date: new Date(2024, 0, 10),
         completed: true,
       },
       {
-        id: 2,
+        id: 3,
         weeklyGoalId: 101,
-        date: new Date("2024-01-11"),
+        date: new Date(2024, 0, 11),
         completed: true,
       },
     ],
@@ -131,110 +143,26 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
     id: 102,
     goalId: 0,
     title: "Host a dinner party",
-    startDate: new Date("2024-01-15"),
-    endDate: new Date("2024-01-21"),
+    startDate: new Date(2024, 0, 15),
+    endDate: new Date(2024, 0, 21),
     numTasks: 3,
     dailyTasks: [
       {
-        id: 1,
+        id: 4,
         weeklyGoalId: 101,
-        date: new Date("2024-01-16"),
+        date: new Date(2024, 0, 16),
         completed: true,
       },
       {
-        id: 2,
+        id: 5,
         weeklyGoalId: 101,
-        date: new Date("2024-01-18"),
+        date: new Date(2024, 0, 18),
         completed: true,
       },
       {
-        id: 2,
+        id: 6,
         weeklyGoalId: 101,
-        date: new Date("2024-01-20"),
-        completed: true,
-      },
-    ],
-  },
-  {
-    id: 102,
-    goalId: 0,
-    title: "Host a dinner party",
-    startDate: new Date("2024-01-22"),
-    endDate: new Date("2024-01-28"),
-    numTasks: 3,
-    dailyTasks: [
-      {
-        id: 1,
-        weeklyGoalId: 101,
-        date: new Date("2024-01-24"),
-        completed: true,
-      },
-      {
-        id: 2,
-        weeklyGoalId: 101,
-        date: new Date("2024-01-25"),
-        completed: true,
-      },
-      {
-        id: 2,
-        weeklyGoalId: 101,
-        date: new Date("2024-01-26"),
-        completed: true,
-      },
-    ],
-  },
-  {
-    id: 102,
-    goalId: 0,
-    title: "Host a dinner party",
-    startDate: new Date("2024-01-29"),
-    endDate: new Date("2024-02-04"),
-    numTasks: 3,
-    dailyTasks: [
-      {
-        id: 1,
-        weeklyGoalId: 101,
-        date: new Date("2024-01-29"),
-        completed: true,
-      },
-      {
-        id: 2,
-        weeklyGoalId: 101,
-        date: new Date("2024-02-02"),
-        completed: true,
-      },
-      {
-        id: 2,
-        weeklyGoalId: 101,
-        date: new Date("2024-02-03"),
-        completed: true,
-      },
-    ],
-  },
-  {
-    id: 102,
-    goalId: 0,
-    title: "Host a dinner party",
-    startDate: new Date("2024-02-05"),
-    endDate: new Date("2024-02-11"),
-    numTasks: 3,
-    dailyTasks: [
-      {
-        id: 1,
-        weeklyGoalId: 101,
-        date: new Date("2024-02-07"),
-        completed: true,
-      },
-      {
-        id: 2,
-        weeklyGoalId: 101,
-        date: new Date("2024-02-09"),
-        completed: true,
-      },
-      {
-        id: 2,
-        weeklyGoalId: 101,
-        date: new Date("2024-02-10"),
+        date: new Date(2024, 0, 20),
         completed: true,
       },
     ],
@@ -243,14 +171,14 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
     id: 202,
     goalId: 0,
     title: "Host a dinner party",
-    startDate: new Date("2024-02-12"),
-    endDate: new Date("2024-02-18"),
+    startDate: new Date(2024, 1, 12),
+    endDate: new Date(2024, 1, 18),
     numTasks: 3,
     dailyTasks: [
       {
         id: 1,
         weeklyGoalId: 101,
-        date: new Date("2024-02-13"),
+        date: new Date(2024, 1, 13),
         completed: true,
       },
     ],
@@ -261,50 +189,88 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
     id: 103,
     goalId: 1,
     title: "Photography basics course",
-    startDate: new Date("2024-01-05"),
-    endDate: new Date("2024-01-12"),
+    startDate: new Date(2024, 0, 5),
+    endDate: new Date(2024, 0, 12),
     numTasks: 5,
-    dailyTasks: [],
+    dailyTasks: [
+      {
+        id: 24,
+        weeklyGoalId: 103,
+        date: new Date(2024, 0, 8),
+        completed: true,
+      },
+      {
+        id: 25,
+        weeklyGoalId: 103,
+        date: new Date(2024, 0, 9),
+        completed: true,
+      },
+      {
+        id: 26,
+        weeklyGoalId: 103,
+        date: new Date(2024, 0, 10),
+        completed: true,
+      },
+    ],
   },
   {
     id: 104,
     goalId: 1,
     title: "Weekend hiking trip",
-    startDate: new Date("2024-02-08"),
-    endDate: new Date("2024-02-14"),
+    startDate: new Date(2024, 1, 8),
+    endDate: new Date(2024, 1, 14),
     numTasks: 5,
-    dailyTasks: [],
+    dailyTasks: [
+      {
+        id: 14,
+        weeklyGoalId: 104,
+        date: new Date(2024, 1, 8),
+        completed: true,
+      },
+      {
+        id: 15,
+        weeklyGoalId: 104,
+        date: new Date(2024, 1, 10),
+        completed: true,
+      },
+      {
+        id: 16,
+        weeklyGoalId: 104,
+        date: new Date(2024, 1, 12),
+        completed: true,
+      },
+      {
+        id: 17,
+        weeklyGoalId: 104,
+        date: new Date(2024, 1, 14),
+        completed: true,
+      },
+    ],
   },
   {
     id: 105,
     goalId: 1,
     title: "Watercolor painting workshop",
-    startDate: new Date("2024-02-15"),
-    endDate: new Date("2024-02-21"),
+    startDate: new Date(2024, 1, 15),
+    endDate: new Date(2024, 1, 21),
     numTasks: 5,
     dailyTasks: [
       {
-        id: 3,
-        weeklyGoalId: 105,
-        date: new Date("2024-02-15"),
-        completed: true,
-      },
-      {
         id: 4,
         weeklyGoalId: 105,
-        date: new Date("2024-02-16"),
+        date: new Date(2024, 1, 16),
         completed: true,
       },
       {
         id: 5,
         weeklyGoalId: 105,
-        date: new Date("2024-02-18"),
+        date: new Date(2024, 1, 18),
         completed: true,
       },
       {
         id: 6,
         weeklyGoalId: 105,
-        date: new Date("2024-02-20"),
+        date: new Date(2024, 1, 20),
         completed: true,
       },
     ],
@@ -315,32 +281,17 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
     id: 106,
     goalId: 2,
     title: "Meal prep mastery",
-    startDate: new Date("2024-03-01"),
-    endDate: new Date("2024-03-07"),
+    startDate: new Date(2024, 2, 1),
+    endDate: new Date(2024, 2, 7),
     numTasks: 4,
     dailyTasks: [
-      {
-        id: 7,
-        weeklyGoalId: 106,
-        date: new Date("2024-03-01"),
-        completed: true,
-      },
-      {
-        id: 8,
-        weeklyGoalId: 106,
-        date: new Date("2024-03-03"),
-        completed: true,
-      },
-      {
-        id: 9,
-        weeklyGoalId: 106,
-        date: new Date("2024-03-05"),
-        completed: true,
-      },
+      { id: 7, weeklyGoalId: 106, date: new Date(2024, 2, 1), completed: true },
+      { id: 8, weeklyGoalId: 106, date: new Date(2024, 2, 3), completed: true },
+      { id: 9, weeklyGoalId: 106, date: new Date(2024, 2, 5), completed: true },
       {
         id: 10,
         weeklyGoalId: 106,
-        date: new Date("2024-03-06"),
+        date: new Date(2024, 2, 6),
         completed: true,
       },
     ],
@@ -349,8 +300,8 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
     id: 107,
     goalId: 2,
     title: "Advanced baking techniques",
-    startDate: new Date("2024-03-08"),
-    endDate: new Date("2024-03-14"),
+    startDate: new Date(2024, 2, 8),
+    endDate: new Date(2024, 2, 14),
     numTasks: 4,
     dailyTasks: [],
   },
@@ -358,8 +309,8 @@ const DUMMY_WEEKLY: WeeklyGoal[] = [
     id: 108,
     goalId: 2,
     title: "International cuisine week",
-    startDate: new Date("2024-03-15"),
-    endDate: new Date("2024-03-21"),
+    startDate: new Date(2024, 2, 15),
+    endDate: new Date(2024, 2, 21),
     numTasks: 4,
     dailyTasks: [],
   },
@@ -380,19 +331,33 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [goals, setGoals] = useState<Goal[]>([]);
   const [selectedGoalColors, setSelectedGoalColors] = useState<string[]>([]);
   const [weeklyGoals, setWeeklyGoals] = useState<WeeklyGoal[]>([]);
-  const today = new Date("2024-02-15");
+  const [finishedGoals, setFinisheGoals] = useState<Goal[]>([]);
+  const today = new Date(2024, 1, 15);
 
   useEffect(() => {
     // use dummy data
-    setGoals(DUMMY_GOALS);
+
+    // check for valid goals, once we read from DB we'll want to handle this before setting states
+    DUMMY_GOALS.forEach((goal) => {
+      if (goal.dueDate.getTime() <= today.getTime()) {
+        goal.status = "expired";
+        setFinisheGoals((prev) => [...prev, goal]);
+      }
+    });
+
+    // set goals using only active ones
+    setGoals(DUMMY_GOALS.filter((goals) => goals.status === "active"));
 
     // TODO ~ not ideal, but manually update WEEKLY DATA to add colors and parent title
     // DUMMY_WEEKLY.forEach((goal) => {
     //   const parent = DUMMY_GOALS.find((parent) => parent.id === goal.goalId);
     // });
 
-    setWeeklyGoals(getActiveWeeklyGoals(new Date(today)));
+    // setWeeklyGoals(getActiveWeeklyGoals(new Date(today)));
   }, []);
+
+  // TODO ~ Daily goal check
+  const checkGoals = () => {};
 
   // TODO might need to move this elsewhere
 
@@ -407,22 +372,30 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
     //   }
     // });
 
-    goals.forEach((goal) => {
-      goal.progress = calculateGoalProgress(
-        goal,
-        DUMMY_WEEKLY.filter((wkGoal) => wkGoal.goalId === goal.id)
-      );
+    if (goals.length > 0) {
+      goals.forEach((goal) => {
+        goal.progress = calculateGoalProgress(
+          goal,
+          DUMMY_WEEKLY.filter((wkGoal) => wkGoal.goalId === goal.id)
+        );
 
-      // set the already selected goal colors to prevent users freom having duplicate colors
-      setSelectedGoalColors((prev) => [...prev, goal.color]);
-    });
+        // set the already selected goal colors to prevent users freom having duplicate colors
+        if (goal.status === "active") {
+          setSelectedGoalColors((prev) => [...prev, goal.color]);
+        }
+      });
 
-    setWeeklyGoals(getActiveWeeklyGoals(new Date(today)));
+      setWeeklyGoals(getActiveWeeklyGoals(today));
+    }
   }, [goals]);
 
   // get first upcomming weekly goal based on date and not yet having completed tasks
   const getActiveWeeklyGoals = (date: Date) => {
-    return DUMMY_WEEKLY.filter((goal) => isActiveWeeklyGoal(goal, date));
+    // we need to filter out weekly goals who's parent is NOT active
+    return DUMMY_WEEKLY.filter((wkGoal) => {
+      const parentGoal = goals.find((goal) => goal.id === wkGoal.goalId);
+      return parentGoal?.status === "active";
+    }).filter((goal) => isActiveWeeklyGoal(goal, date));
   };
 
   const getWeeklyGoalsById = (id: number): WeeklyGoal[] => {
@@ -430,25 +403,29 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const createGoal = (formData: GoalForm) => {
-    const { category, color, title, dueDate } = formData;
+    const { category, color, title, dueDate, numTasks, weeklyTask } = formData;
     // create a new goal
     const goal: Goal = {
       userId: 0,
-      id: 12,
+      id: 12, //TODO will need to get value from DB
       category,
       color,
       title,
       dueDate,
-      created: new Date(),
-      lastUpdated: new Date(),
+      created: today,
+      lastUpdated: today,
       progress: 0,
-      numTasks: 1,
+      numTasks: numTasks,
+      status: "active",
     };
     // add to the DUMMY stack
     DUMMY_GOALS.push(goal);
     // save to db
     // update state
     setGoals(DUMMY_GOALS);
+
+    //* create new record in weeklyDB
+    createWeeklyGoal(goal.id, numTasks, weeklyTask);
   };
 
   const updateGoal = (id: number, formData: GoalForm) => {
@@ -476,10 +453,10 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
     const start = new Date(goal.created);
     const end = new Date(goal.dueDate);
 
-    const numWeeks = Math.floor(
+    //* Using Math ceil to account for partial weeks
+    const numWeeks = Math.ceil(
       (end.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000)
     );
-
     // get the current number of completed goals
     let completedTasks = 0,
       expectedTasks = 0;
@@ -506,8 +483,41 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
   /***********************/
 
   // method to update weekly goal status's, mainly or when users have been inactive for a long time
-  //? Is this really needed?
-  const updateUserWeekly = () => {};
+  const createWeeklyGoal = (
+    parentId: number,
+    numTasks?: number | null,
+    taskName?: string | null
+  ) => {
+    try {
+      const newWeeklyTask: WeeklyGoal = {
+        id: DUMMY_WEEKLY.length + 1,
+        goalId: parentId,
+        startDate: today,
+        endDate: new Date(new Date(today).setDate(today.getDate() + 6)),
+        dailyTasks: [],
+        title: "",
+        numTasks: 1,
+      };
+      // Add record to DB
+      if (taskName && numTasks) {
+        newWeeklyTask.title = taskName;
+        newWeeklyTask.numTasks = numTasks as NumTasks;
+      } else {
+        // existing weekly task, just adding new row
+        const prevWeeklyTask = DUMMY_WEEKLY.filter(
+          (wkGoal) => wkGoal.goalId === parentId
+        ).at(-1);
+        newWeeklyTask.title = prevWeeklyTask!.title;
+        newWeeklyTask.numTasks = prevWeeklyTask!.numTasks;
+      }
+
+      DUMMY_WEEKLY.push(newWeeklyTask);
+
+      // update state
+
+      setWeeklyGoals(getActiveWeeklyGoals(today));
+    } catch (error) {}
+  };
 
   const updateWeeklyGoal = () => {};
 
@@ -533,32 +543,49 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // TODO
     /** TODO - much to do
-     * update lastUpdate and completedTasks in Goal
+     * update lastUpdate
      * SINCE daily task is completed for that day, cycle to NEXT upcomming task
      * ! only for the home page though, otherwise do nothing, but on the Goal page button should be disabled
      */
+
+    const wkGoal = weeklyGoals.filter((goal) => goal.id === weeklyGoalId)[0];
+
+    const goal = goals.filter((goal) => goal.id === wkGoal.goalId)[0];
+
+    if (
+      wkGoal.dailyTasks.length === goal.numTasks &&
+      wkGoal.endDate.getTime() >= goal.dueDate.getTime()
+    ) {
+      // TODO ~ goal is completed, we'll need to update it's DB
+      setGoals((prevGoals) =>
+        prevGoals.map((g) =>
+          g.id === goal.id ? { ...g, status: "completed" } : g
+        )
+      );
+    }
   };
 
-  // Get the first upcomming weekly goal
-  // TODO ~ will need to display a message when no more weekly tasks are active for a given week
-  const getUpcommingWeeklyGoal = (date: Date) => {
+  // Get the upcomming weekly goal
+  const getUpcommingWeeklyGoal = (): WeeklyGoal[] => {
     const weeklyGoal = weeklyGoals
       .filter((goal) => {
         return (
-          isActiveWeeklyGoal(goal, date, true) &&
+          isActiveWeeklyGoal(goal, today, true) &&
           (goal.dailyTasks.length === 0 ||
-            goal.dailyTasks.some(
-              (task) => formatDate(task.date) !== formatDate(new Date(date))
+            goal.dailyTasks.every(
+              (task) => formatDate(task.date) !== formatDate(today)
             ))
         );
       }) // Ignore completed goals
       .sort(
         (a, b) =>
           new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-      ) // Sort by earliest startDate
-      .at(0);
+      );
+    // Sort by earliest startDate
 
-    return weeklyGoal ? weeklyGoal : null;
+    // console.log(weeklyGoal.length);
+
+    return weeklyGoal ? weeklyGoal : [];
   };
 
   //* Note to self, getting parent goal using db query seems excessive

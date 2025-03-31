@@ -22,6 +22,7 @@ const CreateGoalForm: React.FC<CreateGoalFormProps> = ({
     dueDate: new Date(),
     color: "",
     numTasks: 1,
+    weeklyTask: "",
   });
 
   const handleChange = (

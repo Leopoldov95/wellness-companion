@@ -1,4 +1,4 @@
-type NumTasks = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type NumTasks = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 // TODO ~ in the databse might want a JOIN table for duplicate dependat properties (colors, numTasks, etc)
 export type Goal = {
@@ -12,7 +12,7 @@ export type Goal = {
   color: string;
   lastUpdated: Date;
   numTasks: NumTasks;
-  children?: WeeklyGoal[]; // useful for managing frontend
+  status: "active" | "completed" | "expired";
 };
 
 export type GoalForm = {
@@ -21,6 +21,7 @@ export type GoalForm = {
   dueDate: Date;
   color: string;
   numTasks: NumTasks;
+  weeklyTask?: string;
 };
 
 export type WeeklyGoal = {
@@ -112,6 +113,6 @@ export type GoalsContextType = {
   updateGoal: (id: number, formData: GoalForm) => void;
   deleteGoal: (id: number) => void;
   getWeeklyGoalsById: (id: number) => WeeklyGoal[];
-  getUpcommingWeeklyGoal: (date: Date) => WeeklyGoal | null;
+  getUpcommingWeeklyGoal: () => WeeklyGoal[];
   completeWeeklyTask: (id: number, date: Date) => void;
 };

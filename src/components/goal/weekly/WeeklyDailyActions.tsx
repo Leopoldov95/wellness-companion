@@ -14,7 +14,7 @@ import GoalProgressBar from "../GoalProgressBar";
 import { Link } from "expo-router";
 import { globalStyles } from "@/src/styles/globals";
 import { formatDate, formatDateShort } from "@/src/utils/dateUtils";
-import { Button } from "react-native-paper";
+import { Button, TextInput } from "react-native-paper";
 import Fonts from "@/src/constants/Fonts";
 
 type WeeklyDailyActionsProps = {
@@ -33,6 +33,8 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
   currentDate,
 }) => {
   const { id, title, numTasks, dailyTasks, color, startDate, endDate } = goal;
+  const [isEdit, setisEdit] = useState(false);
+  const [goalTitle, setGoalTitle] = useState(title);
 
   const isTaskCompleted = dailyTasks.some(
     (task) => formatDate(task.date) === formatDate(new Date(currentDate))
@@ -58,7 +60,7 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
     const date = new Date();
     // TODO ~ remember to Date transform this
 
-    completeWeeklyTask(id, new Date(currentDate));
+    completeWeeklyTask(id, currentDate);
   };
 
   // Interpolating colors for animation
@@ -97,6 +99,29 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
             Weekly Goal: {formatDateShort(startDate)} -{" "}
             {formatDateShort(endDate)}
           </Text>
+
+          <View style={styles.goalTitle}>
+            {isEdit ? (
+              <TextInput
+                label="Goal Title"
+                value={goalTitle}
+                mode="outlined"
+                style={{ width: "85%" }}
+                onChangeText={(text: React.SetStateAction<string>) =>
+                  setGoalTitle(text)
+                }
+              />
+            ) : (
+              <Text style={globalStyles.labelText}>{goalTitle}</Text>
+            )}
+
+            <Feather
+              onPress={() => setisEdit(!isEdit)}
+              name={isEdit ? "check" : "edit-3"}
+              size={24}
+              color={Colors.light.quinary}
+            />
+          </View>
 
           <View style={styles.calendar}>
             {weekDays.map((day, index) => {
@@ -159,21 +184,19 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
                 ) : null
               }
             >
-              {isTaskCompleted ? "Task Completed!" : "Complete Taskgg"}
+              {isTaskCompleted ? "Task Completed!" : "Complete Task"}
             </Button>
           </Animated.View>
-
-          {/* link to edit weekly */}
-          <Link href={`/(main)/goals/weekly/${id}`} asChild>
-            <Text
+          {goalTitle !== title && (
+            <Button
               style={{
-                ...globalStyles.linkText,
-                textAlign: "center",
+                borderRadius: 8,
               }}
+              mode="outlined"
             >
-              Modify Weekly Goal
-            </Text>
-          </Link>
+              Save Goal Title
+            </Button>
+          )}
         </View>
       </View>
     </Modal>
@@ -191,13 +214,9 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   modalContent: {
-    position: "absolute",
-    top: "25%",
-    left: "2.5%",
-    padding: 10,
+    paddingHorizontal: 16,
     paddingVertical: 20,
-    height: "50%",
-    width: "95%",
+    marginHorizontal: 12,
     backgroundColor: "#f2f2f2",
     justifyContent: "flex-start",
     alignContent: "center",
@@ -245,5 +264,13 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignContent: "flex-start",
     textAlign: "left",
+  },
+  goalTitle: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    justifyContent: "space-between",
+    marginBottom: 8,
   },
 });

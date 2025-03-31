@@ -6,7 +6,7 @@ import {
   DateTimePickerAndroid,
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Collapsible from "react-native-collapsible";
 import { Dropdown } from "react-native-element-dropdown";
@@ -54,7 +54,7 @@ const getFutureDateByMonth = (month: number) => {
 const GoalFormFields: React.FC<GoalFormFieldProps> = ({
   form,
   selectedGoalColors,
-  validDates,
+  validDates, //* we can use this prop to determine if its a new goal or existing goal
   handleChange,
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -131,8 +131,25 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
         maxLength={30}
         outlineStyle={{ borderRadius: 8 }}
         onChangeText={(text) => handleChange("title", text)}
+        placeholder="Become a better reader"
         style={styles.titleField}
       />
+
+      {/* Weekly Goal Title */}
+      {!validDates && (
+        <Fragment>
+          <Text style={styles.label}>Weekly Task</Text>
+          <TextInput
+            value={form?.weeklyTask}
+            mode="outlined"
+            maxLength={30}
+            outlineStyle={{ borderRadius: 8 }}
+            onChangeText={(text) => handleChange("weeklyTask", text)}
+            placeholder="Read 3 times a week"
+            style={styles.titleField}
+          />
+        </Fragment>
+      )}
       {/* Category Dropdown */}
       <View>
         <Text style={styles.label}>Tasks Per Week</Text>

@@ -19,7 +19,7 @@ import Journaling from "@/assets/images/activities/journaling.svg";
 import MoodSelector from "@/src/components/mood/MoodSelector";
 import Facts from "@/src/components/Facts";
 import { useGoals } from "@/src/providers/GoalsProvider";
-import { WeeklyGoal } from "@/src/types/goals";
+import { Goal, WeeklyGoal } from "@/src/types/goals";
 import WeeklyCard from "@/src/components/goal/WeeklyCard";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeOut } from "react-native-reanimated";
@@ -34,12 +34,32 @@ const HomeScreen = () => {
     goals,
     today,
   } = useGoals();
-  // const [upcommingGoal, setUpcommingGoal] = useState<WeeklyGoal | null>(null);
+  const [upcommingGoals, setUpcommingGoals] = useState<WeeklyGoal[]>([]);
+  const [progress, setProgress] = useState(0);
+  const [parentGoal, setParentGoal] = useState<Goal | null>(null);
 
-  const upcommingGoal = React.useMemo(
-    () => getUpcommingWeeklyGoal(new Date(today)),
-    [weeklyGoals]
-  );
+  useEffect(() => {
+    const validDailyGoals = getUpcommingWeeklyGoal();
+
+    setUpcommingGoals(validDailyGoals);
+    if (validDailyGoals.length > 0) {
+      setParentGoal(
+        goals.filter((goal) => goal.id === validDailyGoals[0].goalId)[0]
+      );
+    }
+
+    setProgress(
+      Math.floor(
+        ((weeklyGoals.length - validDailyGoals.length) / weeklyGoals.length) *
+          100
+      )
+    );
+  }, [weeklyGoals]);
+
+  // const upcommingGoal = React.useMemo(
+  //   () =>
+  //   [weeklyGoals]
+  // );
 
   const options: Intl.DateTimeFormatOptions = {
     weekday: "short", // 'Tue'
@@ -50,6 +70,8 @@ const HomeScreen = () => {
 
   // const today = new Date();
   const formattedDate = today.toLocaleDateString("en-US", options);
+
+  // get parentGoal for upcomming goal
 
   return (
     <View style={styles.container}>
@@ -89,16 +111,7 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         {/* Mood Tracking */}
-        {!isMoodTracked ? (
-          <MoodSelector onMoodPress={onMoodPress} />
-        ) : (
-          <Animated.View
-            style={styles.moodMessage}
-            exiting={FadeOut.duration(800)}
-          >
-            <Text>Mood Tracked Today</Text>
-          </Animated.View>
-        )}
+        {!isMoodTracked && <MoodSelector onMoodPress={onMoodPress} />}
 
         {/* Fun mental health facts */}
         <Facts />
@@ -106,16 +119,14 @@ const HomeScreen = () => {
         {/* Upcomming self care */}
         <View>
           <Text style={[globalStyles.subheader, { marginBottom: 10 }]}>
-            Upcomming Goal
+            Daily Tasks
           </Text>
-          {upcommingGoal ? (
+          {upcommingGoals.length > 0 && parentGoal ? (
             <WeeklyCard
-              parentGoal={
-                goals.filter((goal) => goal.id === upcommingGoal.goalId)[0]
-              }
+              parentGoal={parentGoal}
               currentDate={today}
               completeWeeklyTask={completeWeeklyTask}
-              weeklyGoal={upcommingGoal}
+              weeklyGoal={upcommingGoals[0]}
             />
           ) : (
             <View style={styles.noGoal}>
@@ -136,7 +147,7 @@ const HomeScreen = () => {
         <View style={styles.progress}>
           <Text style={globalStyles.labelText}>Daily Progress:</Text>
           <View style={{ flex: 1 }}>
-            <GoalProgressBar progress={50} color="pink" />
+            <GoalProgressBar progress={progress} color="pink" />
           </View>
         </View>
 

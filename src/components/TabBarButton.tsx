@@ -58,7 +58,7 @@ const TabBarButton = ({
   const animatedIconStyle = useAnimatedStyle(() => {
     const scaleValue = interpolate(scale.value, [0, 1], [1, 1.2]);
 
-    const top = interpolate(scale.value, [0, 1], [0, 9]);
+    const top = interpolate(scale.value, [0, 9], [0, 9]);
 
     return {
       transform: [
@@ -81,7 +81,7 @@ const TabBarButton = ({
           color: isFocused ? "#fff" : Colors.light.quaternary,
         })}
       </Animated.View>
-
+      {/* 
       <Animated.Text
         style={[
           {
@@ -92,7 +92,7 @@ const TabBarButton = ({
         ]}
       >
         {label}
-      </Animated.Text>
+      </Animated.Text> */}
     </Pressable>
   );
 };
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 5,
+    paddingVertical: 10,
   },
 });
 
