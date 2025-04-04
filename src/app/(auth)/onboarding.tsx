@@ -31,7 +31,7 @@ const OnboardingScreen = () => {
     // SET the local session to contain the updated user information
     // UPDATE the user context
     // redirect to the home page
-    router.push("/(main)");
+    router.push("/");
   };
 
   return (
@@ -51,7 +51,7 @@ const OnboardingScreen = () => {
       <Button onPress={onProfileAdd} text="Continue"></Button>
       <Button
         variant="secondary"
-        onPress={() => router.push("/(main)")}
+        onPress={() => router.push("/")}
         text="Skip For Now"
       ></Button>
     </View>

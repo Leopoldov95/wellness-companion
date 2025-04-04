@@ -14,12 +14,12 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
-    "@react-native-async-storage/async-storage": "^2.0.0",
+    "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-community/datetimepicker": "8.0.1",
     "@react-native-community/slider": "4.5.2",
     "@react-native-picker/picker": "^2.9.0",
     "@react-navigation/native": "^6.0.2",
-    "@supabase/supabase-js": "^2.48.1",
+    "@supabase/supabase-js": "^2.49.4",
     "expo": "~51.0.28",
     "expo-asset": "~10.0.10",
     "expo-av": "~14.0.7",
@@ -29,6 +29,7 @@
     "expo-image-picker": "^15.0.7",
     "expo-linking": "~6.3.1",
     "expo-router": "~3.5.23",
+    "expo-secure-store": "~13.0.2",
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
@@ -40,6 +41,7 @@
     "react-native-collapsible": "^1.6.2",
     "react-native-countdown-circle-timer": "^3.2.1",
     "react-native-element-dropdown": "^2.12.4",
+    "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.24.0",
     "react-native-modal": "^13.0.1",
     "react-native-paper": "^5.13.1",
@@ -48,7 +50,8 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "^15.7.1",
     "react-native-svg-transformer": "^1.5.0",
-    "react-native-web": "~0.19.10"
+    "react-native-url-polyfill": "^2.0.0",
+    "react-native-web": "^0.19.13"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

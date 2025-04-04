@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
 import React, { useState } from "react";
 import Colors from "@/src/constants/Colors";
 import { Link, router, Stack } from "expo-router";
 import Button from "@/src/components/Button";
 import Feather from "@expo/vector-icons/Feather";
 import { globalStyles } from "@/src/styles/globals";
+import { supabase } from "@/src/lib/supabase";
 
 const SignUpScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,6 +14,7 @@ const SignUpScreen = () => {
     email: "",
     password: "",
     passwordConfirm: "",
+    name: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -26,24 +28,29 @@ const SignUpScreen = () => {
     }));
   };
 
-  async function signInWithEmail() {
+  async function signUpWithEmail() {
     setLoading(true);
 
-    //! TESTING ~ silencig for navigation
+    if (!validateInput()) {
+      setLoading(false);
+      return;
+    }
 
-    // if (!validateInput()) {
-    //   setLoading(false);
-    //   return;
-    // }
+    const { error } = await supabase.auth.signUp({
+      email: form.email,
+      password: form.password,
+    });
 
     // const { error } = await supabase.auth.signInWithPassword({
     //   email,
     //   password,
     // });
 
-    // if (error) Alert.alert(error.message);
+    if (error) Alert.alert(error.message);
     //! Only for testing, but move the user to the home page
     setLoading(false);
+
+    console.log("account created!");
 
     router.push("/(auth)/onboarding");
     //return <Redirect href={"/(main)"} />;
@@ -52,7 +59,7 @@ const SignUpScreen = () => {
   }
 
   const validateInput = () => {
-    const { email, password, passwordConfirm } = form;
+    const { email, password, passwordConfirm, name } = form;
     if (!email) {
       setErrors("Email is Required");
       return false;
@@ -62,6 +69,11 @@ const SignUpScreen = () => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!regex.test(email)) {
       setErrors("Email is invalid");
+      return false;
+    }
+
+    if (!name) {
+      setErrors("Name is Required");
       return false;
     }
 
@@ -91,11 +103,21 @@ const SignUpScreen = () => {
         <Text style={globalStyles.title}>Create Account</Text>
       </View>
 
+      {/* Email */}
       <Text style={styles.label}>Email</Text>
       <TextInput
         value={form.email}
         onChangeText={(text) => handleChange("email", text)}
         placeholder="john@gmail.com"
+        style={styles.input}
+      />
+
+      {/* Name */}
+      <Text style={styles.label}>Name</Text>
+      <TextInput
+        value={form.name}
+        onChangeText={(text) => handleChange("name", text)}
+        placeholder="First Last"
         style={styles.input}
       />
 
@@ -107,6 +129,7 @@ const SignUpScreen = () => {
           value={form.password}
           onChangeText={(text) => handleChange("password", text)}
           placeholder=""
+          autoCapitalize="none"
           secureTextEntry={!showPassword ? true : false}
         />
         <Feather
@@ -126,6 +149,7 @@ const SignUpScreen = () => {
           value={form.passwordConfirm}
           onChangeText={(text) => handleChange("passwordConfirm", text)}
           placeholder=""
+          autoCapitalize="none"
           secureTextEntry={!showPasswordConfirm ? true : false}
         />
         <Feather
@@ -140,7 +164,7 @@ const SignUpScreen = () => {
       <Text style={styles.error}>{errors}</Text>
       <Button
         disabled={loading}
-        onPress={signInWithEmail}
+        onPress={signUpWithEmail}
         text={loading ? "Creating Account..." : "Create Account"}
       />
       <Link href="/(auth)/sign-in" style={styles.link}>

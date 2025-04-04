@@ -34,6 +34,8 @@ const HomeScreen = () => {
     goals,
     today,
   } = useGoals();
+  console.log("inside (main) index");
+
   const [upcommingGoals, setUpcommingGoals] = useState<WeeklyGoal[]>([]);
   const [progress, setProgress] = useState(0);
   const [parentGoal, setParentGoal] = useState<Goal | null>(null);

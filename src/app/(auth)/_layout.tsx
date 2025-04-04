@@ -1,9 +1,20 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useAuth } from "@/src/providers/AuthProvider";
 
 const AuthLayout = () => {
+  const { session } = useAuth();
+
+  console.log("\n**********");
+
+  console.log("auth layout");
+
+  if (session) {
+    return <Redirect href={"/"} />;
+  }
+
   return (
     <SafeAreaProvider>
       <Stack>

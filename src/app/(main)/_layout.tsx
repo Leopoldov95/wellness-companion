@@ -1,5 +1,5 @@
 import React from "react";
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import { useColorScheme } from "@/src/components/useColorScheme";
 import TabBar from "@/src/components/TabBar";
 import {
@@ -8,10 +8,20 @@ import {
 } from "react-native-safe-area-context";
 import MoodProvider from "@/src/providers/MoodProvider";
 import GoalsProvider from "@/src/providers/GoalsProvider";
+import { useAuth } from "@/src/providers/AuthProvider";
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
+
+  const { session } = useAuth();
+
+  // if no session then redirect to index and there we have our main redirect control
+  if (!session) {
+    //* Manuall redirect to (auth)
+    return <Redirect href={"/(auth)/sign-in"} />;
+  }
+
   return (
     <MoodProvider>
       {/* Goal Provider to show the upcomming weekly goals on the home page */}

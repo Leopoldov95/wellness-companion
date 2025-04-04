@@ -34,11 +34,11 @@ const WelcomeScreen = () => {
           mode="contained"
           style={globalStyles.button}
           contentStyle={globalStyles.buttonContect}
-          onPress={() => router.push("/(auth)/sign-in")}
+          onPress={() => router.push("/(auth)/sign-up")}
         >
           Get Started
         </Button>
-        <Link href="/(auth)/sign-up" style={styles.link}>
+        <Link href="/(auth)/sign-in" style={styles.link}>
           <Text style={globalStyles.linkText}>Already have an account?</Text>
         </Link>
       </View>

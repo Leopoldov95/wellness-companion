@@ -14,6 +14,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Avatar, TextInput, Button } from "react-native-paper";
 import { Feather } from "@expo/vector-icons";
 import { globalStyles } from "@/src/styles/globals";
+import { supabase } from "@/src/lib/supabase";
 const DEFAULT_IMAGE = "@/assets/images/avatars/alien_02.png";
 
 const ProfileScreen = () => {
@@ -21,7 +22,7 @@ const ProfileScreen = () => {
 
   // TODO ~ This will need to be update by the ctx
   const [form, setForm] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
     passwordConfirm: "",
@@ -100,10 +101,10 @@ const ProfileScreen = () => {
           <View style={styles.formContainer}>
             <TextInput
               style={styles.input}
-              label="User Name"
+              label="Name"
               mode="outlined"
-              value={form.username}
-              onChangeText={(text) => handleChange("username", text)}
+              value={form.name}
+              onChangeText={(text) => handleChange("name", text)}
             />
             <TextInput
               style={styles.input}
@@ -129,6 +130,19 @@ const ProfileScreen = () => {
             onPress={onSave}
           >
             Save Changes
+          </Button>
+          <Button
+            buttonColor="#fff"
+            textColor={Colors.light.quinary}
+            mode="outlined"
+            style={{
+              marginTop: 8,
+              width: "100%",
+              borderColor: Colors.light.quinary,
+            }}
+            onPress={() => supabase.auth.signOut()}
+          >
+            Sign Out
           </Button>
           <Button
             buttonColor="#b0002033"

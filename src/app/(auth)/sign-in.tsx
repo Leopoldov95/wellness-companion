@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Pressable,
+  Alert,
+} from "react-native";
 import React, { useState } from "react";
 import Colors from "@/src/constants/Colors";
 import { Link, Redirect, router, Stack } from "expo-router";
@@ -6,6 +13,7 @@ import Button from "@/src/components/Button";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { globalStyles } from "@/src/styles/globals";
+import { supabase } from "@/src/lib/supabase";
 
 const SignInScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,21 +35,21 @@ const SignInScreen = () => {
 
   async function signInWithEmail() {
     setLoading(true);
-    if (!validateInput) {
+    if (!validateInput()) {
       return;
     }
 
-    // const { error } = await supabase.auth.signInWithPassword({
-    //   email,
-    //   password,
-    // });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: form.email,
+      password: form.password,
+    });
 
-    // if (error) Alert.alert(error.message);
+    if (error) Alert.alert(error.message);
     //! Only for testing, but move the user to the home page
 
     setLoading(false);
-    router.push("/(main)");
-    //return <Redirect href={"/(main)"} />;
+    // router.push("/(main)");
+    // return <Redirect href={"/(main)"} />;
   }
 
   const validateInput = () => {
@@ -97,6 +105,7 @@ const SignInScreen = () => {
           value={form.password}
           onChangeText={(text) => handleChange("password", text)}
           placeholder=""
+          autoCapitalize="none"
           secureTextEntry={!showPassword ? true : false}
         />
         <Feather
