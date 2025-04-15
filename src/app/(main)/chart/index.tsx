@@ -1,26 +1,29 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import React, { useState } from "react";
-import Colors from "@/src/constants/Colors";
-import { globalStyles } from "@/src/styles/globals";
-import MoodCalendar from "@/src/components/mood/MoodCalendar";
-import { useMood } from "@/src/providers/MoodProvider";
-import Fonts from "@/src/constants/Fonts";
-import CardContent from "react-native-paper/lib/typescript/components/Card/CardContent";
-import { dateToYearMonth } from "@/src/utils/dateUtils";
+import { useMoodList } from "@/src/api/moods";
 import GoalProgressBar from "@/src/components/goal/GoalProgressBar";
-
-/**
- * What do we want to show here?
- * Mood metrics
- * Goal Metrics
- * Journaling metrics
- */
+import MoodCalendar from "@/src/components/mood/MoodCalendar";
+import Colors from "@/src/constants/Colors";
+import Fonts from "@/src/constants/Fonts";
+import { useAuth } from "@/src/providers/AuthProvider";
+import { globalStyles } from "@/src/styles/globals";
+import { dateToYearMonth } from "@/src/utils/dateUtils";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 const ChartScreen = () => {
   const [currentMonth, setCurrentMonth] = useState<string>(
     dateToYearMonth(new Date())
   );
-  const { moods } = useMood();
+  const { profile } = useAuth();
+  const { data: fetchedMoods, error, isLoading } = useMoodList(profile.id);
+
+  if (error) {
+    console.warn("ERROR");
+  }
+
+  if (isLoading) {
+    console.warn("LOADING");
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={globalStyles.title}>Stats</Text>
@@ -30,7 +33,7 @@ const ChartScreen = () => {
         <MoodCalendar
           currentMonth={currentMonth}
           setCurrentMonth={setCurrentMonth}
-          moodEntries={moods}
+          moodEntries={fetchedMoods}
         />
       </View>
 

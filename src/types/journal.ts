@@ -24,7 +24,7 @@ export type JournalContextType = {
 export type GratitudeEntry = {
   id: number;
   userId: number;
-  date: Date;
+  created_at: Date;
   items: DailyGraitudes;
   isShared: boolean;
   isFavorite: boolean;
@@ -34,6 +34,18 @@ export type SharedEntry = {
   id: number;
   entryId: number;
   userId: number;
-  timestamp: Date;
+  created_at: Date;
   isFavorite: boolean;
+};
+
+export type JournalAPIEntry = {
+  id: number;
+  user_id: number;
+  created_at: Date;
+  updated_at: Date;
+  item_1: string;
+  item_2: string;
+  item_3: string;
+  is_shared: boolean;
+  is_favorite: boolean;
 };

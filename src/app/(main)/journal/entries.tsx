@@ -1,15 +1,11 @@
-/**
- * User Post history page
- * User can see all past posts
- * ? How many posts per page before load more?
- * User can view individual post
- * User can delete indiidual post
- * User can share or unshare a post
- * User can Favortie a post
- * User can sort posts by Recent, Favorite, Shared, Unshared
- */
-
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import Colors from "@/src/constants/Colors";
 import { globalStyles } from "@/src/styles/globals";
@@ -27,9 +23,16 @@ import {
 import { filterEntries, sortEntries } from "@/src/utils/journalUtils";
 import BackButton from "@/src/components/BackButton";
 import { router } from "expo-router";
+import { useAuth } from "@/src/providers/AuthProvider";
+import {
+  useDeleteJournal,
+  useJournals,
+  useUpdateJournal,
+} from "@/src/api/journal";
 
 const EntriesScreen = () => {
-  const { entries, toggleFavorite, toggleShare, deleteEntry } = useJournal();
+  const { profile } = useAuth();
+  // const { entries, toggleFavorite, toggleShare, deleteEntry } = useJournal();
   const [filteredEntries, setFilteredEntries] = useState<GratitudeEntry[]>([]);
   const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -40,25 +43,32 @@ const EntriesScreen = () => {
     shared: false,
   });
 
+  const { data: fetchedJournals, isLoading, isError } = useJournals(profile.id);
+  const { mutate: updateJournal } = useUpdateJournal();
+  const { mutate: deleteJournal } = useDeleteJournal();
+
   useEffect(() => {
+    if (!fetchedJournals) return;
     // to avoid managing to much state management, let's update the filteredEntries whwnever there is an update to te entries
-    setFilteredEntries(entries);
+    setFilteredEntries(fetchedJournals);
     // filter
-    setFilteredEntries(filterEntries(entries, filters));
+    setFilteredEntries(filterEntries(fetchedJournals, filters));
     // run the sort option
-    setFilteredEntries(sortEntries(entries, selectedSort));
+    setFilteredEntries(sortEntries(fetchedJournals, selectedSort));
 
     //
-  }, [entries]);
+  }, [fetchedJournals]);
 
   // sorting
   useEffect(() => {
-    setFilteredEntries(sortEntries(entries, selectedSort));
+    if (!fetchedJournals) return;
+    setFilteredEntries(sortEntries(fetchedJournals, selectedSort));
   }, [selectedSort]);
 
   // filtering
   useEffect(() => {
-    setFilteredEntries(filterEntries(entries, filters));
+    if (!fetchedJournals) return;
+    setFilteredEntries(filterEntries(fetchedJournals, filters));
   }, [filters]);
 
   const toggleFilterModal = () => setFilterModalVisible(!isFilterModalVisible);
@@ -76,6 +86,48 @@ const EntriesScreen = () => {
     if (message) {
       setMessage(message);
     }
+  };
+
+  const onShareToggle = (entryId: number) => {
+    // save put
+    const entry = fetchedJournals?.find((entry) => entry.id === entryId);
+    if (entry) {
+      updateJournal({
+        id: entryId,
+        is_shared: !entry?.isShared,
+      });
+    }
+  };
+
+  const onFavoriteToggle = (entryId: number) => {
+    // save put
+    const entry = fetchedJournals?.find((entry) => entry.id === entryId);
+    if (entry) {
+      updateJournal({
+        id: entryId,
+        is_favorite: !entry?.isFavorite,
+      });
+    }
+  };
+
+  const onDelete = (entryId: number) => {
+    Alert.alert(
+      "Confirm",
+      "Are you sure you want to delete this gratitude entry?",
+      [
+        {
+          text: "Cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            deleteJournal(entryId);
+            setSelectedEntryId(null);
+          },
+        },
+      ]
+    );
   };
 
   const selectedEntry = selectedEntryId
@@ -100,7 +152,7 @@ const EntriesScreen = () => {
 
       {/* thumbnails render */}
       <FlatList
-        data={filteredEntries}
+        data={fetchedJournals}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
           <EntryThumb
@@ -119,9 +171,9 @@ const EntriesScreen = () => {
           isModalVisible={!!selectedEntryId}
           entry={selectedEntry}
           closeModal={closeModal}
-          toggleShare={toggleShare}
-          toggleFavorite={toggleFavorite}
-          deleteEntry={deleteEntry}
+          toggleShare={onShareToggle}
+          toggleFavorite={onFavoriteToggle}
+          deleteEntry={onDelete}
           setSelectedEntryId={setSelectedEntryId}
         />
       )}

@@ -307,7 +307,7 @@ const JournalProvider: React.FC<{ children: React.ReactNode }> = ({
         id: DUMMY_SHARED.length,
         entryId,
         userId,
-        timestamp: new Date(),
+        created_at: new Date(),
         isFavorite: false,
       });
     });

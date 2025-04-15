@@ -11,5 +11,5 @@ export type MoodEntry = {
   id: number;
   userId: number;
   mood: moodType;
-  timestamp: Date;
+  created_at: Date;
 };

@@ -1,32 +1,35 @@
+import Journaling from "@/assets/images/activities/journaling.svg";
+import Meditate from "@/assets/images/activities/meditate.svg";
+import { useInsertMood, useMoodList } from "@/src/api/moods";
+import Facts from "@/src/components/Facts";
+import GoalProgressBar from "@/src/components/goal/GoalProgressBar";
+import WeeklyCard from "@/src/components/goal/WeeklyCard";
+import MoodSelector from "@/src/components/mood/MoodSelector";
+import Toaster from "@/src/components/Snackbar";
+import Colors from "@/src/constants/Colors";
+import Fonts from "@/src/constants/Fonts";
+import { useAuth } from "@/src/providers/AuthProvider";
+import { useGoals } from "@/src/providers/GoalsProvider";
+import { useMood } from "@/src/providers/MoodProvider";
+import { globalStyles } from "@/src/styles/globals";
+import { Goal, WeeklyGoal } from "@/src/types/goals";
+import { MoodEntry, moodType } from "@/src/types/mood";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
+import { Link } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   Image,
   Pressable,
   ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import Colors from "@/src/constants/Colors";
-import Feather from "@expo/vector-icons/Feather";
-import { globalStyles } from "@/src/styles/globals";
-import Fonts from "@/src/constants/Fonts";
-import { Link } from "expo-router";
-import { moodType } from "@/src/types/mood";
-import { useMood } from "@/src/providers/MoodProvider";
-import Meditate from "@/assets/images/activities/meditate.svg";
-import Journaling from "@/assets/images/activities/journaling.svg";
-import MoodSelector from "@/src/components/mood/MoodSelector";
-import Facts from "@/src/components/Facts";
-import { useGoals } from "@/src/providers/GoalsProvider";
-import { Goal, WeeklyGoal } from "@/src/types/goals";
-import WeeklyCard from "@/src/components/goal/WeeklyCard";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Animated, { FadeOut } from "react-native-reanimated";
-import GoalProgressBar from "@/src/components/goal/GoalProgressBar";
+import { ActivityIndicator, Snackbar } from "react-native-paper";
 
 const HomeScreen = () => {
-  const { onMoodPress, isMoodTracked } = useMood();
+  // const { isMoodTracked } = useMood();
   const {
     getUpcommingWeeklyGoal,
     completeWeeklyTask,
@@ -34,11 +37,21 @@ const HomeScreen = () => {
     goals,
     today,
   } = useGoals();
-  console.log("inside (main) index");
+  const { mutate: insertMood } = useInsertMood();
 
+  //? Is this flow okay? What is session changes?
+  const { profile } = useAuth();
+  const { data: fetchedMoods, error, isLoading } = useMoodList(profile.id);
+  //*
   const [upcommingGoals, setUpcommingGoals] = useState<WeeklyGoal[]>([]);
   const [progress, setProgress] = useState(0);
   const [parentGoal, setParentGoal] = useState<Goal | null>(null);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState<"success" | "error">(
+    "success"
+  );
+  const [isMoodTracked, setIsMoodTracked] = useState(false);
 
   useEffect(() => {
     const validDailyGoals = getUpcommingWeeklyGoal();
@@ -58,10 +71,18 @@ const HomeScreen = () => {
     );
   }, [weeklyGoals]);
 
-  // const upcommingGoal = React.useMemo(
-  //   () =>
-  //   [weeklyGoals]
-  // );
+  useEffect(() => {
+    if (!fetchedMoods || fetchedMoods.length === 0) return;
+
+    const todayDate = new Date().toISOString().split("T")[0];
+
+    const moodToday = fetchedMoods.find((entry: MoodEntry) => {
+      const entryDate = new Date(entry.created_at).toISOString().split("T")[0];
+      return entryDate === todayDate;
+    });
+
+    setIsMoodTracked(!!moodToday);
+  }, [fetchedMoods]);
 
   const options: Intl.DateTimeFormatOptions = {
     weekday: "short", // 'Tue'
@@ -73,7 +94,34 @@ const HomeScreen = () => {
   // const today = new Date();
   const formattedDate = today.toLocaleDateString("en-US", options);
 
-  // get parentGoal for upcomming goal
+  const showToast = (message: string, type: "success" | "error") => {
+    setSnackbarMessage(message);
+    setSnackbarType(type);
+    setSnackbarVisible(true);
+  };
+
+  const onMoodPress = (mood: moodType) => {
+    insertMood(
+      { userId: profile.id, mood },
+      {
+        onSuccess: () => {
+          // update mood provider?
+          showToast("Mood recorded successfully!", "success");
+        },
+        onError: (error) => {
+          showToast(error.message, "error");
+        },
+      }
+    );
+  };
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>Failed to fetch</Text>;
+  }
 
   return (
     <View style={styles.container}>
@@ -181,6 +229,33 @@ const HomeScreen = () => {
           </Link>
         </View>
       </ScrollView>
+
+      <Toaster
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        message={snackbarMessage}
+        type={snackbarType}
+      />
+
+      {/* Snackbar for error messages */}
+      {/* <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={5000}
+        style={[
+          snackbarMessage.includes("already")
+            ? styles.messageError
+            : styles.messageSuccess,
+          { marginBottom: 90 },
+        ]}
+        action={{
+          label: "DISMISS",
+          textColor: "white",
+          onPress: () => setSnackbarVisible(false),
+        }}
+      >
+        {snackbarMessage}
+      </Snackbar> */}
     </View>
   );
 };

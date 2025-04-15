@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-
 import Happy from "@/assets/images/emotions/colored/happy.svg";
 import Sad from "@/assets/images/emotions/colored/sad.svg";
 import Neutral from "@/assets/images/emotions/colored/neutral.svg";
@@ -37,7 +36,7 @@ const getMonthMoodAverage = (
 ): moodType | null => {
   // Filter entries for the specified month (YYYY-MM)
   const filteredEntries = moods.filter((entry) =>
-    entry.timestamp.toISOString().startsWith(month)
+    new Date(entry.created_at).toISOString().startsWith(month)
   );
 
   // If no entries found, return 0 to indicate no data
@@ -62,7 +61,7 @@ const getMarkedDates = (entries: MoodEntry[]) => {
   > = {};
 
   entries.forEach((entry) => {
-    const dateKey = entry.timestamp.toISOString().split("T")[0];
+    const dateKey = new Date(entry.created_at).toISOString().split("T")[0];
 
     marked[dateKey] = {
       customStyles: {
@@ -97,7 +96,8 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
         dayComponent={({ date, state }: { date: DateData; state: string }) => {
           const moodEntry = moodEntries.find(
             (entry) =>
-              entry.timestamp.toISOString().split("T")[0] === date.dateString
+              new Date(entry.created_at).toISOString().split("T")[0] ===
+              date.dateString
           );
 
           return (

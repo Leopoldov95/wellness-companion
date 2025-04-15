@@ -1,22 +1,26 @@
+import BackButton from "@/src/components/BackButton";
+import Journal from "@/src/components/journal/Journal";
+import Colors from "@/src/constants/Colors";
+import { useAuth } from "@/src/providers/AuthProvider";
+import { useJournal } from "@/src/providers/JournalProvider";
+import { globalStyles } from "@/src/styles/globals";
+import Feather from "@expo/vector-icons/Feather";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   Dimensions,
   Image,
   Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
-import React, { useState } from "react";
-import Colors from "@/src/constants/Colors";
-import { globalStyles } from "@/src/styles/globals";
-const { width } = Dimensions.get("window");
-import { useJournal } from "@/src/providers/JournalProvider";
-import { Button } from "react-native-paper";
-import Journal from "@/src/components/journal/Journal";
-import Feather from "@expo/vector-icons/Feather";
-import { router } from "expo-router";
 import Modal from "react-native-modal";
-import BackButton from "@/src/components/BackButton";
+import { Button } from "react-native-paper";
+import { useInsertJournal, useJournals } from "@/src/api/journal";
+import { GratitudeEntry } from "@/src/types/journal";
+import Toaster from "@/src/components/Snackbar";
+const { width } = Dimensions.get("window");
 
 const SPIRAL_COUNT = 15;
 
@@ -40,13 +44,29 @@ const SPIRAL_COUNT = 15;
 // 2. Users can have 'avatars' for sharing as an additional bonus
 
 const JournalScreen = () => {
+  const { profile } = useAuth();
   const { hasWrittenToday, shareJournal } = useJournal();
+  const { mutate: insertJournal } = useInsertJournal();
   //const { hasWrittenToday, entries } = useJournal();
   const [isSaveModalVisible, setSaveModalVisible] = useState(false);
+  const [isWrittenToday, setIsWrittenToday] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState<"success" | "error">(
+    "success"
+  );
+
+  const { data: fetchedJournals } = useJournals(profile.id);
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setSnackbarMessage(message);
+    setSnackbarType(type);
+    setSnackbarVisible(true);
+  };
 
   const toggleSaveModal = () => {
-    saveJournal();
-    setSaveModalVisible(!isSaveModalVisible);
+    onJournalSave();
+    setSaveModalVisible(false);
   };
 
   const [entries, setEntries] = useState({
@@ -55,6 +75,21 @@ const JournalScreen = () => {
     entry3: "",
   });
 
+  // check if user already created an entry
+  useEffect(() => {
+    if (!fetchedJournals || fetchedJournals.length === 0) return;
+
+    const todayDate = new Date().toISOString().split("T")[0];
+
+    const hasWrittenToday = fetchedJournals.find((entry: GratitudeEntry) => {
+      const entryDate = new Date(entry.created_at).toISOString().split("T")[0];
+
+      return entryDate === todayDate;
+    });
+
+    setIsWrittenToday(!!hasWrittenToday);
+  }, [fetchedJournals]);
+
   const handleInputChange = (text: string, index: number) => {
     setEntries((prev) => ({
       ...prev,
@@ -62,9 +97,28 @@ const JournalScreen = () => {
     }));
   };
 
-  const saveJournal = (share: boolean = false) => {
-    const enryInputs = Object.values(entries);
+  // need to pass in the flag to determine if it's shared or not
+  const onJournalSave = (share: boolean = false) => {
     // call the ctx save method here
+    insertJournal(
+      {
+        userId: profile.id,
+        items: [entries.entry1, entries.entry2, entries.entry3],
+        is_shared: share,
+      },
+      {
+        onError: (error) => {
+          showToast(error.message, "success");
+        },
+      }
+    );
+
+    //TODO clear form and disable button
+    setEntries({
+      entry1: "",
+      entry2: "",
+      entry3: "",
+    });
   };
 
   const canSave = entries.entry1 && entries.entry2 && entries.entry3;
@@ -104,9 +158,12 @@ const JournalScreen = () => {
         {/*** MUST BE DISABLED IF NO ENTRY */}
         {/* ??? Maybe ask the user to sare anonymously AFTER creating a graiue journal */}
         <Pressable
-          style={[styles.saveBtn, !canSave && styles.disabledBtn]}
-          onPress={toggleSaveModal}
-          disabled={!canSave}
+          style={[
+            styles.saveBtn,
+            (!canSave || isWrittenToday) && styles.disabledBtn,
+          ]}
+          onPress={() => setSaveModalVisible(true)}
+          disabled={!canSave || isWrittenToday}
         >
           <Feather
             name="save"
@@ -129,6 +186,14 @@ const JournalScreen = () => {
           <Text style={styles.buttonText}>History</Text>
         </Pressable>
       </View>
+
+      {/* Snackbar */}
+      <Toaster
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        message={snackbarMessage}
+        type={snackbarType}
+      />
 
       <Modal
         isVisible={isSaveModalVisible}
@@ -154,7 +219,7 @@ const JournalScreen = () => {
           <Button
             icon="share"
             mode="contained"
-            onPress={() => saveJournal(true)}
+            onPress={() => onJournalSave(true)}
             style={styles.shareButton}
           >
             Share Anonymously

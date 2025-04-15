@@ -8,7 +8,7 @@ export type Goal = {
   title: string;
   dueDate: Date;
   created: Date;
-  progress: number;
+  progress: number; // get's calculated client side
   color: string;
   lastUpdated: Date;
   numTasks: NumTasks;
@@ -30,8 +30,8 @@ export type WeeklyGoal = {
   title: string;
   startDate: Date;
   endDate: Date;
-  numTasks: NumTasks;
-  dailyTasks: DailyTask[];
+  numTasks: NumTasks; //! same here, get's calue from parent goal
+  dailyTasks: DailyTask[]; //! Not to be in DB, gets build client side
 };
 
 export type DailyTask = {
