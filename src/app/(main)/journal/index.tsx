@@ -22,32 +22,10 @@ import { GratitudeEntry } from "@/src/types/journal";
 import Toaster from "@/src/components/Snackbar";
 const { width } = Dimensions.get("window");
 
-const SPIRAL_COUNT = 15;
-
-//*TODO
-//* MUST HAVES
-// 1. We'll need to load/use the JSON prompt data to give users a prompt to help them start writing things down. It should show a new one daily (and not on page refesh)
-// 2. Users can only write one gratude entry per day
-// 3. Users can only wrtie 3 things they are grateful for.
-//? What should be the character limit
-// 3. We'll want a way for users to see their past gratitude journals
-//? Should this be a new page or modal?
-// 4. Users have the option to share their gratitudes anonymously after writing an entry
-// 5. Users have a way to view anonymized posts
-//? Should this be a new page?
-//! Must be unique (user's should not be able to see the same gratidue entry twice). We'll need a flag for this
-//! Users can "save" their favrotie gratitude entries
-//! Entries are sorted from newest to oldest (unseen)
-//! If a user has seen all unseen new entries, it will just restart
-//* NICE TO HAVE
-// 1. Gratidue jounral background can be dynamic with SVG graphics
-// 2. Users can have 'avatars' for sharing as an additional bonus
-
 const JournalScreen = () => {
   const { profile } = useAuth();
   const { hasWrittenToday, shareJournal } = useJournal();
   const { mutate: insertJournal } = useInsertJournal();
-  //const { hasWrittenToday, entries } = useJournal();
   const [isSaveModalVisible, setSaveModalVisible] = useState(false);
   const [isWrittenToday, setIsWrittenToday] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);

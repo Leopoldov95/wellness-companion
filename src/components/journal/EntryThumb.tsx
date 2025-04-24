@@ -1,43 +1,36 @@
+import Colors from "@/src/constants/Colors";
+import Fonts from "@/src/constants/Fonts";
+import { GratitudeEntry } from "@/src/types/journal";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import React from "react";
 import {
   FlatList,
+  Image,
+  ImageSourcePropType,
+  Pressable,
   StyleSheet,
   Text,
   View,
-  ListRenderItem,
-  Image,
-  Pressable,
-  Modal,
 } from "react-native";
-import React, { useState } from "react";
-import { GratitudeEntry } from "@/src/types/journal";
-import Colors from "@/src/constants/Colors";
-import { globalStyles } from "@/src/styles/globals";
-import Fonts from "@/src/constants/Fonts";
-import AntDesign from "@expo/vector-icons/AntDesign";
 
 interface EntryThumbProps {
   item: GratitudeEntry;
   index: number;
+  image: ImageSourcePropType;
   onPress: () => void;
 }
 
-const EntryThumb: React.FC<EntryThumbProps> = ({ item, index, onPress }) => {
-  const images = {
-    1: require("@/assets/images/journal/notes/note-1.png"),
-    2: require("@/assets/images/journal/notes/note-2.png"),
-    3: require("@/assets/images/journal/notes/note-3.png"),
-    4: require("@/assets/images/journal/notes/note-4.png"),
-    5: require("@/assets/images/journal/notes/note-5.png"),
-  };
-  const imageIndex = (index % 5) + 1;
+const EntryThumb: React.FC<EntryThumbProps> = ({
+  item,
+  index,
+  image,
+  onPress,
+}) => {
+  const imageIndex = (index % 13) + 1;
 
   return (
     <View style={styles.entryContainer}>
-      <Image
-        resizeMode="contain"
-        source={images[imageIndex]}
-        style={styles.image}
-      />
+      <Image resizeMode="contain" source={image} style={styles.image} />
       <Pressable
         onPress={onPress}
         android_ripple={{ color: "rgba(0,0,0,0.1)" }}
@@ -69,10 +62,12 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
+    opacity: 0.3,
+    borderRadius: 20,
   },
   entryContainer: {
     aspectRatio: 1,
-    width: "50%",
+    width: "100%",
     position: "relative",
   },
   entryContent: {
@@ -86,7 +81,7 @@ const styles = StyleSheet.create({
     width: "95%",
   },
   entryText: {
-    fontSize: 8,
+    fontSize: 10,
     marginBottom: 4,
     fontFamily: Fonts.primary[400],
   },

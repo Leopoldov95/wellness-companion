@@ -35,7 +35,7 @@ export function dateToYearMonth(date: Date): string {
 
 // converts date to MMM/DD/YYY
 export function dateToReadible(date: Date): string {
-  return date.toLocaleDateString("en-US", {
+  return new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "2-digit",
     year: "numeric",

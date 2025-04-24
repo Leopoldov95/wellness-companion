@@ -7,7 +7,7 @@ import GoalFormFields from "./GoalFormFields";
 type EditGoalFormProps = {
   initialData: Goal;
   onSubmit: (formData: GoalForm) => void;
-  onDelete: (formData: number) => void;
+  onDelete: () => void;
   onCancel: () => void;
   selectedGoalColors: string[];
   weeklyGoals: WeeklyGoal[];
@@ -56,7 +56,7 @@ const EditGoalForm: React.FC<EditGoalFormProps> = ({
         </Button>
         <Button
           mode="outlined"
-          onPress={() => onDelete(initialData.id)}
+          onPress={onDelete}
           buttonColor="#fdeded"
           textColor="#b00020"
           style={{ borderColor: "#b00020" }}

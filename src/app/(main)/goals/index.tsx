@@ -1,15 +1,27 @@
 import Wave from "@/assets/images/goals/wave.svg";
+import {
+  useActiveWeeklyGoals,
+  useCompleteDailyTask,
+  useGoalsList,
+  useInsertGoal,
+  useUpdateWeeklyGoalTitle,
+} from "@/src/api/goals";
 import CreateGoal from "@/src/components/goal/CreateGoal";
 import GoalCard from "@/src/components/goal/GoalCard";
 import WeeklyCardList from "@/src/components/goal/WeeklyCardList";
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
+import { useAuth } from "@/src/providers/AuthProvider";
 import { useGoals } from "@/src/providers/GoalsProvider";
 import { globalStyles } from "@/src/styles/globals";
 import { AntDesign, Octicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import NoGoals from "@/assets/images/goals/no_goals.svg";
+import { GoalForm } from "@/src/types/goals";
+import { ActivityIndicator } from "react-native-paper";
+import Toaster from "@/src/components/Snackbar";
 
 /**
  * There could be a qizard that helps users figure out how this system works
@@ -19,16 +31,107 @@ import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
  */
 
 const GoalsScreen = () => {
-  const {
-    goals,
-    weeklyGoals,
-    selectedGoalColors,
-    createGoal,
-    today,
-    completeWeeklyTask,
-  } = useGoals();
-  const [goalModalVisible, setGoalModalVisible] = useState(false);
+  console.log("\n###### Hello from goals screen! #####");
 
+  const { profile } = useAuth();
+  const { mutate: insertGoal } = useInsertGoal();
+  const { mutate: completeDailyTask } = useCompleteDailyTask();
+  const { mutate: updateWeeklyGoal } = useUpdateWeeklyGoalTitle();
+  const { data: fetchedGoals, isLoading: isGoalsLoading } = useGoalsList(
+    profile.id
+  );
+  const {
+    data: fetchedWeeklyGoals,
+    isLoading: isWeeklyLoading,
+    error: weeklyGoalError,
+  } = useActiveWeeklyGoals(profile.id);
+  const [goalModalVisible, setGoalModalVisible] = useState(false);
+  const [selectedGoalColors, setSelectedGoalColors] = useState<string[]>([]);
+
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState<"success" | "error">(
+    "success"
+  );
+
+  useEffect(() => {
+    fetchedGoals.forEach((goal) => {
+      if (goal.status === "active") {
+        setSelectedGoalColors((prev) => [...prev, goal.color]);
+      }
+    });
+  }, [fetchedGoals]);
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setSnackbarMessage(message);
+    setSnackbarType(type);
+    setSnackbarVisible(true);
+  };
+
+  const { today } = useGoals();
+
+  const createGoal = (formData: GoalForm) => {
+    insertGoal(
+      {
+        userId: profile.id,
+        title: formData.title,
+        category: formData.category,
+        numTasks: formData.numTasks,
+        color: formData.color,
+        dueDate: formData.dueDate,
+        weeklyTask: formData.weeklyTask,
+      },
+      {
+        onError: (error) => {
+          showToast(error.message, "error");
+        },
+        onSuccess: () => {
+          showToast("Goal Created!", "success");
+        },
+      }
+    );
+  };
+
+  const completeWeeklyTask = (weeklyGoalId: number, date: Date) => {
+    completeDailyTask(
+      {
+        weeklyGoalId,
+        date,
+      },
+      {
+        onSuccess: () => {
+          console.log("SUCCESS");
+        },
+        onError: (error) => {
+          console.log("ERROR");
+          console.log(error);
+        },
+      }
+    );
+  };
+
+  const updateWeeklyTask = (weeklyGoalId: number, newTitle: string) => {
+    updateWeeklyGoal(
+      {
+        weeklyGoalId,
+        newTitle,
+      },
+      {
+        onError: (error) => {
+          console.log("ERROR");
+          console.log(error);
+        },
+      }
+    );
+  };
+
+  if (isGoalsLoading || isWeeklyLoading) {
+    return <ActivityIndicator />;
+  }
+
+  // if (weeklyGoalError) {
+  //   showToast("Failed to fetch weekly goals.", "error");
+  // }
   return (
     <View style={styles.container}>
       <View style={styles.background}>
@@ -54,7 +157,7 @@ const GoalsScreen = () => {
 
         {/* menu button */}
         <Link href="/(main)/goals/history" asChild>
-          <Pressable>
+          <Pressable disabled={fetchedGoals.length < 1}>
             <Octicons name="history" size={36} color="white" />
           </Pressable>
         </Link>
@@ -63,27 +166,37 @@ const GoalsScreen = () => {
       {/* Goal overview */}
       {/* TODO ~ caraousel for other goals, MAX number of lng term goals is 10 */}
       <View>
-        <FlatList
-          data={goals}
-          renderItem={({ item }) => <GoalCard goal={item} />}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.goalCardContainer}
-        />
+        {fetchedGoals.length < 1 ? (
+          <View style={styles.noGoals}>
+            <NoGoals width={325} height={325} />
+            <Text style={globalStyles.title}>No Goals Yet!</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={fetchedGoals}
+            renderItem={({ item }) => <GoalCard goal={item} />}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.goalCardContainer}
+          />
+        )}
       </View>
 
       {/* weekly goals */}
       {/* TODO ~ Will be a flatlist */}
 
-      <View style={{ height: `55%` }}>
-        <Text style={styles.subtitle}>Weekly Goals</Text>
-        <WeeklyCardList
-          goals={goals}
-          currentDate={today}
-          completeWeeklyTask={completeWeeklyTask}
-          weeklyGoals={weeklyGoals}
-        />
-      </View>
+      {fetchedGoals.length > 0 && fetchedWeeklyGoals!.length > 0 && (
+        <View style={{ height: `55%` }}>
+          <Text style={styles.subtitle}>Weekly Goals</Text>
+          <WeeklyCardList
+            // goals={fetchedGoals}
+            currentDate={today}
+            completeWeeklyTask={completeWeeklyTask}
+            updateWeeklyTask={updateWeeklyTask}
+            weeklyGoals={fetchedWeeklyGoals}
+          />
+        </View>
+      )}
 
       {/* Create Goal Modal */}
       {goalModalVisible && (
@@ -94,6 +207,14 @@ const GoalsScreen = () => {
           createGoal={createGoal}
         />
       )}
+
+      {/* Snackbar */}
+      <Toaster
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        message={snackbarMessage}
+        type={snackbarType}
+      />
     </View>
   );
 };
@@ -137,6 +258,13 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.seconday[600],
     fontSize: 16,
     letterSpacing: 1,
+  },
+  noGoals: {
+    height: "95%",
+    display: "flex",
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

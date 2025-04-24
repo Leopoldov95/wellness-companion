@@ -1,36 +1,53 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
-import React from "react";
-import Colors from "@/src/constants/Colors";
-import { globalStyles } from "@/src/styles/globals";
-import { useGoals } from "@/src/providers/GoalsProvider";
-import { GetCategoryImage } from "@/src/components/goal/GetCategoryImage";
-import GoalProgressBar from "@/src/components/goal/GoalProgressBar";
-import { dateToReadible } from "@/src/utils/dateUtils";
-import { FontAwesome6 } from "@expo/vector-icons";
+import History from "@/assets/images/goals/history.svg";
+import { usePastGoals } from "@/src/api/goals";
 import BackButton from "@/src/components/BackButton";
-import { router } from "expo-router";
-import Fonts from "@/src/constants/Fonts";
 import HistoryCard from "@/src/components/goal/HistoryCard";
+import Colors from "@/src/constants/Colors";
+import { useAuth } from "@/src/providers/AuthProvider";
+import { globalStyles } from "@/src/styles/globals";
+import { router } from "expo-router";
+import React from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 
 const HistoryScreen = () => {
-  const { goals } = useGoals();
+  const { profile } = useAuth();
+
+  const { data, error, isLoading } = usePastGoals(profile.id);
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>Error fetching history goals...</Text>;
+  }
 
   return (
     <View style={styles.container}>
       <Text style={globalStyles.title}>Goal History</Text>
       <BackButton onPress={() => router.back()} />
 
-      <FlatList
-        data={goals}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <HistoryCard goal={item} />}
-        numColumns={1}
-        contentContainerStyle={{
-          paddingBottom: 120,
-          marginTop: 30,
-          paddingHorizontal: 5,
-        }}
-      />
+      {data?.length > 0 ? (
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <HistoryCard goal={item} />}
+          numColumns={1}
+          contentContainerStyle={{
+            paddingBottom: 120,
+            marginTop: 30,
+            paddingHorizontal: 5,
+          }}
+        />
+      ) : (
+        <View style={styles.noGoals}>
+          <History width={325} height={325} />
+          <Text style={[globalStyles.title, { color: "#333" }]}>
+            No Historical Goals Yet!
+          </Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -43,5 +60,12 @@ const styles = StyleSheet.create({
     padding: 12,
     paddingTop: 20,
     backgroundColor: Colors.light.greyBg,
+  },
+  noGoals: {
+    height: "75%",
+    display: "flex",
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

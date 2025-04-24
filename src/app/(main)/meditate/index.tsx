@@ -47,7 +47,7 @@ const MeditateScreen = () => {
 
       <FlatList
         data={tracks}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <Track track={item} onPress={onTrackSelect} />
         )}

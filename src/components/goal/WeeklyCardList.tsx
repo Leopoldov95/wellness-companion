@@ -5,15 +5,17 @@ import { Goal, WeeklyGoal } from "@/src/types/goals";
 
 type WeeklyCardListProps = {
   weeklyGoals: WeeklyGoal[];
-  goals: Goal[]; // needed to get parent details
+  // goals: Goal[]; // needed to get parent details
   completeWeeklyTask: (id: number, date: Date) => void;
+  updateWeeklyTask: (id: number, title: string) => void;
   currentDate: Date;
 };
 
 const WeeklyCardList: React.FC<WeeklyCardListProps> = ({
   weeklyGoals,
-  goals,
+  // goals,
   completeWeeklyTask,
+  updateWeeklyTask,
   currentDate,
 }) => {
   return (
@@ -22,13 +24,14 @@ const WeeklyCardList: React.FC<WeeklyCardListProps> = ({
       renderItem={({ item }) => (
         <WeeklyCard
           weeklyGoal={item}
-          parentGoal={goals.filter((goal) => goal.id === item.goalId)[0]}
+          // parentGoal={goals.filter((goal) => goal.id === item.goalId)[0]}
           currentDate={currentDate}
           completeWeeklyTask={completeWeeklyTask}
+          updateWeeklyTask={updateWeeklyTask}
         />
       )}
       showsVerticalScrollIndicator={true}
-      keyExtractor={(item, index) => index.toString()}
+      keyExtractor={(item) => item.id.toString()}
       nestedScrollEnabled={true}
       contentContainerStyle={{
         paddingHorizontal: 8,

@@ -332,7 +332,7 @@ const GoalsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [selectedGoalColors, setSelectedGoalColors] = useState<string[]>([]);
   const [weeklyGoals, setWeeklyGoals] = useState<WeeklyGoal[]>([]);
   const [finishedGoals, setFinisheGoals] = useState<Goal[]>([]);
-  const today = new Date(2024, 1, 15);
+  const today = new Date();
 
   useEffect(() => {
     // use dummy data

@@ -10,7 +10,7 @@ const GoalsLayout = () => {
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="history" options={{ headerShown: false }} />
-          <Stack.Screen name="goal/[id]" options={{ headerShown: false }} />
+          <Stack.Screen name="[id]" options={{ headerShown: false }} />
         </Stack>
       </GoalsProvider>
     </SafeAreaProvider>

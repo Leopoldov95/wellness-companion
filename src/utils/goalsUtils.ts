@@ -8,8 +8,8 @@ export const isActiveWeeklyGoal = (
   checkTaskLimit: boolean = false
 ): boolean => {
   const isWithinDateRange =
-    goal.endDate.getTime() >= date.getTime() &&
-    goal.startDate.getTime() <= date.getTime();
+    new Date(goal.endDate).getTime() >= new Date(date).getTime() &&
+    new Date(goal.startDate).getTime() <= new Date(date).getTime();
 
   if (!isWithinDateRange) return false;
 

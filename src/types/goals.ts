@@ -2,7 +2,7 @@ export type NumTasks = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 // TODO ~ in the databse might want a JOIN table for duplicate dependat properties (colors, numTasks, etc)
 export type Goal = {
-  userId: number;
+  userId: string;
   id: number;
   category: Category;
   title: string;
@@ -13,6 +13,19 @@ export type Goal = {
   lastUpdated: Date;
   numTasks: NumTasks;
   status: "active" | "completed" | "expired";
+};
+
+export type GoalAPI = {
+  id: number;
+  user_id: string;
+  category: Category;
+  title: string;
+  due_date: Date;
+  created_at: Date;
+  num_tasks: NumTasks;
+  status: "active" | "completed" | "expired";
+  last_updated: Date;
+  color: string;
 };
 
 export type GoalForm = {
@@ -32,6 +45,29 @@ export type WeeklyGoal = {
   endDate: Date;
   numTasks: NumTasks; //! same here, get's calue from parent goal
   dailyTasks: DailyTask[]; //! Not to be in DB, gets build client side
+  color: string;
+  category: string;
+  parentTitle: string;
+};
+
+export type WeeklyGoalAPI = {
+  id: number;
+  goal_id: number;
+  title: string;
+  start_date: Date;
+  end_date: Date;
+  daily_tasks: {
+    id: number;
+    date: string;
+    completed: boolean;
+    weekly_goal_id: number;
+  }[];
+  goals: {
+    num_tasks: number;
+    color: string;
+    category: Category;
+    title: string;
+  };
 };
 
 export type DailyTask = {

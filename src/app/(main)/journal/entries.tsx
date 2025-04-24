@@ -1,6 +1,7 @@
 import {
   Alert,
   FlatList,
+  ImageSourcePropType,
   Pressable,
   StyleSheet,
   Text,
@@ -30,12 +31,30 @@ import {
   useUpdateJournal,
 } from "@/src/api/journal";
 
+// Dynamic bg images
+const BG_IMG = [
+  require("@/assets/images/journal/entries/entry-bg-1.png"),
+  require("@/assets/images/journal/entries/entry-bg-2.png"),
+  require("@/assets/images/journal/entries/entry-bg-3.png"),
+  require("@/assets/images/journal/entries/entry-bg-4.png"),
+  require("@/assets/images/journal/entries/entry-bg-5.png"),
+  require("@/assets/images/journal/entries/entry-bg-6.png"),
+  require("@/assets/images/journal/entries/entry-bg-7.png"),
+  require("@/assets/images/journal/entries/entry-bg-8.png"),
+  require("@/assets/images/journal/entries/entry-bg-9.png"),
+  require("@/assets/images/journal/entries/entry-bg-10.png"),
+  require("@/assets/images/journal/entries/entry-bg-11.png"),
+  require("@/assets/images/journal/entries/entry-bg-12.png"),
+  require("@/assets/images/journal/entries/entry-bg-13.png"),
+];
+
 const EntriesScreen = () => {
   const { profile } = useAuth();
   // const { entries, toggleFavorite, toggleShare, deleteEntry } = useJournal();
   const [filteredEntries, setFilteredEntries] = useState<GratitudeEntry[]>([]);
   const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [modalImg, setModalImg] = useState<ImageSourcePropType>(BG_IMG[0]);
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
   const [selectedSort, setSelectedSort] = useState<SortOptions>("newest");
   const [filters, setFilters] = useState<FilterOptions>({
@@ -77,8 +96,9 @@ const EntriesScreen = () => {
     setMessage(null);
   };
 
-  const openModal = (entryId: number) => {
+  const openModal = (entryId: number, index: number) => {
     setSelectedEntryId(entryId);
+    setModalImg(BG_IMG[index]);
   };
 
   const closeModal = (message?: string) => {
@@ -153,16 +173,20 @@ const EntriesScreen = () => {
       {/* thumbnails render */}
       <FlatList
         data={fetchedJournals}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, index }) => (
-          <EntryThumb
-            item={item}
-            index={index}
-            onPress={() => openModal(item.id)}
-          />
+          <View style={{ flex: 1 }}>
+            <EntryThumb
+              item={item}
+              index={index}
+              image={BG_IMG[index]}
+              onPress={() => openModal(item.id, index)}
+            />
+          </View>
         )}
         numColumns={2}
         contentContainerStyle={{ paddingBottom: 120, marginTop: 20 }}
+        columnWrapperStyle={{ columnGap: 10 }}
       />
 
       {/* modal */}
@@ -170,6 +194,7 @@ const EntriesScreen = () => {
         <EntryModal
           isModalVisible={!!selectedEntryId}
           entry={selectedEntry}
+          image={modalImg}
           closeModal={closeModal}
           toggleShare={onShareToggle}
           toggleFavorite={onFavoriteToggle}

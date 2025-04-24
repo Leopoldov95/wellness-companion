@@ -1,14 +1,11 @@
-import { View, Text, StyleSheet, Image } from "react-native";
-import React from "react";
 import { globalStyles } from "@/src/styles/globals";
+import React from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
 // import Button from "@/src/components/Button";
-import { Button } from "react-native-paper";
-import { Link } from "expo-router";
-import Colors from "@/src/constants/Colors";
 import WelcomeGraphic from "@/assets/images/auth/welcome-graphic.svg";
-import { useRouter } from "expo-router";
-import { useFonts } from "expo-font";
-import Fonts from "@/src/constants/Fonts";
+import Colors from "@/src/constants/Colors";
+import { Link, useRouter } from "expo-router";
+import { Button } from "react-native-paper";
 
 const WelcomeScreen = () => {
   const router = useRouter();

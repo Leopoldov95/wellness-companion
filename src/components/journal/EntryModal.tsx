@@ -7,6 +7,7 @@ import {
   Image,
   FlatList,
   Alert,
+  ImageSourcePropType,
 } from "react-native";
 import React from "react";
 import { GratitudeEntry } from "@/src/types/journal";
@@ -19,6 +20,7 @@ import { Feather } from "@expo/vector-icons";
 type EntryModalProps = {
   entry: GratitudeEntry;
   isModalVisible: boolean;
+  image: ImageSourcePropType;
   closeModal: (message?: string) => void;
   toggleFavorite: (entryId: number) => void;
   toggleShare: (entryId: number) => void;
@@ -33,6 +35,7 @@ const EntryModal: React.FC<EntryModalProps> = ({
   toggleShare,
   deleteEntry,
   setSelectedEntryId,
+  image,
   closeModal,
 }) => {
   const onToggleShare = (entryId: number) => {
@@ -73,12 +76,9 @@ const EntryModal: React.FC<EntryModalProps> = ({
       onRequestClose={() => closeModal()}
     >
       <View style={styles.modalContainer}>
-        <Image
-          resizeMode="cover"
-          source={require("@/assets/images/journal/notes/note-1.png")}
-          style={styles.image}
-        />
         <View style={styles.modalContent}>
+          <Image resizeMode="cover" source={image} style={styles.image} />
+
           <FlatList
             data={entry.items}
             renderItem={({ item, index }) => (
@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.3)",
     position: "relative",
+    paddingHorizontal: 10,
   },
   modalContent: {
     position: "absolute",
@@ -155,11 +156,16 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     height: "50%",
     width: "100%",
+    borderRadius: 40,
+    backgroundColor: "#fff",
+    marginLeft: 10,
+    overflow: "hidden",
   },
   image: {
-    width: "100%",
-    height: "50%",
-    aspectRatio: 1,
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.2,
+    left: 0,
+    zIndex: 0,
   },
   entryText: {
     fontSize: 16,
@@ -171,6 +177,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     paddingHorizontal: 10,
+    marginBottom: -16,
   },
   modalButton: {
     padding: 12,

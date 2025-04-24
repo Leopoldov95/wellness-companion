@@ -1,82 +1,164 @@
+import {
+  useDeleteGoal,
+  useGoalsList,
+  useGoalWeeklyTasks,
+  useUpdateGoalDetails,
+  useUpdateWeeklyGoalTitle,
+} from "@/src/api/goals";
 import EditGoalForm from "@/src/components/goal/EditGoalForm";
 import GoalProgressBar from "@/src/components/goal/GoalProgressBar";
 import WeeklyCardList from "@/src/components/goal/WeeklyCardList";
 import Colors from "@/src/constants/Colors";
+import { useAuth } from "@/src/providers/AuthProvider";
 import { useGoals } from "@/src/providers/GoalsProvider";
 import { globalStyles } from "@/src/styles/globals";
 import { Goal, GoalForm, WeeklyGoal, ValidDateType } from "@/src/types/goals";
 import { dateToReadible } from "@/src/utils/dateUtils";
 import { Feather } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import React, { Fragment, useEffect, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 
 const GoalEditScreen = () => {
+  const { profile } = useAuth();
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(typeof idString === "string" ? idString : idString[0]);
+  const queryClient = useQueryClient();
+  console.log("\n####### GOAL ID PAGE #########");
+  console.log(`goal id is... ${id}`);
+
+  console.log("CHECK 1");
+
+  const { goals, getWeeklyGoalsById, today, completeWeeklyTask } = useGoals();
   const [goal, setGoal] = useState<Goal | null>(null);
   const [weekly, setWeekly] = useState<WeeklyGoal[]>([]);
+  const [selectedGoalColors, setSelectedGoalColors] = useState<string[]>([]);
   const [isEdit, setIsEdit] = useState(false);
   const [validDates, setValidDates] = useState<ValidDateType>({
     startDate: new Date(),
     endDate: new Date(),
   });
   const {
-    goals,
-    updateGoal,
-    deleteGoal,
-    getWeeklyGoalsById,
-    today,
-    selectedGoalColors,
-    completeWeeklyTask,
-  } = useGoals();
-  //const { id } = useLocalSearchParams();
-  const { id: idString } = useLocalSearchParams();
-  const id = parseFloat(typeof idString === "string" ? idString : idString[0]);
+    data: fetchedGoals,
+    isLoading: isGoalsLoading,
+    error: goalsError,
+  } = useGoalsList(profile.id);
+
+  const {
+    data: fetchedWeeklyGoals,
+    error: weeklyTaskError,
+    isLoading: isWeeklyLoading,
+  } = useGoalWeeklyTasks(id);
+  const { mutate: updateGoal } = useUpdateGoalDetails();
+  const { mutate: deleteGoal } = useDeleteGoal();
+  const { mutate: updateWeeklyGoal } = useUpdateWeeklyGoalTitle();
+
+  console.log("CHECK 2");
 
   const router = useRouter();
 
+  if (isWeeklyLoading || isGoalsLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (weeklyTaskError || goalsError || !fetchedGoals) {
+    return <Text>Error...</Text>;
+  }
+
+  console.log("CHECK 3");
+
   useEffect(() => {
-    const currentGoal = goals.find((g) => g.id === id);
+    if (
+      !fetchedGoals.length ||
+      !fetchedWeeklyGoals ||
+      isGoalsLoading ||
+      isWeeklyLoading
+    )
+      return;
 
-    if (currentGoal) {
-      setGoal(currentGoal);
-      const weeklyGoals = getWeeklyGoalsById(currentGoal.id);
-      setWeekly(weeklyGoals);
-      //TODO, set start and end date limitations for goal, can also use weekly
-      // 1. find the current weekly goal
-      const curentWeekly = weeklyGoals.filter(
-        (wkGoal) =>
-          wkGoal.endDate.getTime() >= today.getTime() &&
-          wkGoal.startDate.getTime() <= today.getTime()
-      )[0];
-      // 2. use that to set valid start date for goal edit (must be at last day OF current weekly)
-      const validStartDate = curentWeekly.endDate;
+    const currentGoal = fetchedGoals.find((g) => g.id === id);
 
-      // 3. end date MUST be within 6 months of original creation date
-      let createdDate = new Date(currentGoal.created);
-
-      // Clone the date and add 6 months
-      let validEndDate = new Date(createdDate);
-
-      validEndDate.setMonth(validEndDate.getMonth() + 6);
-
-      setValidDates({
-        startDate: validStartDate,
-        endDate: validEndDate,
-      });
-
-      // 4. update it
-    } else {
-      console.warn("goal not found");
+    if (!currentGoal) {
+      console.log("goal not found");
+      return;
     }
-  }, []);
 
+    setGoal(currentGoal);
+    setWeekly(fetchedWeeklyGoals);
+    // 1. find the current weekly goal
+    const curentWeekly = fetchedWeeklyGoals[0];
+
+    //! For now, if no current weekly goal then kick user back to goal page
+    if (!curentWeekly) {
+      console.log("there is no current weekly...");
+
+      return;
+    }
+
+    // 2. use that to set valid start date for goal edit (must be at last day OF current weekly)
+    const validStartDate = new Date(curentWeekly.endDate);
+
+    // 3. end date MUST be within 6 months of original creation date
+    let createdDate = new Date(currentGoal.created);
+
+    // Clone the date and add 6 months
+    let validEndDate = new Date(createdDate);
+    validEndDate.setMonth(validEndDate.getMonth() + 6);
+
+    setValidDates({
+      startDate: validStartDate,
+      endDate: validEndDate,
+    });
+
+    fetchedGoals.forEach((goal) => {
+      if (goal.status === "active") {
+        setSelectedGoalColors((prev) => [...prev, goal.color]);
+      }
+    });
+  }, [fetchedGoals, fetchedWeeklyGoals, isGoalsLoading, isWeeklyLoading, id]);
+
+  console.log("CHECK 4");
+
+  // fallack in case wekkly goal returns an empty array
+  // useEffect(() => {
+  //   if (
+  //     !isWeeklyLoading &&
+  //     fetchedWeeklyGoals &&
+  //     fetchedWeeklyGoals.length === 0 &&
+  //     !weeklyTaskError
+  //   ) {
+  //     console.log("redirecting within useEffects");
+
+  //     router.replace("/(main)/goals");
+  //   }
+  // }, [fetchedWeeklyGoals, isWeeklyLoading, weeklyTaskError]);
+
+  //TODO ~ add API here
   const handleUpdate = (updatedForm: GoalForm) => {
     if (goal) {
-      updateGoal(goal.id, updatedForm);
-      router.back(); // Navigate back after update
+      updateGoal(
+        {
+          id: goal.id,
+          updates: updatedForm,
+        },
+        {
+          onSuccess: () => {
+            router.back(); // Navigate back after update
+          },
+          onError: (error) => {
+            console.log("something wrong");
+            console.log(error);
+          },
+        }
+      );
     }
   };
 
+  console.log("CHECK 5");
+
+  //TODO ~ add delete here
   const onDelete = () => {
     Alert.alert("Confirm", "Are you sure you want to delete this goal?", [
       {
@@ -85,13 +167,64 @@ const GoalEditScreen = () => {
       {
         text: "Delete",
         style: "destructive",
-        onPress: () => {
-          deleteGoal(id);
-          router.back(); // Navigate back after update
+        onPress: async () => {
+          console.log("\n****** DELETING GOAL *********");
+
+          deleteGoal(
+            {
+              userId: profile.id,
+              goalId: id,
+            },
+            {
+              onSuccess: async () => {
+                console.log("goal deleted!");
+                await queryClient.invalidateQueries({
+                  queryKey: ["weekly_goals_active"],
+                }); // force refetch!
+                router.back();
+              },
+              onError: (error) => {
+                console.log("something wrong");
+                console.log(error);
+              },
+            }
+          );
         },
       },
     ]);
   };
+
+  const updateWeeklyTask = (weeklyGoalId: number, newTitle: string) => {
+    updateWeeklyGoal(
+      {
+        weeklyGoalId,
+        newTitle,
+      },
+      {
+        onError: (error) => {
+          console.log("ERROR");
+          console.log(error);
+        },
+      }
+    );
+  };
+
+  console.log("CHECK 6");
+
+  // no goal handler
+  // if (
+  //   !isGoalsLoading &&
+  //   fetchedGoals?.length > 0 &&
+  //   !fetchedGoals.find((g) => g.id === id)
+  // ) {
+  //   console.log("redrecting...");
+
+  //   return router.replace("/(main)/goals");
+  // }
+
+  console.log("CHECK 7");
+  console.log(`Value of Goal`);
+  console.log(goal);
 
   if (goal) {
     const { title, category, dueDate, progress, color, numTasks } = goal;
@@ -167,7 +300,8 @@ const GoalEditScreen = () => {
             </Text>
             <View style={isEdit ? { maxHeight: "30%" } : { maxHeight: "40%" }}>
               <WeeklyCardList
-                goals={[goal]}
+                // goals={[goal]}
+                updateWeeklyTask={updateWeeklyTask}
                 currentDate={today}
                 completeWeeklyTask={completeWeeklyTask}
                 weeklyGoals={weekly} // we want to show the newest one first

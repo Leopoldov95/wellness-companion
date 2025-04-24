@@ -1,5 +1,10 @@
 import Journaling from "@/assets/images/activities/journaling.svg";
 import Meditate from "@/assets/images/activities/meditate.svg";
+import {
+  useActiveWeeklyGoals,
+  useCompleteDailyTask,
+  useUpdateWeeklyGoalTitle,
+} from "@/src/api/goals";
 import { useInsertMood, useMoodList } from "@/src/api/moods";
 import Facts from "@/src/components/Facts";
 import GoalProgressBar from "@/src/components/goal/GoalProgressBar";
@@ -14,6 +19,8 @@ import { useMood } from "@/src/providers/MoodProvider";
 import { globalStyles } from "@/src/styles/globals";
 import { Goal, WeeklyGoal } from "@/src/types/goals";
 import { MoodEntry, moodType } from "@/src/types/mood";
+import { formatDate } from "@/src/utils/dateUtils";
+import { isActiveWeeklyGoal } from "@/src/utils/goalsUtils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { Link } from "expo-router";
@@ -31,16 +38,23 @@ import { ActivityIndicator, Snackbar } from "react-native-paper";
 const HomeScreen = () => {
   // const { isMoodTracked } = useMood();
   const {
-    getUpcommingWeeklyGoal,
-    completeWeeklyTask,
-    weeklyGoals,
-    goals,
+    // getUpcommingWeeklyGoal,
+    // completeWeeklyTask,
+    // weeklyGoals,
+    // goals,
     today,
   } = useGoals();
   const { mutate: insertMood } = useInsertMood();
+  const { mutate: completeDailyTask } = useCompleteDailyTask();
+  const { mutate: updateWeeklyGoal } = useUpdateWeeklyGoalTitle();
 
   //? Is this flow okay? What is session changes?
   const { profile } = useAuth();
+  const {
+    data: fetchedWeeklyGoals,
+    isLoading: isWeeklyLoading,
+    error: weeklyGoalError,
+  } = useActiveWeeklyGoals(profile.id);
   const { data: fetchedMoods, error, isLoading } = useMoodList(profile.id);
   //*
   const [upcommingGoals, setUpcommingGoals] = useState<WeeklyGoal[]>([]);
@@ -54,22 +68,40 @@ const HomeScreen = () => {
   const [isMoodTracked, setIsMoodTracked] = useState(false);
 
   useEffect(() => {
-    const validDailyGoals = getUpcommingWeeklyGoal();
+    console.log("Main home page");
+    console.log("fetched weekly goals");
+    console.log(fetchedWeeklyGoals);
 
-    setUpcommingGoals(validDailyGoals);
-    if (validDailyGoals.length > 0) {
-      setParentGoal(
-        goals.filter((goal) => goal.id === validDailyGoals[0].goalId)[0]
+    if (fetchedWeeklyGoals.length > 0) {
+      const weeklyGoals = fetchedWeeklyGoals
+        .filter((goal) => {
+          return (
+            isActiveWeeklyGoal(goal, today, true) &&
+            (goal.dailyTasks.length === 0 ||
+              goal.dailyTasks.every(
+                (task) => formatDate(task.date) !== formatDate(today)
+              ))
+          );
+        }) // Ignore completed goals
+        .sort(
+          (a, b) =>
+            new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+        );
+
+      console.log("\n### RESULT:");
+      console.log(weeklyGoals);
+
+      setUpcommingGoals(weeklyGoals);
+
+      setProgress(
+        Math.floor(
+          ((fetchedWeeklyGoals.length - weeklyGoals.length) /
+            fetchedWeeklyGoals.length) *
+            100
+        )
       );
     }
-
-    setProgress(
-      Math.floor(
-        ((weeklyGoals.length - validDailyGoals.length) / weeklyGoals.length) *
-          100
-      )
-    );
-  }, [weeklyGoals]);
+  }, [fetchedWeeklyGoals]);
 
   useEffect(() => {
     if (!fetchedMoods || fetchedMoods.length === 0) return;
@@ -115,11 +147,44 @@ const HomeScreen = () => {
     );
   };
 
-  if (isLoading) {
+  const completeWeeklyTask = (weeklyGoalId: number, date: Date) => {
+    completeDailyTask(
+      {
+        weeklyGoalId,
+        date,
+      },
+      {
+        onSuccess: () => {
+          console.log("SUCCESS");
+        },
+        onError: (error) => {
+          console.log("ERROR");
+          console.log(error);
+        },
+      }
+    );
+  };
+
+  const updateWeeklyTask = (weeklyGoalId: number, newTitle: string) => {
+    updateWeeklyGoal(
+      {
+        weeklyGoalId,
+        newTitle,
+      },
+      {
+        onError: (error) => {
+          console.log("ERROR");
+          console.log(error);
+        },
+      }
+    );
+  };
+
+  if (isLoading || isWeeklyLoading) {
     return <ActivityIndicator />;
   }
 
-  if (error) {
+  if (error || weeklyGoalError) {
     return <Text>Failed to fetch</Text>;
   }
 
@@ -171,9 +236,9 @@ const HomeScreen = () => {
           <Text style={[globalStyles.subheader, { marginBottom: 10 }]}>
             Daily Tasks
           </Text>
-          {upcommingGoals.length > 0 && parentGoal ? (
+          {upcommingGoals.length > 0 ? (
             <WeeklyCard
-              parentGoal={parentGoal}
+              updateWeeklyTask={updateWeeklyTask}
               currentDate={today}
               completeWeeklyTask={completeWeeklyTask}
               weeklyGoal={upcommingGoals[0]}

@@ -81,7 +81,7 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
     }
 
     DateTimePickerAndroid.open({
-      value: form.dueDate,
+      value: new Date(form.dueDate),
       onChange,
       mode: "date",
       is24Hour: true,
@@ -132,6 +132,7 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
         outlineStyle={{ borderRadius: 8 }}
         onChangeText={(text) => handleChange("title", text)}
         placeholder="Become a better reader"
+        placeholderTextColor="#A9A9A9"
         style={styles.titleField}
       />
 
@@ -146,6 +147,7 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
             outlineStyle={{ borderRadius: 8 }}
             onChangeText={(text) => handleChange("weeklyTask", text)}
             placeholder="Read 3 times a week"
+            placeholderTextColor="#A9A9A9"
             style={styles.titleField}
           />
         </Fragment>
@@ -179,7 +181,9 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
           Target End Date
         </Button>
         <Text style={[styles.label, { textAlign: "center", marginTop: 6 }]}>
-          {form.dueDate ? form.dueDate.toDateString() : "Target Goal Date"}
+          {new Date(form.dueDate)
+            ? new Date(form.dueDate).toDateString()
+            : "Target Goal Date"}
         </Text>
       </View>
 

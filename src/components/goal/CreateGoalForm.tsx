@@ -16,6 +16,7 @@ const CreateGoalForm: React.FC<CreateGoalFormProps> = ({
   selectedGoalColors,
   onCancel,
 }) => {
+  const [error, setError] = useState("");
   const [form, setForm] = useState<GoalForm>({
     category: "cooking",
     title: "",
@@ -33,6 +34,26 @@ const CreateGoalForm: React.FC<CreateGoalFormProps> = ({
       ...prev,
       [field]: value,
     }));
+
+    // clear error by default
+    setError("");
+  };
+
+  const handleFormSubmit = () => {
+    if (!form.title.trim()) {
+      setError("Please enter a goal title.");
+      return;
+    }
+    const weeklyTask = form?.weeklyTask ?? "";
+    if (!weeklyTask.trim()) {
+      setError("Please enter a weekly task.");
+      return;
+    }
+    if (!form.color.trim()) {
+      setError("Please choose a goal color.");
+      return;
+    }
+    onSubmit(form);
   };
 
   return (
@@ -45,8 +66,10 @@ const CreateGoalForm: React.FC<CreateGoalFormProps> = ({
         handleChange={handleChange}
       />
 
+      {error.length > 0 && <Text style={styles.errorText}>{error}</Text>}
+
       <View style={styles.actions}>
-        <Button mode="contained" onPress={() => onSubmit(form)}>
+        <Button mode="contained" onPress={handleFormSubmit}>
           Create
         </Button>
         <Button
@@ -76,5 +99,12 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     gap: 18,
+  },
+  errorText: {
+    color: "#b00020",
+    textAlign: "center",
+    fontWeight: "600",
+    marginTop: -10,
+    marginBottom: 6,
   },
 });

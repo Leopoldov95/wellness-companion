@@ -24,7 +24,7 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal }) => {
   return (
     // TODO ~ Make the goals cards pressable
     <View style={styles.container}>
-      <Link href={`/(main)/goals/goal/${id}`} asChild>
+      <Link href={`/(main)/goals/${id}`} asChild>
         <Pressable
           android_ripple={{ color: "rgba(0,0,0,0.1)", borderless: true }}
           style={styles.card}

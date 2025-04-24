@@ -9,20 +9,31 @@ import { dateToReadible } from "@/src/utils/dateUtils";
 
 type WeeklyCardProps = {
   weeklyGoal: WeeklyGoal;
-  parentGoal: Goal; // needed to get parent details
+  // parentGoal: Goal; // needed to get parent details
   completeWeeklyTask: (id: number, date: Date) => void;
+  updateWeeklyTask: (id: number, title: string) => void;
   currentDate: Date;
 };
 
 const WeeklyCard: React.FC<WeeklyCardProps> = ({
   weeklyGoal,
-  parentGoal,
+  // parentGoal,
   currentDate,
   completeWeeklyTask,
+  updateWeeklyTask,
 }) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const { id, title, numTasks, dailyTasks, endDate } = weeklyGoal;
-  const { category, title: parentTitle, color } = parentGoal;
+  const {
+    id,
+    title,
+    numTasks,
+    dailyTasks,
+    endDate,
+    category,
+    parentTitle,
+    color,
+  } = weeklyGoal;
+  // const { category, title: parentTitle, color } = parentGoal;
 
   const isActive = isActiveWeeklyGoal(weeklyGoal, currentDate, true);
 
@@ -66,6 +77,7 @@ const WeeklyCard: React.FC<WeeklyCardProps> = ({
           isModalVisible
           currentDate={currentDate}
           completeWeeklyTask={completeWeeklyTask}
+          updateWeeklyTask={updateWeeklyTask}
           closeModal={() => setIsModalVisible(false)}
         />
       )}

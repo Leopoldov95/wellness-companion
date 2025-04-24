@@ -1,3 +1,10 @@
+import Colors from "@/src/constants/Colors";
+import Fonts from "@/src/constants/Fonts";
+import { globalStyles } from "@/src/styles/globals";
+import { WeeklyGoal } from "@/src/types/goals";
+import { formatDate, formatDateShort } from "@/src/utils/dateUtils";
+import { Feather } from "@expo/vector-icons";
+import React, { useRef, useState } from "react";
 import {
   Animated,
   Modal,
@@ -6,22 +13,15 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useRef, useState } from "react";
-import { WeeklyGoal } from "@/src/types/goals";
-import { Feather } from "@expo/vector-icons";
-import Colors from "@/src/constants/Colors";
-import GoalProgressBar from "../GoalProgressBar";
-import { Link } from "expo-router";
-import { globalStyles } from "@/src/styles/globals";
-import { formatDate, formatDateShort } from "@/src/utils/dateUtils";
 import { Button, TextInput } from "react-native-paper";
-import Fonts from "@/src/constants/Fonts";
+import GoalProgressBar from "../GoalProgressBar";
 
 type WeeklyDailyActionsProps = {
   goal: WeeklyGoal;
   isModalVisible: boolean;
   currentDate: Date;
   completeWeeklyTask: (id: number, date: Date) => void;
+  updateWeeklyTask: (id: number, title: string) => void;
   closeModal: () => void;
 };
 
@@ -30,6 +30,7 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
   isModalVisible,
   closeModal,
   completeWeeklyTask,
+  updateWeeklyTask,
   currentDate,
 }) => {
   const { id, title, numTasks, dailyTasks, color, startDate, endDate } = goal;
@@ -45,10 +46,6 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
   ).current;
 
   const handlePress = () => {
-    // console.log(`Has completed? ${completed}`);
-
-    // setCompleted(true);
-
     // Animate background change
     Animated.timing(backgroundColor, {
       toValue: 1,
@@ -79,7 +76,14 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
     return days;
   };
 
-  const weekDays = getWeekDays(startDate);
+  const onUpdate = () => {
+    if (goalTitle.length < 1) return;
+
+    updateWeeklyTask(id, goalTitle);
+    setisEdit(false);
+  };
+
+  const weekDays = getWeekDays(new Date(startDate));
 
   return (
     <Modal
@@ -193,6 +197,8 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
                 borderRadius: 8,
               }}
               mode="outlined"
+              onPress={onUpdate}
+              disabled={goalTitle.length < 1}
             >
               Save Goal Title
             </Button>
