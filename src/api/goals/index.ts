@@ -2,9 +2,11 @@
 //! Make sure to refer to user_id for invalidation else it won't work
 import { supabase } from "@/src/lib/supabase";
 import {
+  Category,
   Goal,
   GoalAPI,
   NumTasks,
+  Tables,
   WeeklyGoal,
   WeeklyGoalAPI,
 } from "@/src/types/goals";
@@ -21,28 +23,33 @@ type GoalUpdateInput = {
   }>;
 };
 
-const transformGoalFormat = (goalAPI: GoalAPI): Goal => ({
+const transformGoalFormat = (goalAPI: Tables<"goals">): Goal => ({
   id: goalAPI.id,
   userId: goalAPI.user_id,
-  category: goalAPI.category,
+  category: goalAPI.category as Category,
   title: goalAPI.title,
   color: goalAPI.color,
-  created: goalAPI.created_at,
-  dueDate: goalAPI.due_date,
-  lastUpdated: goalAPI.last_updated,
+  created: new Date(goalAPI.created_at),
+  dueDate: new Date(goalAPI.due_date),
+  lastUpdated: new Date(goalAPI.last_updated),
   status: goalAPI.status,
-  numTasks: goalAPI.num_tasks,
+  numTasks: goalAPI.num_tasks as NumTasks,
   progress: 0,
 });
 
+type WeeklyGoalWithRelations = Tables<"weekly_goals"> & {
+  goals: Tables<"goals">;
+  daily_tasks: Tables<"daily_tasks">[];
+};
+
 const transformWeeklyGoalFormat = (
-  weeklyGoalAPI: WeeklyGoalAPI
+  weeklyGoalAPI: WeeklyGoalWithRelations
 ): WeeklyGoal => ({
   id: weeklyGoalAPI.id,
   goalId: weeklyGoalAPI.goal_id,
   title: weeklyGoalAPI.title,
-  startDate: weeklyGoalAPI.start_date,
-  endDate: weeklyGoalAPI.end_date,
+  startDate: new Date(weeklyGoalAPI.start_date),
+  endDate: new Date(weeklyGoalAPI.end_date),
   numTasks: weeklyGoalAPI.goals.num_tasks as NumTasks,
   color: weeklyGoalAPI.goals.color,
   parentTitle: weeklyGoalAPI.goals.title,
@@ -143,7 +150,7 @@ export const usePastGoals = (userId: string) => {
         throw new Error(error.message);
       }
 
-      return data;
+      return (data ?? []).map(transformGoalFormat);
     },
     initialData: [],
   });
@@ -264,6 +271,8 @@ export const useCompleteOrExpireGoal = () => {
 
 // ✅ GET user current active week goals
 export const useActiveWeeklyGoals = (userId: string) => {
+  console.log(`fetching goals for user id... ${userId}`);
+
   return useQuery<WeeklyGoal[]>({
     queryKey: ["weekly_goals_active"],
     queryFn: async () => {
@@ -275,6 +284,7 @@ export const useActiveWeeklyGoals = (userId: string) => {
         .lte("start_date", today) // start_date <= today
         .gte("end_date", today) // end_date >= today
         .eq("goals.user_id", userId)
+        .not("goals", "is", null)
         .eq("goals.status", "active"); // make sure to only get active goals
 
       // should return an array of ojects represnting the weekly goals.
@@ -329,7 +339,7 @@ export const useCompleteDailyTask = () => {
       const { data: completedTask, error } = await supabase
         .from("daily_tasks")
         .insert({
-          date: date,
+          date: date.toString(),
           completed: true,
           weekly_goal_id: weeklyGoalId,
         })
@@ -401,7 +411,7 @@ export const useUpdateWeeklyGoalTitle = () => {
 /*** UTILITIES ***/
 
 // ensure weekly goals get apprpriately created
-export const ensureCurrentWeeklyGoals = async (userId: number) => {
+export const ensureCurrentWeeklyGoals = async (userId: string) => {
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
@@ -441,8 +451,8 @@ export const ensureCurrentWeeklyGoals = async (userId: number) => {
       newEnd.setDate(newStart.getDate() + 6);
 
       await supabase.from("weekly_goals").insert({
-        user_id: userId,
         goal_id: goal.id,
+        title: latestWeeklyGoal.title,
         start_date: newStart.toISOString().split("T")[0],
         end_date: newEnd.toISOString().split("T")[0],
       });

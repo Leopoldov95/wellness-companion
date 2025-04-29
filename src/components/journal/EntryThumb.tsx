@@ -4,6 +4,7 @@ import { GratitudeEntry } from "@/src/types/journal";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import React from "react";
 import {
+  Dimensions,
   FlatList,
   Image,
   ImageSourcePropType,
@@ -12,6 +13,9 @@ import {
   Text,
   View,
 } from "react-native";
+
+const { width } = Dimensions.get("window");
+const ITEM_WIDTH = (width - 60) / 2;
 
 interface EntryThumbProps {
   item: GratitudeEntry;
@@ -67,8 +71,18 @@ const styles = StyleSheet.create({
   },
   entryContainer: {
     aspectRatio: 1,
-    width: "100%",
+    width: ITEM_WIDTH,
     position: "relative",
+    // iOS Shadow
+    shadowColor: "#000", // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Shadow position
+    shadowOpacity: 0.25, // Shadow transparency
+    shadowRadius: 3.84, // Shadow blur radius
+    // Android Shadow
+    elevation: 3,
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: "#fff",
   },
   entryContent: {
     position: "absolute",

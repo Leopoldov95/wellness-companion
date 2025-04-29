@@ -1,9 +1,10 @@
 import { supabase } from "@/src/lib/supabase";
+import { Tables } from "@/src/types/goals";
 import { GratitudeEntry, JournalAPIEntry } from "@/src/types/journal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const transformJournalEntry = (
-  entry: JournalAPIEntry
+  entry: Tables<"journal">
 ): GratitudeEntry => ({
   id: entry.id,
   userId: entry.user_id,
@@ -14,7 +15,7 @@ export const transformJournalEntry = (
 });
 
 // get USER journal
-export const useJournals = (id: number) => {
+export const useJournals = (id: string) => {
   return useQuery<GratitudeEntry[]>({
     queryKey: ["journal", id],
     queryFn: async () => {
@@ -137,7 +138,7 @@ export const useDeleteJournal = () => {
 
 // get SHARED journals
 //TODO GET all shared journals NOT belonging to current user AND not SEEN
-export const useSharedJournals = (id: number) => {
+export const useSharedJournals = (id: string) => {
   return useQuery({
     queryKey: ["shared_journal", id],
     queryFn: async () => {

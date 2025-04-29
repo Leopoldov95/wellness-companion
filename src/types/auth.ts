@@ -13,4 +13,5 @@ export type AuthData = {
   session: Session | null;
   profile: any;
   loading: boolean;
+  refreshProfile: () => {};
 };

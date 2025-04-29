@@ -23,7 +23,7 @@ export type JournalContextType = {
 
 export type GratitudeEntry = {
   id: number;
-  userId: number;
+  userId: string;
   created_at: Date;
   items: DailyGraitudes;
   isShared: boolean;

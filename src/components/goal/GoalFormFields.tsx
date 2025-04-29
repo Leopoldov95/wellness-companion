@@ -91,7 +91,6 @@ const GoalFormFields: React.FC<GoalFormFieldProps> = ({
   };
 
   const toggleAccordion = () => {
-    // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setIsExpanded(!isExpanded);
   };
 

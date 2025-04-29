@@ -86,7 +86,7 @@ const JournalScreen = () => {
       },
       {
         onError: (error) => {
-          showToast(error.message, "success");
+          showToast(error.message, "error");
         },
       }
     );
@@ -126,6 +126,7 @@ const JournalScreen = () => {
       <View style={styles.actionsContainer}>
         {/* View community posts */}
         <Pressable
+          disabled={true}
           style={styles.button}
           onPress={() => router.push("/(main)/journal/shared")}
         >

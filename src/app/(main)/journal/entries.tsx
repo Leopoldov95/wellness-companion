@@ -175,17 +175,19 @@ const EntriesScreen = () => {
         data={fetchedJournals}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, index }) => (
-          <View style={{ flex: 1 }}>
-            <EntryThumb
-              item={item}
-              index={index}
-              image={BG_IMG[index]}
-              onPress={() => openModal(item.id, index)}
-            />
-          </View>
+          <EntryThumb
+            item={item}
+            index={index}
+            image={BG_IMG[index]}
+            onPress={() => openModal(item.id, index)}
+          />
         )}
         numColumns={2}
-        contentContainerStyle={{ paddingBottom: 120, marginTop: 20 }}
+        contentContainerStyle={{
+          paddingBottom: 120,
+          paddingTop: 20,
+          paddingHorizontal: 10,
+        }}
         columnWrapperStyle={{ columnGap: 10 }}
       />
 

@@ -1,4 +1,12 @@
-import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Alert,
+  Image,
+  Pressable,
+} from "react-native";
 import React, { useState } from "react";
 import Colors from "@/src/constants/Colors";
 import { Link, router, Stack } from "expo-router";
@@ -6,20 +14,68 @@ import Button from "@/src/components/Button";
 import Feather from "@expo/vector-icons/Feather";
 import { globalStyles } from "@/src/styles/globals";
 import { supabase } from "@/src/lib/supabase";
+import * as FileSystem from "expo-file-system";
+import * as Crypto from "expo-crypto";
+import * as ImagePicker from "expo-image-picker";
+import { decode } from "base64-arraybuffer";
+import Collapsible from "react-native-collapsible";
+import Fonts from "@/src/constants/Fonts";
+import { AVATARS } from "@/src/constants/Profile";
+
+const DEFAULT_IMAGE = AVATARS.alien_02;
 
 const SignUpScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [image, setImage] = useState<string | number>(DEFAULT_IMAGE);
+  const [imageKey, setImageKey] = useState<string | null>("alien_02");
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [errors, setErrors] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
     email: "",
     password: "",
     passwordConfirm: "",
     name: "",
   });
+  const uploadImage = async () => {
+    if (!image || typeof image !== "string" || !image.startsWith("file://")) {
+      // no image selected, or it's a local asset (not a file:// upload)
+      return;
+    }
 
-  const [loading, setLoading] = useState(false);
+    const base64 = await FileSystem.readAsStringAsync(image, {
+      encoding: "base64",
+    });
+    const filePath = `${Crypto.randomUUID()}.png`;
+    const contentType = "image/png";
+    const { data, error } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, decode(base64), { contentType });
 
-  const [errors, setErrors] = useState("");
+    if (data) {
+      return data.path;
+    }
+    if (error) {
+      console.log(error);
+    }
+  };
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+      setImageKey(null);
+    }
+  };
 
   const handleChange = (field: string, value: string) => {
     setForm((prevForm) => ({
@@ -35,27 +91,44 @@ const SignUpScreen = () => {
       setLoading(false);
       return;
     }
+    let userImagePath = "";
+
+    // user has selected default profile
+    if (imageKey !== null && typeof image === "number") {
+      userImagePath = `default:${imageKey}`;
+    }
+    if (imageKey === null && typeof image === "string") {
+      const imagePath = await uploadImage();
+      if (!imagePath) {
+        setErrors("Issue uploading image.");
+        return;
+      }
+      userImagePath = imagePath;
+    }
 
     const { error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
+      options: {
+        data: {
+          full_name: form.name, // must match what the trigger expects
+          avatar_url: userImagePath,
+        },
+      },
     });
 
-    // const { error } = await supabase.auth.signInWithPassword({
-    //   email,
-    //   password,
-    // });
+    if (error) {
+      console.log(error);
 
-    if (error) Alert.alert(error.message);
+      Alert.alert(error.message);
+      setLoading(false);
+      return;
+    }
     //! Only for testing, but move the user to the home page
     setLoading(false);
 
     console.log("account created!");
-
-    router.push("/(auth)/onboarding");
-    //return <Redirect href={"/(main)"} />;
-
-    //router.push("/");
+    //* no need for manual redirect as session handler takes care of that
   }
 
   const validateInput = () => {
@@ -95,12 +168,60 @@ const SignUpScreen = () => {
     return true;
   };
 
+  const toggleAccordion = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: "Sign In" }} />
 
       <View style={styles.header}>
         <Text style={globalStyles.title}>Create Account</Text>
+      </View>
+
+      <Image
+        source={typeof image === "string" ? { uri: image } : image}
+        style={styles.image}
+      />
+
+      <Text
+        onPress={pickImage}
+        style={[globalStyles.linkText, { textAlign: "center", fontSize: 16 }]}
+      >
+        Upload Image
+      </Text>
+
+      <View style={styles.avatarContainer}>
+        <Pressable onPress={toggleAccordion} style={styles.accordionHeader}>
+          <Text style={styles.label}>Choose Avatar Instead</Text>
+
+          <Feather
+            name={isExpanded ? "chevron-up" : "chevron-down"}
+            size={24}
+            color="black"
+          />
+        </Pressable>
+        <Collapsible collapsed={!isExpanded}>
+          <View style={styles.avatarWrapper}>
+            {Object.entries(AVATARS).map(([key, image]) => (
+              <Pressable
+                onPress={() => {
+                  setImage(image);
+                  setImageKey(key);
+                  toggleAccordion();
+                }}
+                key={key}
+              >
+                <Image
+                  resizeMode="cover"
+                  source={image}
+                  style={styles.avatar}
+                />
+              </Pressable>
+            ))}
+          </View>
+        </Collapsible>
       </View>
 
       {/* Email */}
@@ -179,14 +300,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     flexDirection: "column",
-    padding: 30,
+    paddingHorizontal: 30,
+    paddingVertical: 16,
     backgroundColor: Colors.light.greyBg,
   },
   header: {
-    marginBottom: 32,
+    marginBottom: 10,
   },
   label: {
-    color: "gray",
+    color: Colors.light.text,
+    fontFamily: Fonts.primary[400],
     fontSize: 16,
   },
   input: {
@@ -194,7 +317,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginTop: 5,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   error: {
     color: "red",
@@ -218,10 +341,44 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginTop: 5,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   passwordIcon: {
     marginLeft: "auto",
+  },
+  image: {
+    width: 150,
+    height: 150,
+    aspectRatio: 1,
+    alignSelf: "center",
+    borderRadius: 75,
+    marginBottom: 10,
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    aspectRatio: 1,
+    alignSelf: "center",
+    borderRadius: 40,
+  },
+  avatarContainer: {
+    overflow: "hidden",
+  },
+  accordionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+  },
+  avatarWrapper: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginHorizontal: "auto",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    rowGap: 10,
   },
 });
 

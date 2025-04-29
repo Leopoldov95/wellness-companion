@@ -9,7 +9,7 @@ export type MoodContextType = {
 
 export type MoodEntry = {
   id: number;
-  userId: number;
+  userId: string;
   mood: moodType;
   created_at: Date;
 };

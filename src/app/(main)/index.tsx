@@ -15,7 +15,6 @@ import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { useGoals } from "@/src/providers/GoalsProvider";
-import { useMood } from "@/src/providers/MoodProvider";
 import { globalStyles } from "@/src/styles/globals";
 import { Goal, WeeklyGoal } from "@/src/types/goals";
 import { MoodEntry, moodType } from "@/src/types/mood";
@@ -25,6 +24,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { Link } from "expo-router";
 import React, { useEffect, useState } from "react";
+import RemoteImage from "@/src/components/RemoteImage"; // component to read and use image from DB
 import {
   Image,
   Pressable,
@@ -33,7 +33,8 @@ import {
   Text,
   View,
 } from "react-native";
-import { ActivityIndicator, Snackbar } from "react-native-paper";
+import { ActivityIndicator } from "react-native-paper";
+import { AVATARS } from "@/src/constants/Profile";
 
 const HomeScreen = () => {
   // const { isMoodTracked } = useMood();
@@ -50,6 +51,7 @@ const HomeScreen = () => {
 
   //? Is this flow okay? What is session changes?
   const { profile } = useAuth();
+
   const {
     data: fetchedWeeklyGoals,
     isLoading: isWeeklyLoading,
@@ -59,19 +61,50 @@ const HomeScreen = () => {
   //*
   const [upcommingGoals, setUpcommingGoals] = useState<WeeklyGoal[]>([]);
   const [progress, setProgress] = useState(0);
-  const [parentGoal, setParentGoal] = useState<Goal | null>(null);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [image, setImage] = useState<string | number>(
+    profile?.avatar_url || AVATARS.alien_02
+  );
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarType, setSnackbarType] = useState<"success" | "error">(
     "success"
   );
   const [isMoodTracked, setIsMoodTracked] = useState(false);
 
-  useEffect(() => {
-    console.log("Main home page");
-    console.log("fetched weekly goals");
-    console.log(fetchedWeeklyGoals);
+  console.log("\n\n######### HOME SCREEN ###########");
+  console.log("profile");
+  console.log(profile);
 
+  useEffect(() => {
+    console.log("calling use effect");
+
+    if (profile?.avatar_url) {
+      console.log("we have a profile image!");
+
+      const avatar_url = profile?.avatar_url;
+      if (avatar_url.length > 0) {
+        if (profile?.avatar_url.startsWith("default:")) {
+          console.log("using a placeholder image!");
+
+          // It's a default avatar, like "female_01"
+          const avatarKey = avatar_url.replace("default:", "");
+          if (avatarKey in AVATARS) {
+            const image = AVATARS[avatarKey as keyof typeof AVATARS];
+            setImage(image);
+          }
+          setImage(image);
+        } else {
+          // It's an uploaded avatar
+          const image = avatar_url;
+          console.log(image);
+
+          setImage(image);
+        }
+      }
+    }
+  }, [profile]);
+
+  useEffect(() => {
     if (fetchedWeeklyGoals.length > 0) {
       const weeklyGoals = fetchedWeeklyGoals
         .filter((goal) => {
@@ -88,9 +121,6 @@ const HomeScreen = () => {
             new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
         );
 
-      console.log("\n### RESULT:");
-      console.log(weeklyGoals);
-
       setUpcommingGoals(weeklyGoals);
 
       setProgress(
@@ -100,6 +130,8 @@ const HomeScreen = () => {
             100
         )
       );
+    } else {
+      setUpcommingGoals([]);
     }
   }, [fetchedWeeklyGoals]);
 
@@ -131,6 +163,8 @@ const HomeScreen = () => {
     setSnackbarType(type);
     setSnackbarVisible(true);
   };
+
+  // API Calls
 
   const onMoodPress = (mood: moodType) => {
     insertMood(
@@ -185,6 +219,9 @@ const HomeScreen = () => {
   }
 
   if (error || weeklyGoalError) {
+    console.log(error);
+    console.log(weeklyGoalError);
+
     return <Text>Failed to fetch</Text>;
   }
 
@@ -208,14 +245,30 @@ const HomeScreen = () => {
             >
               Welcome back,
             </Text>
-            <Text style={styles.name}>John Doe</Text>
+            <Text style={styles.name}>{profile.full_name}</Text>
           </View>
         </View>
         <View>
-          <Image
+          {image.toString().startsWith("default:") || !isNaN(Number(image)) ? (
+            <Image
+              resizeMode="cover"
+              source={typeof image === "string" ? { uri: image } : image}
+              style={styles.avatar}
+            />
+          ) : (
+            <RemoteImage
+              fallback={
+                "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+              }
+              path={profile?.avatar_url}
+              style={styles.avatar}
+              resizeMode="cover"
+            />
+          )}
+          {/* <Image
             style={styles.avatar}
-            source={require("@/assets/images/placeholder/profile.png")}
-          />
+            source={typeof image === "string" ? { uri: image } : image}
+          /> */}
         </View>
       </View>
 

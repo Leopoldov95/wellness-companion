@@ -48,8 +48,7 @@ const SignInScreen = () => {
     //! Only for testing, but move the user to the home page
 
     setLoading(false);
-    // router.push("/(main)");
-    // return <Redirect href={"/(main)"} />;
+    //* no need for manual redirect as session handler takes care of that
   }
 
   const validateInput = () => {

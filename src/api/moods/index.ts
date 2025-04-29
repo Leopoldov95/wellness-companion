@@ -1,10 +1,18 @@
 import { supabase } from "@/src/lib/supabase";
-import { MoodEntry } from "@/src/types/mood";
+import { Tables } from "@/src/types/goals";
+import { MoodEntry, moodType } from "@/src/types/mood";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+export const transformMoodEntry = (entry: Tables<"moods">): MoodEntry => ({
+  id: entry.id,
+  userId: entry.user_id,
+  created_at: new Date(entry.created_at),
+  mood: entry.mood as moodType,
+});
 
 //! dont pass in ID, use session to get user ID
 // get current user's mood
-export const useMoodList = (id: number) => {
+export const useMoodList = (id: string) => {
   return useQuery({
     queryKey: ["moods", id],
     queryFn: async () => {
@@ -16,8 +24,7 @@ export const useMoodList = (id: number) => {
       if (error) {
         throw new Error(error.message);
       }
-
-      return (data as MoodEntry[]) ?? [];
+      return (data ?? []).map(transformMoodEntry);
     },
   });
 };
