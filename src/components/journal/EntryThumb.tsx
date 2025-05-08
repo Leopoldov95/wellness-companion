@@ -19,19 +19,11 @@ const ITEM_WIDTH = (width - 60) / 2;
 
 interface EntryThumbProps {
   item: GratitudeEntry;
-  index: number;
   image: ImageSourcePropType;
   onPress: () => void;
 }
 
-const EntryThumb: React.FC<EntryThumbProps> = ({
-  item,
-  index,
-  image,
-  onPress,
-}) => {
-  const imageIndex = (index % 13) + 1;
-
+const EntryThumb: React.FC<EntryThumbProps> = ({ item, image, onPress }) => {
   return (
     <View style={styles.entryContainer}>
       <Image resizeMode="contain" source={image} style={styles.image} />
@@ -57,6 +49,8 @@ const EntryThumb: React.FC<EntryThumbProps> = ({
             color={Colors.light.red}
           />
         )}
+
+        <Text style={styles.date}>{item.created_at.toLocaleDateString()}</Text>
       </Pressable>
     </View>
   );
@@ -70,6 +64,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   entryContainer: {
+    marginBottom: 16,
     aspectRatio: 1,
     width: ITEM_WIDTH,
     position: "relative",
@@ -103,6 +98,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 10,
     right: 10,
+  },
+  date: {
+    textAlign: "center",
+    marginTop: "auto",
   },
 });
 

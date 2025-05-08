@@ -91,7 +91,6 @@ const JournalScreen = () => {
       }
     );
 
-    //TODO clear form and disable button
     setEntries({
       entry1: "",
       entry2: "",
@@ -127,7 +126,7 @@ const JournalScreen = () => {
         {/* View community posts */}
         <Pressable
           disabled={true}
-          style={styles.button}
+          style={[styles.button, styles.disabledBtn]}
           onPress={() => router.push("/(main)/journal/shared")}
         >
           <Feather name="users" size={24} color="white" />

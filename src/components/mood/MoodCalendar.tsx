@@ -8,6 +8,7 @@ import VerySad from "@/assets/images/emotions/colored/very-sad.svg";
 import { Calendar, DateData } from "react-native-calendars";
 import { MoodEntry, moodType } from "@/src/types/mood";
 import { globalStyles } from "@/src/styles/globals";
+import { datetoLocalString } from "@/src/utils/dateUtils";
 
 type MoodCalendarProps = {
   moodEntries: MoodEntry[];
@@ -61,7 +62,7 @@ const getMarkedDates = (entries: MoodEntry[]) => {
   > = {};
 
   entries.forEach((entry) => {
-    const dateKey = new Date(entry.created_at).toISOString().split("T")[0];
+    const dateKey = datetoLocalString(entry.created_at);
 
     marked[dateKey] = {
       customStyles: {
@@ -94,11 +95,9 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
           setCurrentMonth(month.dateString.slice(0, 7))
         }
         dayComponent={({ date, state }: { date: DateData; state: string }) => {
-          const moodEntry = moodEntries.find(
-            (entry) =>
-              new Date(entry.created_at).toISOString().split("T")[0] ===
-              date.dateString
-          );
+          const moodEntry = moodEntries.find((entry) => {
+            return datetoLocalString(entry.created_at) === date.dateString;
+          });
 
           return (
             <View

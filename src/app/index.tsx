@@ -6,11 +6,7 @@ import { ActivityIndicator } from "react-native-paper";
 
 export default function index() {
   const { session, loading } = useAuth();
-  const [user, setUser] = useState(null);
-
-  console.log("\n**********");
-
-  console.log("inside app index");
+  // const [user, setUser] = useState(null);
 
   if (loading) {
     return <ActivityIndicator />;

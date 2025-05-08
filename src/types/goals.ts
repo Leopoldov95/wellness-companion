@@ -55,6 +55,7 @@ export type WeeklyGoal = {
   color: string;
   category: string;
   parentTitle: string;
+  status: "active" | "completed" | "expired";
 };
 
 export type WeeklyGoalAPI = {
@@ -148,14 +149,5 @@ export const categoryData: CategoryItem[] = [
 ];
 
 export type GoalsContextType = {
-  goals: Goal[];
   today: Date;
-  weeklyGoals: WeeklyGoal[];
-  selectedGoalColors: string[];
-  createGoal: (formDate: GoalForm) => void;
-  updateGoal: (id: number, formData: GoalForm) => void;
-  deleteGoal: (id: number) => void;
-  getWeeklyGoalsById: (id: number) => WeeklyGoal[];
-  getUpcommingWeeklyGoal: () => WeeklyGoal[];
-  completeWeeklyTask: (id: number, date: Date) => void;
 };

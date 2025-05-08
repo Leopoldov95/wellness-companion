@@ -9,11 +9,18 @@ import {
 } from "react";
 import { supabase } from "@/src/lib/supabase";
 import { Tables } from "../database.types";
+import { ensureCurrentWeeklyGoals } from "../api/goals";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AuthContext = createContext<AuthData>({
   session: null,
   loading: true,
-  profile: null,
+  profile: {
+    id: "",
+    avatar_url: "",
+    full_name: "",
+    updated_at: new Date().toISOString(),
+  },
   refreshProfile: async () => {},
 });
 
@@ -53,6 +60,20 @@ export default function AuthProvider({ children }: PropsWithChildren) {
   //   });
   // }, []);
 
+  const maybeRunGoalInit = async (userId: string) => {
+    const todayStr = new Date().toISOString().split("T")[0];
+    // const lastRun = await AsyncStorage.getItem("lastGoalInitRun");
+
+    // if (lastRun === todayStr) return;
+
+    try {
+      await ensureCurrentWeeklyGoals(userId);
+      // await AsyncStorage.setItem("lastGoalInitRun", todayStr);
+    } catch (error) {
+      console.error("Failed to ensure current weekly goals:", error);
+    }
+  };
+
   const fetchProfile = async (userId: string) => {
     const { data, error } = await supabase
       .from("profiles")
@@ -76,6 +97,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
 
       if (session) {
         await fetchProfile(session.user.id);
+        // run goal updates here
+        await maybeRunGoalInit(session.user.id);
       }
 
       setLoading(false);

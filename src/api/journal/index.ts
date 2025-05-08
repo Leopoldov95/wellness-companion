@@ -30,6 +30,7 @@ export const useJournals = (id: string) => {
 
       return (data ?? []).map(transformJournalEntry);
     },
+    initialData: [],
   });
 };
 

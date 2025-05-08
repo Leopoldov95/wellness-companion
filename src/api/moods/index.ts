@@ -26,6 +26,7 @@ export const useMoodList = (id: string) => {
       }
       return (data ?? []).map(transformMoodEntry);
     },
+    initialData: [],
   });
 };
 

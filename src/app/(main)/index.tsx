@@ -3,6 +3,8 @@ import Meditate from "@/assets/images/activities/meditate.svg";
 import {
   useActiveWeeklyGoals,
   useCompleteDailyTask,
+  useGoalsList,
+  useUpdateGoalDetails,
   useUpdateWeeklyGoalTitle,
 } from "@/src/api/goals";
 import { useInsertMood, useMoodList } from "@/src/api/moods";
@@ -18,8 +20,11 @@ import { useGoals } from "@/src/providers/GoalsProvider";
 import { globalStyles } from "@/src/styles/globals";
 import { Goal, WeeklyGoal } from "@/src/types/goals";
 import { MoodEntry, moodType } from "@/src/types/mood";
-import { formatDate } from "@/src/utils/dateUtils";
-import { isActiveWeeklyGoal } from "@/src/utils/goalsUtils";
+import { datetoLocalString, formatDate } from "@/src/utils/dateUtils";
+import {
+  calculateGoalProgress,
+  isActiveWeeklyGoal,
+} from "@/src/utils/goalsUtils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { Link } from "expo-router";
@@ -48,6 +53,7 @@ const HomeScreen = () => {
   const { mutate: insertMood } = useInsertMood();
   const { mutate: completeDailyTask } = useCompleteDailyTask();
   const { mutate: updateWeeklyGoal } = useUpdateWeeklyGoalTitle();
+  const { mutate: updateGoal } = useUpdateGoalDetails();
 
   //? Is this flow okay? What is session changes?
   const { profile } = useAuth();
@@ -58,7 +64,9 @@ const HomeScreen = () => {
     error: weeklyGoalError,
   } = useActiveWeeklyGoals(profile.id);
   const { data: fetchedMoods, error, isLoading } = useMoodList(profile.id);
-  //*
+  const { data: fetchedGoals, isLoading: isGoalsLoading } = useGoalsList(
+    profile.id
+  );
   const [upcommingGoals, setUpcommingGoals] = useState<WeeklyGoal[]>([]);
   const [progress, setProgress] = useState(0);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -71,33 +79,21 @@ const HomeScreen = () => {
   );
   const [isMoodTracked, setIsMoodTracked] = useState(false);
 
-  console.log("\n\n######### HOME SCREEN ###########");
-  console.log("profile");
-  console.log(profile);
-
   useEffect(() => {
-    console.log("calling use effect");
-
     if (profile?.avatar_url) {
-      console.log("we have a profile image!");
-
       const avatar_url = profile?.avatar_url;
       if (avatar_url.length > 0) {
         if (profile?.avatar_url.startsWith("default:")) {
-          console.log("using a placeholder image!");
-
           // It's a default avatar, like "female_01"
           const avatarKey = avatar_url.replace("default:", "");
           if (avatarKey in AVATARS) {
             const image = AVATARS[avatarKey as keyof typeof AVATARS];
             setImage(image);
           }
-          setImage(image);
+          //setImage(image);
         } else {
           // It's an uploaded avatar
           const image = avatar_url;
-          console.log(image);
-
           setImage(image);
         }
       }
@@ -105,6 +101,9 @@ const HomeScreen = () => {
   }, [profile]);
 
   useEffect(() => {
+    // console.log("\n\n\nWEEEKLY UPDATE");
+    // console.log(fetchedWeeklyGoals);
+
     if (fetchedWeeklyGoals.length > 0) {
       const weeklyGoals = fetchedWeeklyGoals
         .filter((goal) => {
@@ -120,6 +119,8 @@ const HomeScreen = () => {
           (a, b) =>
             new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
         );
+      // console.log("weekly goals:");
+      // console.log(weeklyGoals);
 
       setUpcommingGoals(weeklyGoals);
 
@@ -138,10 +139,13 @@ const HomeScreen = () => {
   useEffect(() => {
     if (!fetchedMoods || fetchedMoods.length === 0) return;
 
-    const todayDate = new Date().toISOString().split("T")[0];
+    //const todayDate = new Date().toISOString().split("T")[0];
+    const todayDate = datetoLocalString(new Date());
 
     const moodToday = fetchedMoods.find((entry: MoodEntry) => {
-      const entryDate = new Date(entry.created_at).toISOString().split("T")[0];
+      //const entryDate = new Date(entry.created_at).toISOString().split("T")[0];
+      const entryDate = datetoLocalString(entry.created_at);
+
       return entryDate === todayDate;
     });
 
@@ -188,9 +192,6 @@ const HomeScreen = () => {
         date,
       },
       {
-        onSuccess: () => {
-          console.log("SUCCESS");
-        },
         onError: (error) => {
           console.log("ERROR");
           console.log(error);
@@ -219,9 +220,6 @@ const HomeScreen = () => {
   }
 
   if (error || weeklyGoalError) {
-    console.log(error);
-    console.log(weeklyGoalError);
-
     return <Text>Failed to fetch</Text>;
   }
 

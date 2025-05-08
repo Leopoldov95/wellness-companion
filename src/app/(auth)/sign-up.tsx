@@ -124,10 +124,8 @@ const SignUpScreen = () => {
       setLoading(false);
       return;
     }
-    //! Only for testing, but move the user to the home page
     setLoading(false);
 
-    console.log("account created!");
     //* no need for manual redirect as session handler takes care of that
   }
 

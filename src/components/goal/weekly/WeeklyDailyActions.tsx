@@ -53,10 +53,6 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
       useNativeDriver: false, // Background color animation requires false
     }).start();
 
-    // need to add result to entry list
-    const date = new Date();
-    // TODO ~ remember to Date transform this
-
     completeWeeklyTask(id, currentDate);
   };
 
@@ -116,7 +112,7 @@ const WeeklyDailyActions: React.FC<WeeklyDailyActionsProps> = ({
                 }
               />
             ) : (
-              <Text style={globalStyles.labelText}>{goalTitle}</Text>
+              <Text style={globalStyles.labelText}>{title}</Text>
             )}
 
             <Feather

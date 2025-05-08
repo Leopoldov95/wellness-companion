@@ -1,4 +1,5 @@
 import { Session } from "@supabase/supabase-js";
+import { Tables } from "../database.types";
 
 export type User = {
   id?: number;
@@ -11,7 +12,7 @@ export type User = {
 // TODO ~ might need to handle the profile type
 export type AuthData = {
   session: Session | null;
-  profile: any;
+  profile: Tables<"profiles">;
   loading: boolean;
   refreshProfile: () => {};
 };

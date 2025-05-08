@@ -1,9 +1,11 @@
 import Wave from "@/assets/images/goals/wave.svg";
 import {
   useActiveWeeklyGoals,
+  useAllWeeklyGoals,
   useCompleteDailyTask,
   useGoalsList,
   useInsertGoal,
+  useUpdateGoalDetails,
   useUpdateWeeklyGoalTitle,
 } from "@/src/api/goals";
 import CreateGoal from "@/src/components/goal/CreateGoal";
@@ -22,6 +24,8 @@ import NoGoals from "@/assets/images/goals/no_goals.svg";
 import { GoalForm } from "@/src/types/goals";
 import { ActivityIndicator } from "react-native-paper";
 import Toaster from "@/src/components/Snackbar";
+import { calculateGoalProgress } from "@/src/utils/goalsUtils";
+import { datetoLocalString } from "@/src/utils/dateUtils";
 
 /**
  * There could be a qizard that helps users figure out how this system works
@@ -31,12 +35,11 @@ import Toaster from "@/src/components/Snackbar";
  */
 
 const GoalsScreen = () => {
-  console.log("\n###### Hello from goals screen! #####");
-
   const { profile } = useAuth();
   const { mutate: insertGoal } = useInsertGoal();
   const { mutate: completeDailyTask } = useCompleteDailyTask();
   const { mutate: updateWeeklyGoal } = useUpdateWeeklyGoalTitle();
+  const { mutate: updateGoal } = useUpdateGoalDetails();
   const { data: fetchedGoals, isLoading: isGoalsLoading } = useGoalsList(
     profile.id
   );
@@ -45,6 +48,12 @@ const GoalsScreen = () => {
     isLoading: isWeeklyLoading,
     error: weeklyGoalError,
   } = useActiveWeeklyGoals(profile.id);
+  // all weekly goals
+  const {
+    data: fetchedAllWeeklyGoals,
+    error: allWeeklyGoalsError,
+    isLoading: isAllWeeklyGoalsLoading,
+  } = useAllWeeklyGoals(profile.id);
   const [goalModalVisible, setGoalModalVisible] = useState(false);
   const [selectedGoalColors, setSelectedGoalColors] = useState<string[]>([]);
 
@@ -58,9 +67,13 @@ const GoalsScreen = () => {
     fetchedGoals.forEach((goal) => {
       if (goal.status === "active") {
         setSelectedGoalColors((prev) => [...prev, goal.color]);
+        goal.progress = calculateGoalProgress(
+          goal,
+          fetchedAllWeeklyGoals.filter((wkGoal) => wkGoal.goalId === goal.id)
+        );
       }
     });
-  }, [fetchedGoals]);
+  }, [fetchedGoals, fetchedAllWeeklyGoals]);
 
   const showToast = (message: string, type: "success" | "error") => {
     setSnackbarMessage(message);
@@ -99,9 +112,6 @@ const GoalsScreen = () => {
         date,
       },
       {
-        onSuccess: () => {
-          console.log("SUCCESS");
-        },
         onError: (error) => {
           console.log("ERROR");
           console.log(error);

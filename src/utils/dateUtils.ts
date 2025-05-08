@@ -1,3 +1,10 @@
+export const toISOStringWithLocalTime = (date: Date) => {
+  // Create a new date that adjusts for the timezone offset
+  const tzOffsetMs = date.getTimezoneOffset() * 60 * 1000;
+  const localTime = new Date(date.getTime() - tzOffsetMs);
+  return localTime.toISOString().slice(0, 19); // removes the 'Z' at end
+};
+
 // converts any date to YYYY-MM-DD format
 export function formatDate(inputDate: string | Date): string {
   // Convert input to a Date object
@@ -40,4 +47,15 @@ export function dateToReadible(date: Date): string {
     day: "2-digit",
     year: "numeric",
   });
+}
+
+// converts date to local time in YYYY-MM-DD
+export function datetoLocalString(date: Date): string {
+  return (
+    new Date(date).getFullYear() +
+    "-" +
+    String(date.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(date.getDate()).padStart(2, "0")
+  );
 }

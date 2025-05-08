@@ -198,9 +198,6 @@ const ProfileScreen = () => {
 
     // call DB here
     updateProfile(updates, {
-      onSuccess: () => {
-        console.log("changes saved!");
-      },
       onError: (error) => {
         console.log("something wrong...");
 

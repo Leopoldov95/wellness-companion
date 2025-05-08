@@ -14,10 +14,10 @@ import { useAuth } from "@/src/providers/AuthProvider";
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
 
-  const { session } = useAuth();
+  const { session, profile } = useAuth();
 
   // if no session then redirect to index and there we have our main redirect control
-  if (!session) {
+  if (!session || !profile) {
     //* Manuall redirect to (auth)
     return <Redirect href={"/(auth)/sign-in"} />;
   }

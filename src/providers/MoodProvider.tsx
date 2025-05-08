@@ -25,8 +25,6 @@ const MoodProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isMoodTracked, setIsMoodTracked] = useState(false);
 
   const onMoodPress = async (userMood: moodType) => {
-    console.log(`your mood is ${userMood}`);
-
     setMood(userMood);
     setIsMoodTracked(true);
   };

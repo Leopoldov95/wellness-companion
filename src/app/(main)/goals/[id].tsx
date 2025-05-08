@@ -26,10 +26,6 @@ const GoalEditScreen = () => {
   const { id: idString } = useLocalSearchParams();
   const id = parseFloat(typeof idString === "string" ? idString : idString[0]);
   const queryClient = useQueryClient();
-  console.log("\n####### GOAL ID PAGE #########");
-  console.log(`goal id is... ${id}`);
-
-  console.log("CHECK 1");
 
   const { goals, getWeeklyGoalsById, today, completeWeeklyTask } = useGoals();
   const [goal, setGoal] = useState<Goal | null>(null);
@@ -55,8 +51,6 @@ const GoalEditScreen = () => {
   const { mutate: deleteGoal } = useDeleteGoal();
   const { mutate: updateWeeklyGoal } = useUpdateWeeklyGoalTitle();
 
-  console.log("CHECK 2");
-
   const router = useRouter();
 
   if (isWeeklyLoading || isGoalsLoading) {
@@ -66,8 +60,6 @@ const GoalEditScreen = () => {
   if (weeklyTaskError || goalsError || !fetchedGoals) {
     return <Text>Error...</Text>;
   }
-
-  console.log("CHECK 3");
 
   useEffect(() => {
     if (
@@ -119,22 +111,6 @@ const GoalEditScreen = () => {
     });
   }, [fetchedGoals, fetchedWeeklyGoals, isGoalsLoading, isWeeklyLoading, id]);
 
-  console.log("CHECK 4");
-
-  // fallack in case wekkly goal returns an empty array
-  // useEffect(() => {
-  //   if (
-  //     !isWeeklyLoading &&
-  //     fetchedWeeklyGoals &&
-  //     fetchedWeeklyGoals.length === 0 &&
-  //     !weeklyTaskError
-  //   ) {
-  //     console.log("redirecting within useEffects");
-
-  //     router.replace("/(main)/goals");
-  //   }
-  // }, [fetchedWeeklyGoals, isWeeklyLoading, weeklyTaskError]);
-
   //TODO ~ add API here
   const handleUpdate = (updatedForm: GoalForm) => {
     if (goal) {
@@ -156,8 +132,6 @@ const GoalEditScreen = () => {
     }
   };
 
-  console.log("CHECK 5");
-
   //TODO ~ add delete here
   const onDelete = () => {
     Alert.alert("Confirm", "Are you sure you want to delete this goal?", [
@@ -168,8 +142,6 @@ const GoalEditScreen = () => {
         text: "Delete",
         style: "destructive",
         onPress: async () => {
-          console.log("\n****** DELETING GOAL *********");
-
           deleteGoal(
             {
               userId: profile.id,
@@ -177,7 +149,6 @@ const GoalEditScreen = () => {
             },
             {
               onSuccess: async () => {
-                console.log("goal deleted!");
                 await queryClient.invalidateQueries({
                   queryKey: ["weekly_goals_active"],
                 }); // force refetch!
@@ -208,23 +179,6 @@ const GoalEditScreen = () => {
       }
     );
   };
-
-  console.log("CHECK 6");
-
-  // no goal handler
-  // if (
-  //   !isGoalsLoading &&
-  //   fetchedGoals?.length > 0 &&
-  //   !fetchedGoals.find((g) => g.id === id)
-  // ) {
-  //   console.log("redrecting...");
-
-  //   return router.replace("/(main)/goals");
-  // }
-
-  console.log("CHECK 7");
-  console.log(`Value of Goal`);
-  console.log(goal);
 
   if (goal) {
     const { title, category, dueDate, progress, color, numTasks } = goal;

@@ -7,10 +7,6 @@ import { useAuth } from "@/src/providers/AuthProvider";
 const AuthLayout = () => {
   const { session } = useAuth();
 
-  console.log("\n**********");
-
-  console.log("auth layout");
-
   if (session) {
     return <Redirect href={"/"} />;
   }

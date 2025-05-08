@@ -1,16 +1,20 @@
 /** GOALS **/
 //! Make sure to refer to user_id for invalidation else it won't work
+import { Database } from "@/src/database.types";
 import { supabase } from "@/src/lib/supabase";
 import {
   Category,
   Goal,
-  GoalAPI,
   NumTasks,
   Tables,
   WeeklyGoal,
-  WeeklyGoalAPI,
 } from "@/src/types/goals";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 type GoalUpdateInput = {
   id: number;
@@ -20,6 +24,7 @@ type GoalUpdateInput = {
     numTasks: number;
     category: string;
     dueDate: Date;
+    status: "active" | "expired" | "completed";
   }>;
 };
 
@@ -42,12 +47,19 @@ type WeeklyGoalWithRelations = Tables<"weekly_goals"> & {
   daily_tasks: Tables<"daily_tasks">[];
 };
 
+type InsertGoalWithWeeklyGoalReturn =
+  Database["public"]["Functions"]["insert_goal_with_weekly_goal"]["Returns"];
+
+type InsertGoalWithWeeklyGoalArgs =
+  Database["public"]["Functions"]["insert_goal_with_weekly_goal"]["Args"];
+
 const transformWeeklyGoalFormat = (
   weeklyGoalAPI: WeeklyGoalWithRelations
 ): WeeklyGoal => ({
   id: weeklyGoalAPI.id,
   goalId: weeklyGoalAPI.goal_id,
   title: weeklyGoalAPI.title,
+  status: weeklyGoalAPI.status,
   startDate: new Date(weeklyGoalAPI.start_date),
   endDate: new Date(weeklyGoalAPI.end_date),
   numTasks: weeklyGoalAPI.goals.num_tasks as NumTasks,
@@ -62,13 +74,50 @@ const transformWeeklyGoalFormat = (
   })),
 });
 
+//* Utility method to clear all goal related queries when an update is made as all of these are interconnected
+
+const invalidateGoalQueries = async ({
+  queryClient,
+  userId,
+  goalId,
+  clearOld,
+}: {
+  queryClient: QueryClient;
+  userId?: string;
+  goalId?: number;
+  clearOld?: boolean;
+}) => {
+  // default queries
+  await queryClient.invalidateQueries({ queryKey: ["goals"] });
+  await queryClient.invalidateQueries({
+    queryKey: ["weekly_goals_active"],
+  });
+  await queryClient.invalidateQueries({
+    queryKey: ["weekly_goals_all"],
+  });
+
+  // only want to clear old query cache when necessay
+  if (clearOld) {
+    await queryClient.invalidateQueries({ queryKey: ["old_goals"] });
+  }
+
+  // goal related queries
+  if (goalId) {
+    await queryClient.invalidateQueries({
+      queryKey: ["weekly_goals", goalId],
+    });
+  }
+
+  // user-goal related queries
+  if (userId) {
+  }
+};
+
 // ✅ GET user active goals
 export const useGoalsList = (userId: string) => {
   return useQuery<Goal[]>({
     queryKey: ["goals"],
     queryFn: async () => {
-      //await ensureCurrentWeeklyGoals(id);
-
       const { data, error } = await supabase
         .from("goals")
         .select("*")
@@ -86,20 +135,21 @@ export const useGoalsList = (userId: string) => {
   });
 };
 
-// ✅ POST create a new goal (must check in DB no more than 10 entries)
-//! this will throw an error is user has >= 10 goals, must update UI to support this
+// POST create a new goal (must check in DB no more than 10 entries)
+//TODO this will throw an error is user has >= 10 goals, must update UI to support this
 export const useInsertGoal = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    async mutationFn(data: any) {
-      console.log("creating goal...");
-      const start = new Date();
-      const end = new Date();
-      end.setDate(start.getDate() + 6); // 7-day span
+    async mutationFn(data: any): Promise<InsertGoalWithWeeklyGoalReturn> {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // set to local midnight
+      data.dueDate.setHours(0, 0, 0, 0); // set parent goal to midnight as well
+      const end = new Date(today);
+      end.setDate(today.getDate() + 6); // 7-day span
 
-      const startStr = start.toISOString().split("T")[0];
-      const endStr = end.toISOString().split("T")[0];
+      const startStr = today.toISOString();
+      const endStr = end.toISOString();
 
       const { data: newGoal, error } = await supabase.rpc(
         "insert_goal_with_weekly_goal",
@@ -109,13 +159,15 @@ export const useInsertGoal = () => {
           p_category: data.category,
           p_num_tasks: data.numTasks,
           p_color: data.color,
-          p_due_date: data.dueDate,
+          p_due_date: data.dueDate.toISOString(),
           p_weekly_task: data.weeklyTask,
           p_start_date: startStr,
           p_end_date: endStr,
         }
       );
       if (error) {
+        console.log(error);
+
         throw new Error(
           "Failed to create goal and weekly goal: " + error.message
         );
@@ -124,13 +176,7 @@ export const useInsertGoal = () => {
       return newGoal;
     },
     async onSuccess(_, data) {
-      await queryClient.invalidateQueries({ queryKey: ["goals"] });
-      // await queryClient.invalidateQueries({
-      //   queryKey: ["goals", data.user_id],
-      // });
-      await queryClient.invalidateQueries({
-        queryKey: ["weekly_goals_active"],
-      });
+      await invalidateGoalQueries({ queryClient });
     },
   });
 };
@@ -158,22 +204,33 @@ export const usePastGoals = (userId: string) => {
 
 /** BOTH **/
 
-// ✅ PUT update goal details (title, color, num_tasks, etc.)
+// PUT update goal details (title, color, num_tasks, etc.)
 
 export const useUpdateGoalDetails = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     async mutationFn({ id, updates }: GoalUpdateInput) {
+      const updatesToDbKeyMap: Record<string, keyof Tables<"goals">> = {
+        title: "title",
+        color: "color",
+        numTasks: "num_tasks",
+        category: "category",
+        dueDate: "due_date",
+        status: "status",
+      };
       // Map camelCase fields to DB snake_case
-      const dbUpdates: Record<string, any> = {};
+      const dbUpdates: Partial<Tables<"goals">> = {};
 
-      if (updates.title !== undefined) dbUpdates.title = updates.title;
-      if (updates.color !== undefined) dbUpdates.color = updates.color;
-      if (updates.numTasks !== undefined)
-        dbUpdates.num_tasks = updates.numTasks;
-      if (updates.category !== undefined) dbUpdates.category = updates.category;
-      if (updates.dueDate !== undefined) dbUpdates.due_date = updates.dueDate;
+      for (const [key, value] of Object.entries(updates) as [string, any]) {
+        const dbKey = updatesToDbKeyMap[key];
+        if (!dbKey || value === undefined) continue;
+
+        dbUpdates[dbKey] =
+          key === "dueDate" && value instanceof Date
+            ? value.toISOString()
+            : value;
+      }
 
       const { data: updatedGoal, error } = await supabase
         .from("goals")
@@ -189,19 +246,16 @@ export const useUpdateGoalDetails = () => {
 
     // TODO ~ so need to update weekly goals as the num_tasks may change...
     async onSuccess(updatedGoal, { id }) {
-      await queryClient.invalidateQueries({ queryKey: ["goals"] });
-      // await queryClient.invalidateQueries({ queryKey: ["goals", id] });
-      await queryClient.invalidateQueries({
-        queryKey: ["weekly_goals_active"],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ["weekly_goals", id],
+      await invalidateGoalQueries({
+        queryClient: queryClient,
+        goalId: id,
+        clearOld: true,
       });
     },
   });
 };
 
-// ➡️ DELETE goal (and DELETE all relation weekly goals)
+// DELETE goal (and DELETE all relation weekly goals)
 export const useDeleteGoal = () => {
   const queryClient = useQueryClient();
 
@@ -213,70 +267,23 @@ export const useDeleteGoal = () => {
       }
     },
     async onSuccess(_, { userId, goalId }) {
-      await queryClient.invalidateQueries({ queryKey: ["goals"] });
-      // await queryClient.invalidateQueries({ queryKey: ["goals", goalId] });
-      await queryClient.invalidateQueries({
-        queryKey: ["weekly_goals_active"],
+      await invalidateGoalQueries({
+        queryClient,
+        goalId,
+        userId,
       });
-      await queryClient.invalidateQueries({
-        queryKey: ["weekly_goals", goalId],
-      });
-    },
-  });
-};
-
-// PUT goal completion (expired or completed) and then DELETE weekly goals (they'll no longer be needed)
-// PUT mark goal completed or expired, then delete its weekly goals
-export const useCompleteOrExpireGoal = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    async mutationFn({
-      id,
-      status,
-    }: {
-      id: number;
-      status: "completed" | "expired"; // Assuming these are valid enum values
-    }) {
-      // 1. Update goal status
-      const { data, error } = await supabase
-        .from("goals")
-        .update({ status })
-        .eq("id", id)
-        .single();
-
-      if (error) throw new Error(error.message);
-
-      // 2. Delete related weekly goals
-      //! Let's keep these for now
-      // const { error: deleteError } = await supabase
-      //   .from("weekly_goals")
-      //   .delete()
-      //   .eq("goal_id", id); // assumes goal_id is FK in weekly_goals
-
-      // if (deleteError) throw new Error(deleteError.message);
-
-      return data;
-    },
-
-    async onSuccess(_, { id }) {
-      await queryClient.invalidateQueries({ queryKey: ["goals"] });
-      await queryClient.invalidateQueries({ queryKey: ["old_goals"] });
-      // await queryClient.invalidateQueries({ queryKey: ["goals", id] });
     },
   });
 };
 
 /** WEEKLY **/
 
-// ✅ GET user current active week goals
+//  GET user current active week goals
 export const useActiveWeeklyGoals = (userId: string) => {
-  console.log(`fetching goals for user id... ${userId}`);
-
   return useQuery<WeeklyGoal[]>({
     queryKey: ["weekly_goals_active"],
     queryFn: async () => {
-      const today = new Date().toISOString().split("T")[0]; // Get YYYY-MM-DD format
+      const today = new Date().toISOString();
 
       const { data, error } = await supabase
         .from("weekly_goals")
@@ -286,10 +293,6 @@ export const useActiveWeeklyGoals = (userId: string) => {
         .eq("goals.user_id", userId)
         .not("goals", "is", null)
         .eq("goals.status", "active"); // make sure to only get active goals
-
-      // should return an array of ojects represnting the weekly goals.
-      // Need to have a way where if end_date is at least 1 day before current date (or if it has past current date) then a new one gets created
-      //? If new one gets created becuase user was inactive for some time, how to manage this?
 
       if (error) {
         throw new Error(error.message);
@@ -301,7 +304,7 @@ export const useActiveWeeklyGoals = (userId: string) => {
   });
 };
 
-// ✅ GET all week goals for a SPECIFIED goal (never want to just blind fetch all week goals)
+//  GET all week goals for a SPECIFIED goal (never want to just blind fetch all week goals)
 // This is for the main goal view page, here we don't care about getting only active goals
 export const useGoalWeeklyTasks = (goalId: number) => {
   return useQuery<WeeklyGoal[]>({
@@ -323,11 +326,11 @@ export const useGoalWeeklyTasks = (goalId: number) => {
   });
 };
 
-// ✅ POST Weekly goal daily task
+//  POST Weekly goal daily task
 export const useCompleteDailyTask = () => {
   const queryClient = useQueryClient();
 
-  //! Need to check or add constraint so that number of daily tasks for a weekly goal does not exceed num_tasks for goal
+  //TODO Need to check or add constraint so that number of daily tasks for a weekly goal does not exceed num_tasks for goal
   return useMutation({
     async mutationFn({
       weeklyGoalId,
@@ -339,12 +342,14 @@ export const useCompleteDailyTask = () => {
       const { data: completedTask, error } = await supabase
         .from("daily_tasks")
         .insert({
-          date: date.toString(),
+          date: date.toISOString(),
           completed: true,
           weekly_goal_id: weeklyGoalId,
         })
-        .select()
+        .select("*, weekly_goals(goal_id)")
         .single();
+
+      // we need to check if parent goal is complete
 
       if (error) {
         throw new Error("Failed to complete task: " + error.message);
@@ -352,15 +357,34 @@ export const useCompleteDailyTask = () => {
 
       return completedTask;
     },
-    async onSuccess(_, data) {
-      await queryClient.invalidateQueries({ queryKey: ["goals"] });
-      await queryClient.invalidateQueries({
-        queryKey: ["weekly_goals_active"],
+    async onSuccess(data) {
+      // TODO ~ need to pass in goal Id here as well
+      await invalidateGoalQueries({
+        queryClient,
+        goalId: data.weekly_goals.goal_id,
       });
-      // await queryClient.invalidateQueries({
-      //   queryKey: ["weekly_goals", goalId],
-      // });
     },
+  });
+};
+
+// get's all user's weekly goal, mainly for analytics
+export const useAllWeeklyGoals = (userId: string) => {
+  return useQuery<WeeklyGoal[]>({
+    queryKey: ["weekly_goals_all", userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("weekly_goals")
+        .select("*, daily_tasks(*), goals!inner(*)")
+        .eq("goals.user_id", userId)
+        .order("start_date", { ascending: false });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return (data ?? []).map(transformWeeklyGoalFormat);
+    },
+    initialData: [],
   });
 };
 
@@ -393,68 +417,90 @@ export const useUpdateWeeklyGoalTitle = () => {
       return updatedWeeklyTask;
     },
     async onSuccess(_, data) {
-      await queryClient.invalidateQueries({ queryKey: ["goals"] });
-      await queryClient.invalidateQueries({
-        queryKey: ["weekly_goals_active"],
+      // TODO ~ need to pass in goal Id here as well
+      await invalidateGoalQueries({
+        queryClient,
       });
-      // await queryClient.invalidateQueries({
-      //   queryKey: ["weekly_goals", goalId],
-      // });
     },
   });
 };
 
-//? POST create new weekly goal (should always be autoamtic), by default will always use values from previous one
-
-//? PUT updtae weekly goal staus?
-
 /*** UTILITIES ***/
 
-// ensure weekly goals get apprpriately created
 export const ensureCurrentWeeklyGoals = async (userId: string) => {
-  const today = new Date();
+  const today = new Date(); // current timestamp with time
+  today.setHours(0, 0, 0, 0); // normalize start of day (midnight)
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
-  const yesterdayStr = yesterday.toISOString().split("T")[0];
 
   // 1. Get all active goals for the user
   const { data: activeGoals, error: goalsError } = await supabase
     .from("goals")
-    .select("id")
+    .select("*")
     .eq("user_id", userId)
     .eq("status", "active");
 
-  if (goalsError || !activeGoals) return;
+  if (goalsError) {
+    console.error("Failed to fetch active goals:", goalsError);
+    return;
+  }
+  if (!activeGoals || activeGoals.length === 0) return;
 
+  // 2. Update expired goals
+  const expiredGoals = activeGoals
+    .filter((goal) => new Date(goal.due_date).getTime() < today.getTime())
+    .map((goal) => goal.id);
+
+  if (expiredGoals.length > 0) {
+    const { error } = await supabase
+      .from("goals")
+      .update({ status: "expired" })
+      .in("id", expiredGoals);
+
+    if (error) {
+      console.error("Failed to update expired goals:", error);
+    }
+  }
+
+  // 3. Ensure current weekly goals exist
   for (const goal of activeGoals) {
-    // 2. For each goal, get the latest weekly_goal
     const { data: latestWeeklyGoal, error: wgError } = await supabase
       .from("weekly_goals")
       .select("*")
-      .eq("user_id", userId)
       .eq("goal_id", goal.id)
       .order("end_date", { ascending: false })
       .limit(1)
       .single();
 
-    if (wgError || !latestWeeklyGoal) {
+    if (wgError) {
+      console.error("Error fetching weekly goal for goal:", goal.id, wgError);
       continue;
     }
 
-    // 3. If the last weekly goal ended before yesterday, create a new one
-    if (latestWeeklyGoal.end_date < yesterdayStr) {
-      const lastEnd = new Date(latestWeeklyGoal.end_date);
+    // If no weekly goal yet, or last one ended before yesterday, create a new one
+    if (!latestWeeklyGoal || new Date(latestWeeklyGoal.end_date) < yesterday) {
+      const lastEnd = latestWeeklyGoal
+        ? new Date(latestWeeklyGoal.end_date) //! this is the root cuase, fundamentally this is incorrect and will have a cascading effect
+        : new Date(yesterday); //* set's it to yesterday
+
       const newStart = new Date(lastEnd);
       newStart.setDate(newStart.getDate() + 1);
 
       const newEnd = new Date(newStart);
       newEnd.setDate(newStart.getDate() + 6);
 
+      //Expire the outdated weekly goal
+      await supabase
+        .from("weekly_goals")
+        .update({ status: "expired" })
+        .eq("id", latestWeeklyGoal.id);
+
       await supabase.from("weekly_goals").insert({
         goal_id: goal.id,
-        title: latestWeeklyGoal.title,
-        start_date: newStart.toISOString().split("T")[0],
-        end_date: newEnd.toISOString().split("T")[0],
+        title: goal.title,
+        start_date: newStart.toISOString(),
+        end_date: newEnd.toISOString(),
+        status: "active",
       });
     }
   }
