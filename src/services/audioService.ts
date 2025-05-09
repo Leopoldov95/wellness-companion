@@ -1,39 +1,18 @@
+import { TrackAsset } from "@/src/types/meditation";
 import { Asset } from "expo-asset";
-import { Audio, AVPlaybackStatus } from "expo-av";
+import { Audio } from "expo-av";
 import { Sound } from "expo-av/build/Audio";
-import { TrackModule, TrackAsset } from "@/src/types/meditation";
-
-// export async function loadTracks(): Promise<TrackAsset[]> {
-//   const audioModules: TrackModule = {
-//     track1: require("../../assets/tracks/Blessing.mp3"),
-//     track2: require("../../assets/tracks/Blossom.mp3"),
-//     track9: require("../../assets/tracks/Deep.mp3"),
-//     track3: require("../../assets/tracks/Earth.mp3"),
-//     track4: require("../../assets/tracks/Floating.mp3"),
-//     track5: require("../../assets/tracks/Motion.mp3"),
-//     track6: require("../../assets/tracks/Movement.mp3"),
-//     track7: require("../../assets/tracks/Replenish.mp3"),
-//     track8: require("../../assets/tracks/Sanctuary.mp3"),
-//   };
-
-//   const loadedAssets: any = await Asset.loadAsync(Object.values(audioModules));
-
-//   return loadedAssets.map((track: TrackAsset, idx: number) => ({
-//     ...track,
-//     id: idx,
-//   }));
-// }
 
 export async function loadTracks(): Promise<TrackAsset[]> {
   return Object.entries({
-    track1: require("@/assets/tracks/Blessing.mp3"),
-    track2: require("@/assets/tracks/Blossom.mp3"),
-    track3: require("@/assets/tracks/Earth.mp3"),
-    track4: require("@/assets/tracks/Floating.mp3"),
-    track5: require("@/assets/tracks/Motion.mp3"),
-    track6: require("@/assets/tracks/Movement.mp3"),
-    track7: require("@/assets/tracks/Replenish.mp3"),
-    track8: require("@/assets/tracks/Sanctuary.mp3"),
+    track1: require("@/assets/tracks/blessing.mp3"),
+    track2: require("@/assets/tracks/blossom.mp3"),
+    track3: require("@/assets/tracks/earth.mp3"),
+    track4: require("@/assets/tracks/floating.mp3"),
+    track5: require("@/assets/tracks/motion.mp3"),
+    track6: require("@/assets/tracks/movement.mp3"),
+    track7: require("@/assets/tracks/replenish.mp3"),
+    track8: require("@/assets/tracks/sanctuary.mp3"),
     track9: require("@/assets/tracks/test.mp3"),
   }).map(([key, asset], index) => {
     const { name, uri } = Asset.fromModule(asset);

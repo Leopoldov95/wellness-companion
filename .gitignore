@@ -46,3 +46,5 @@ expo-env.d.ts
 
 # misc
 .env
+build*
+android

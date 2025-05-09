@@ -55,7 +55,7 @@ const PlayerScreen = () => {
     onBackBtn();
   };
 
-  const imgSrc = IMG_PATH[currentAudio?.name as string] || IMG_PATH["Earth"];
+  const imgSrc = IMG_PATH[currentAudio?.name as string] || IMG_PATH["earth"];
 
   return (
     <View style={styles.container}>

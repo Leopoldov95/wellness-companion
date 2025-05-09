@@ -13,14 +13,16 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.leo.ortega.WellnessCompanion"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.leo.ortega.WellnessCompanion"
+      "package": "com.leo.ortega.WellnessCompanion",
+      "versionCode": 15
     },
     "web": {
       "bundler": "metro",
