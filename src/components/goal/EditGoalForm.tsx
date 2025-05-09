@@ -20,7 +20,6 @@ const EditGoalForm: React.FC<EditGoalFormProps> = ({
   onCancel,
   onDelete,
   selectedGoalColors,
-  weeklyGoals,
   validDates,
 }) => {
   const [form, setForm] = useState<GoalForm>({ ...initialData });

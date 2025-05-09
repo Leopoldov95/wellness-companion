@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, Dimensions, TextInput } from "react-native";
-import React from "react";
-import { useJournal } from "@/src/providers/JournalProvider";
 import Fonts from "@/src/constants/Fonts";
+import { useJournal } from "@/src/providers/JournalProvider";
+import React from "react";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 const SPIRAL_COUNT = 15;
 
 const Journal = ({
@@ -12,7 +12,7 @@ const Journal = ({
   onInputChange: (text: string, index: number) => void;
 }) => {
   //const { todayPrompt, hasWrittenToday, entries } = useJournal();
-  const { todayPrompt, hasWrittenToday } = useJournal();
+  const { todayPrompt } = useJournal();
 
   return (
     <View style={styles.journal}>

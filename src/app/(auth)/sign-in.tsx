@@ -1,19 +1,19 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Pressable,
-  Alert,
-} from "react-native";
-import React, { useState } from "react";
-import Colors from "@/src/constants/Colors";
-import { Link, Redirect, router, Stack } from "expo-router";
 import Button from "@/src/components/Button";
+import Colors from "@/src/constants/Colors";
+import { supabase } from "@/src/lib/supabase";
+import { globalStyles } from "@/src/styles/globals";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { globalStyles } from "@/src/styles/globals";
-import { supabase } from "@/src/lib/supabase";
+import { Link, Stack } from "expo-router";
+import React, { useState } from "react";
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 const SignInScreen = () => {
   const [showPassword, setShowPassword] = useState(false);

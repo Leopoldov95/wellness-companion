@@ -1,14 +1,14 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import Animated, { FadeOut, FadeIn } from "react-native-reanimated";
-import React from "react";
 import Happy from "@/assets/images/emotions/happy.svg";
-import Sad from "@/assets/images/emotions/sad.svg";
 import Neutral from "@/assets/images/emotions/neutral.svg";
+import Sad from "@/assets/images/emotions/sad.svg";
 import VeryHappy from "@/assets/images/emotions/very-happy.svg";
 import VerySad from "@/assets/images/emotions/very-sad.svg";
+import Colors from "@/src/constants/Colors";
 import { globalStyles } from "@/src/styles/globals";
 import { moodType } from "@/src/types/mood";
-import Colors from "@/src/constants/Colors";
+import React from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import Animated, { FadeOut } from "react-native-reanimated";
 
 interface MoodTrackerProps {
   onMoodPress: (mood: moodType) => void;

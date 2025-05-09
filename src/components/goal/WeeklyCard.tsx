@@ -1,15 +1,14 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
-import { Goal, WeeklyGoal } from "@/src/types/goals";
-import WeeklyDailyActions from "./weekly/WeeklyDailyActions";
-import { isActiveWeeklyGoal } from "@/src/utils/goalsUtils";
+import { WeeklyGoal } from "@/src/types/goals";
 import { dateToReadible } from "@/src/utils/dateUtils";
+import { isActiveWeeklyGoal } from "@/src/utils/goalsUtils";
+import React from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import WeeklyDailyActions from "./weekly/WeeklyDailyActions";
 
 type WeeklyCardProps = {
   weeklyGoal: WeeklyGoal;
-  // parentGoal: Goal; // needed to get parent details
   completeWeeklyTask: (id: number, date: Date) => void;
   updateWeeklyTask: (id: number, title: string) => void;
   currentDate: Date;
@@ -17,7 +16,6 @@ type WeeklyCardProps = {
 
 const WeeklyCard: React.FC<WeeklyCardProps> = ({
   weeklyGoal,
-  // parentGoal,
   currentDate,
   completeWeeklyTask,
   updateWeeklyTask,
@@ -33,7 +31,6 @@ const WeeklyCard: React.FC<WeeklyCardProps> = ({
     parentTitle,
     color,
   } = weeklyGoal;
-  // const { category, title: parentTitle, color } = parentGoal;
 
   const isActive = isActiveWeeklyGoal(weeklyGoal, currentDate, true);
 
@@ -69,8 +66,7 @@ const WeeklyCard: React.FC<WeeklyCardProps> = ({
           ></View>
         </View>
       </Pressable>
-      {/* TODO will need to redo this logic, grey out card when goal is completed */}
-      {/* (ONLY FOR GOALS page) */}
+
       {isModalVisible && isActive && (
         <WeeklyDailyActions
           goal={weeklyGoal}

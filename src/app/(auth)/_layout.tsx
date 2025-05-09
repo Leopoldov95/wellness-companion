@@ -1,8 +1,7 @@
-import { View, Text } from "react-native";
-import React from "react";
-import { Redirect, Stack } from "expo-router";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useAuth } from "@/src/providers/AuthProvider";
+import { Redirect, Stack } from "expo-router";
+import React from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const AuthLayout = () => {
   const { session } = useAuth();

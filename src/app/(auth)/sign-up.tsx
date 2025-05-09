@@ -1,26 +1,26 @@
+import Button from "@/src/components/Button";
+import Colors from "@/src/constants/Colors";
+import Fonts from "@/src/constants/Fonts";
+import { AVATARS } from "@/src/constants/Profile";
+import { supabase } from "@/src/lib/supabase";
+import { globalStyles } from "@/src/styles/globals";
+import Feather from "@expo/vector-icons/Feather";
+import { decode } from "base64-arraybuffer";
+import * as Crypto from "expo-crypto";
+import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
+import { Link, Stack } from "expo-router";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
   Alert,
   Image,
   Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
-import React, { useState } from "react";
-import Colors from "@/src/constants/Colors";
-import { Link, router, Stack } from "expo-router";
-import Button from "@/src/components/Button";
-import Feather from "@expo/vector-icons/Feather";
-import { globalStyles } from "@/src/styles/globals";
-import { supabase } from "@/src/lib/supabase";
-import * as FileSystem from "expo-file-system";
-import * as Crypto from "expo-crypto";
-import * as ImagePicker from "expo-image-picker";
-import { decode } from "base64-arraybuffer";
 import Collapsible from "react-native-collapsible";
-import Fonts from "@/src/constants/Fonts";
-import { AVATARS } from "@/src/constants/Profile";
 
 const DEFAULT_IMAGE = AVATARS.alien_02;
 

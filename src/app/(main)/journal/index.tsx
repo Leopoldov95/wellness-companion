@@ -1,9 +1,13 @@
+import { useInsertJournal, useJournals } from "@/src/api/journal";
 import BackButton from "@/src/components/BackButton";
 import Journal from "@/src/components/journal/Journal";
+import Toaster from "@/src/components/Snackbar";
 import Colors from "@/src/constants/Colors";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { useJournal } from "@/src/providers/JournalProvider";
 import { globalStyles } from "@/src/styles/globals";
+import { GratitudeEntry } from "@/src/types/journal";
+import { datetoLocalString } from "@/src/utils/dateUtils";
 import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -17,14 +21,11 @@ import {
 } from "react-native";
 import Modal from "react-native-modal";
 import { Button } from "react-native-paper";
-import { useInsertJournal, useJournals } from "@/src/api/journal";
-import { GratitudeEntry } from "@/src/types/journal";
-import Toaster from "@/src/components/Snackbar";
 const { width } = Dimensions.get("window");
 
 const JournalScreen = () => {
   const { profile } = useAuth();
-  const { hasWrittenToday, shareJournal } = useJournal();
+  const { hasWrittenToday } = useJournal();
   const { mutate: insertJournal } = useInsertJournal();
   const [isSaveModalVisible, setSaveModalVisible] = useState(false);
   const [isWrittenToday, setIsWrittenToday] = useState(false);
@@ -57,10 +58,10 @@ const JournalScreen = () => {
   useEffect(() => {
     if (!fetchedJournals || fetchedJournals.length === 0) return;
 
-    const todayDate = new Date().toISOString().split("T")[0];
+    const todayDate = datetoLocalString(new Date());
 
     const hasWrittenToday = fetchedJournals.find((entry: GratitudeEntry) => {
-      const entryDate = new Date(entry.created_at).toISOString().split("T")[0];
+      const entryDate = datetoLocalString(new Date(entry.created_at));
 
       return entryDate === todayDate;
     });
@@ -188,12 +189,7 @@ const JournalScreen = () => {
             resizeMode="contain"
           />
           {/* share anonymously */}
-          {/* TODO~ Flow */}
-          {/* 
-            1. On Save press the gratide entry gets saved to the DB
-            2. IF user clickes the share button, THEN it will share to community
-            3. Easiest would be to just use local entry state
-          */}
+
           <Button
             icon="share"
             mode="contained"

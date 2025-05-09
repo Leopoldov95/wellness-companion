@@ -72,7 +72,9 @@ const TabBarButton = ({
 
   return (
     <Pressable
+      // @ts-ignore
       onPress={onPress}
+      // @ts-ignore
       onLongPress={onLongPress}
       style={styles.tabBarItems}
     >
@@ -81,18 +83,6 @@ const TabBarButton = ({
           color: isFocused ? "#fff" : Colors.light.quaternary,
         })}
       </Animated.View>
-      {/* 
-      <Animated.Text
-        style={[
-          {
-            color: isFocused ? Colors.light.text : "grey",
-            fontSize: 12,
-          },
-          animatedTextStyle,
-        ]}
-      >
-        {label}
-      </Animated.Text> */}
     </Pressable>
   );
 };

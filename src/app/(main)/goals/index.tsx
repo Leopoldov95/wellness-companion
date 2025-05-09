@@ -1,30 +1,27 @@
+import NoGoals from "@/assets/images/goals/no_goals.svg";
 import Wave from "@/assets/images/goals/wave.svg";
 import {
   useActiveWeeklyGoals,
-  useAllWeeklyGoals,
   useCompleteDailyTask,
   useGoalsList,
   useInsertGoal,
-  useUpdateGoalDetails,
   useUpdateWeeklyGoalTitle,
 } from "@/src/api/goals";
 import CreateGoal from "@/src/components/goal/CreateGoal";
 import GoalCard from "@/src/components/goal/GoalCard";
 import WeeklyCardList from "@/src/components/goal/WeeklyCardList";
+import Toaster from "@/src/components/Snackbar";
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { useGoals } from "@/src/providers/GoalsProvider";
 import { globalStyles } from "@/src/styles/globals";
+import { GoalForm } from "@/src/types/goals";
 import { AntDesign, Octicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import NoGoals from "@/assets/images/goals/no_goals.svg";
-import { GoalForm } from "@/src/types/goals";
 import { ActivityIndicator } from "react-native-paper";
-import Toaster from "@/src/components/Snackbar";
-import { datetoLocalString } from "@/src/utils/dateUtils";
 
 /**
  * There could be a qizard that helps users figure out how this system works
@@ -38,7 +35,6 @@ const GoalsScreen = () => {
   const { mutate: insertGoal } = useInsertGoal();
   const { mutate: completeDailyTask } = useCompleteDailyTask();
   const { mutate: updateWeeklyGoal } = useUpdateWeeklyGoalTitle();
-  const { mutate: updateGoal } = useUpdateGoalDetails();
   const { data: fetchedGoals, isLoading: isGoalsLoading } = useGoalsList(
     profile.id
   );
@@ -48,11 +44,6 @@ const GoalsScreen = () => {
     error: weeklyGoalError,
   } = useActiveWeeklyGoals(profile.id);
   // all weekly goals
-  const {
-    data: fetchedAllWeeklyGoals,
-    error: allWeeklyGoalsError,
-    isLoading: isAllWeeklyGoalsLoading,
-  } = useAllWeeklyGoals(profile.id);
   const [goalModalVisible, setGoalModalVisible] = useState(false);
   const [selectedGoalColors, setSelectedGoalColors] = useState<string[]>([]);
 

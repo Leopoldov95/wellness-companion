@@ -1,4 +1,25 @@
 import {
+  useDeleteJournal,
+  useJournals,
+  useUpdateJournal,
+} from "@/src/api/journal";
+import BackButton from "@/src/components/BackButton";
+import EntryFilter from "@/src/components/journal/EntryFilter";
+import EntryModal from "@/src/components/journal/EntryModal";
+import EntryThumb from "@/src/components/journal/EntryThumb";
+import Colors from "@/src/constants/Colors";
+import { useAuth } from "@/src/providers/AuthProvider";
+import { globalStyles } from "@/src/styles/globals";
+import {
+  FilterOptions,
+  GratitudeEntry,
+  SortOptions,
+} from "@/src/types/journal";
+import { filterEntries, sortEntries } from "@/src/utils/journalUtils";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
   Alert,
   FlatList,
   ImageSourcePropType,
@@ -7,29 +28,7 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import Colors from "@/src/constants/Colors";
-import { globalStyles } from "@/src/styles/globals";
-import EntryThumb from "@/src/components/journal/EntryThumb";
-import EntryModal from "@/src/components/journal/EntryModal";
-import { useJournal } from "@/src/providers/JournalProvider";
 import { Snackbar } from "react-native-paper";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import EntryFilter from "@/src/components/journal/EntryFilter";
-import {
-  FilterOptions,
-  GratitudeEntry,
-  SortOptions,
-} from "@/src/types/journal";
-import { filterEntries, sortEntries } from "@/src/utils/journalUtils";
-import BackButton from "@/src/components/BackButton";
-import { router } from "expo-router";
-import { useAuth } from "@/src/providers/AuthProvider";
-import {
-  useDeleteJournal,
-  useJournals,
-  useUpdateJournal,
-} from "@/src/api/journal";
 
 // Dynamic bg images
 const BG_IMG = [
@@ -50,7 +49,6 @@ const BG_IMG = [
 
 const EntriesScreen = () => {
   const { profile } = useAuth();
-  // const { entries, toggleFavorite, toggleShare, deleteEntry } = useJournal();
   const [filteredEntries, setFilteredEntries] = useState<GratitudeEntry[]>([]);
   const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -177,7 +175,6 @@ const EntriesScreen = () => {
         renderItem={({ item, index }) => (
           <EntryThumb
             item={item}
-            index={index}
             image={BG_IMG[index]}
             onPress={() => openModal(item.id, index)}
           />

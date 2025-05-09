@@ -1,14 +1,13 @@
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 
+import BackButton from "@/src/components/BackButton";
 import Track from "@/src/components/meditate/Track";
 import Colors from "@/src/constants/Colors";
 import { useMeditate } from "@/src/providers/MeditateProvider";
 import { globalStyles } from "@/src/styles/globals";
 import { DurationType, TrackAsset } from "@/src/types/meditation";
-import Feather from "@expo/vector-icons/Feather";
 import { Picker } from "@react-native-picker/picker";
 import { router } from "expo-router";
-import BackButton from "@/src/components/BackButton";
 
 const MeditateScreen = () => {
   const { tracks, onTrackPress, setSelectedDuration, selectedDuration } =

@@ -14,9 +14,6 @@ type HistoryCardType = {
 };
 
 const HistoryCard: React.FC<HistoryCardType> = ({ goal }) => {
-  console.log("goal is...");
-  console.log(goal);
-
   return (
     <View style={styles.goalCard}>
       {/* Icon based on completion */}

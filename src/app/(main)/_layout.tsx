@@ -1,14 +1,12 @@
-import React from "react";
-import { Redirect, Tabs } from "expo-router";
-import { useColorScheme } from "@/src/components/useColorScheme";
 import TabBar from "@/src/components/TabBar";
+import { useAuth } from "@/src/providers/AuthProvider";
+import GoalsProvider from "@/src/providers/GoalsProvider";
+import { Redirect, Tabs } from "expo-router";
+import React from "react";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import MoodProvider from "@/src/providers/MoodProvider";
-import GoalsProvider from "@/src/providers/GoalsProvider";
-import { useAuth } from "@/src/providers/AuthProvider";
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 
 export default function TabLayout() {
@@ -23,19 +21,16 @@ export default function TabLayout() {
   }
 
   return (
-    <MoodProvider>
-      {/* Goal Provider to show the upcomming weekly goals on the home page */}
-      <GoalsProvider>
-        <SafeAreaProvider style={{ flex: 1, paddingTop: insets.top }}>
-          <Tabs
-            screenOptions={{
-              headerShown: false,
-              tabBarHideOnKeyboard: true,
-            }}
-            tabBar={(props) => <TabBar {...props} />}
-          ></Tabs>
-        </SafeAreaProvider>
-      </GoalsProvider>
-    </MoodProvider>
+    <GoalsProvider>
+      <SafeAreaProvider style={{ flex: 1, paddingTop: insets.top }}>
+        <Tabs
+          screenOptions={{
+            headerShown: false,
+            tabBarHideOnKeyboard: true,
+          }}
+          tabBar={(props) => <TabBar {...props} />}
+        ></Tabs>
+      </SafeAreaProvider>
+    </GoalsProvider>
   );
 }

@@ -8,17 +8,9 @@ export type FilterOptions = {
 };
 
 export type JournalContextType = {
-  entries: GratitudeEntry[];
   todayPrompt: string | null;
   hasWrittenToday: boolean;
-  addEntry: (entry: GratitudeEntry) => void;
   setTodayPrompt: (prompt: string) => void;
-  shareJournal: (entry: GratitudeEntry) => void;
-  toggleFavorite: (entryId: number) => void;
-  toggleShare: (entryId: number) => void;
-  deleteEntry: (entryId: number) => void;
-  getSharedEntries: (userId: number) => GratitudeEntry[];
-  updateSeenEntries: (userId: number, entries: number[]) => void;
 };
 
 export type GratitudeEntry = {

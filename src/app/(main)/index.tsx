@@ -12,13 +12,15 @@ import Facts from "@/src/components/Facts";
 import GoalProgressBar from "@/src/components/goal/GoalProgressBar";
 import WeeklyCard from "@/src/components/goal/WeeklyCard";
 import MoodSelector from "@/src/components/mood/MoodSelector";
+import RemoteImage from "@/src/components/RemoteImage"; // component to read and use image from DB
 import Toaster from "@/src/components/Snackbar";
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
+import { AVATARS } from "@/src/constants/Profile";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { useGoals } from "@/src/providers/GoalsProvider";
 import { globalStyles } from "@/src/styles/globals";
-import { Goal, WeeklyGoal } from "@/src/types/goals";
+import { WeeklyGoal } from "@/src/types/goals";
 import { MoodEntry, moodType } from "@/src/types/mood";
 import { datetoLocalString, formatDate } from "@/src/utils/dateUtils";
 import { isActiveWeeklyGoal } from "@/src/utils/goalsUtils";
@@ -26,7 +28,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { Link } from "expo-router";
 import React, { useEffect, useState } from "react";
-import RemoteImage from "@/src/components/RemoteImage"; // component to read and use image from DB
 import {
   Image,
   Pressable,
@@ -36,21 +37,12 @@ import {
   View,
 } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import { AVATARS } from "@/src/constants/Profile";
 
 const HomeScreen = () => {
-  // const { isMoodTracked } = useMood();
-  const {
-    // getUpcommingWeeklyGoal,
-    // completeWeeklyTask,
-    // weeklyGoals,
-    // goals,
-    today,
-  } = useGoals();
+  const { today } = useGoals();
   const { mutate: insertMood } = useInsertMood();
   const { mutate: completeDailyTask } = useCompleteDailyTask();
   const { mutate: updateWeeklyGoal } = useUpdateWeeklyGoalTitle();
-  const { mutate: updateGoal } = useUpdateGoalDetails();
 
   //? Is this flow okay? What is session changes?
   const { profile } = useAuth();
@@ -61,9 +53,6 @@ const HomeScreen = () => {
     error: weeklyGoalError,
   } = useActiveWeeklyGoals(profile.id);
   const { data: fetchedMoods, error, isLoading } = useMoodList(profile.id);
-  const { data: fetchedGoals, isLoading: isGoalsLoading } = useGoalsList(
-    profile.id
-  );
   const [upcommingGoals, setUpcommingGoals] = useState<WeeklyGoal[]>([]);
   const [progress, setProgress] = useState(0);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -87,7 +76,6 @@ const HomeScreen = () => {
             const image = AVATARS[avatarKey as keyof typeof AVATARS];
             setImage(image);
           }
-          //setImage(image);
         } else {
           // It's an uploaded avatar
           const image = avatar_url;
@@ -98,9 +86,6 @@ const HomeScreen = () => {
   }, [profile]);
 
   useEffect(() => {
-    // console.log("\n\n\nWEEEKLY UPDATE");
-    // console.log(fetchedWeeklyGoals);
-
     if (fetchedWeeklyGoals.length > 0) {
       const weeklyGoals = fetchedWeeklyGoals
         .filter((goal) => {
@@ -116,8 +101,6 @@ const HomeScreen = () => {
           (a, b) =>
             new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
         );
-      // console.log("weekly goals:");
-      // console.log(weeklyGoals);
 
       setUpcommingGoals(weeklyGoals);
 
@@ -156,7 +139,6 @@ const HomeScreen = () => {
     day: "numeric", // '25'
   };
 
-  // const today = new Date();
   const formattedDate = today.toLocaleDateString("en-US", options);
 
   const showToast = (message: string, type: "success" | "error") => {
@@ -349,26 +331,6 @@ const HomeScreen = () => {
         message={snackbarMessage}
         type={snackbarType}
       />
-
-      {/* Snackbar for error messages */}
-      {/* <Snackbar
-        visible={snackbarVisible}
-        onDismiss={() => setSnackbarVisible(false)}
-        duration={5000}
-        style={[
-          snackbarMessage.includes("already")
-            ? styles.messageError
-            : styles.messageSuccess,
-          { marginBottom: 90 },
-        ]}
-        action={{
-          label: "DISMISS",
-          textColor: "white",
-          onPress: () => setSnackbarVisible(false),
-        }}
-      >
-        {snackbarMessage}
-      </Snackbar> */}
     </View>
   );
 };

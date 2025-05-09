@@ -194,13 +194,8 @@ const ChartScreen = () => {
         </View>
       </View>
 
-      {/* goals completed lifetime. SHOW NA if any are still in progress */}
-      {/* completetion rate lifetime. Do NOt include in progress goals, show NA if no data available */}
-      {/* weekly goals completed this month */}
-      {/* top goals category */}
-
       {/* Journal data ✅ */}
-      <View style={styles.journalContainer}>
+      <View>
         <Text style={globalStyles.subheader}>Journaling</Text>
         <View style={styles.cardContainer}>
           <View style={styles.card}>

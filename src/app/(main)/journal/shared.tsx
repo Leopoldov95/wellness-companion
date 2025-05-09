@@ -1,26 +1,23 @@
-import { Alert, StyleSheet, Text, View, Image } from "react-native";
-import React, { useEffect, useState } from "react";
-import { globalStyles } from "@/src/styles/globals";
 import BackButton from "@/src/components/BackButton";
-import { router } from "expo-router";
-import { Colors } from "react-native/Libraries/NewAppScreen";
-import { useJournal } from "@/src/providers/JournalProvider";
+import Fonts from "@/src/constants/Fonts";
+import { globalStyles } from "@/src/styles/globals";
 import { GratitudeEntry } from "@/src/types/journal";
-import Notepad from "@/assets/images/journal/notepad.svg";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
 import {
-  GestureDetector,
-  Gesture,
-  GestureHandlerRootView,
   Directions,
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
 } from "react-native-gesture-handler";
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
   runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
-import Fonts from "@/src/constants/Fonts";
-import { useNavigation } from "@react-navigation/native";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 const BG_IMG = [
   require("@/assets/images/journal/entries/entry-bg-1.png"),
@@ -43,31 +40,32 @@ type RandBgType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 const getRandomNumber = (): RandBgType =>
   Math.floor(Math.random() * 13) as RandBgType;
 
+//TODO ~ Will need to add viewed logic
 const SharedScreen = () => {
-  const { getSharedEntries, updateSeenEntries } = useJournal();
-  const entries = getSharedEntries(123);
-  const navigation = useNavigation();
-  const [viewed, setViewed] = useState<number[]>([]);
+  // const entries = getSharedEntries(123);
+  const entries: GratitudeEntry[] = [];
+  //const navigation = useNavigation();
+  // const [viewed, setViewed] = useState<number[]>([]);
   const [entryIdx, setEntryIdx] = useState<number>(0);
   const [currentEntry, setCurrentEntry] = useState<GratitudeEntry | null>(null);
   const [randBgImg, setRandBgImg] = useState<RandBgType>(getRandomNumber());
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
-      // save seen entries to db
-      console.log("****");
-      console.log("Saving to db");
-      updateSeenEntries(123, viewed);
-    });
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+  //     // save seen entries to db
+  //     console.log("****");
+  //     console.log("Saving to db");
+  //     updateSeenEntries(123, viewed);
+  //   });
 
-    return () => unsubscribe();
-  }, [navigation, viewed]);
+  //   return () => unsubscribe();
+  // }, [navigation, viewed]);
 
   useEffect(() => {
     setRandBgImg(getRandomNumber());
     const entry = entries[entryIdx];
     setCurrentEntry(entry);
-    setViewed((prevViewed) => [...prevViewed, entry.id]);
+    //setViewed((prevViewed) => [...prevViewed, entry.id]);
   }, [entryIdx]);
 
   // Shared values for animations
@@ -77,7 +75,7 @@ const SharedScreen = () => {
 
   // Helper function to update entry after animation completes
   const updateEntry = () => {
-    runOnJS(setEntryIdx)(Math.min(entryIdx + 1, entries.length - 1));
+    // runOnJS(setEntryIdx)(Math.min(entryIdx + 1, entries.length - 1));
     translateX.value = 0;
     translateY.value = 0;
     opacity.value = 1; // Reset opacity

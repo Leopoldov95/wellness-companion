@@ -5,7 +5,6 @@ import { Goal, WeeklyGoal } from "@/src/types/goals";
 
 type WeeklyCardListProps = {
   weeklyGoals: WeeklyGoal[];
-  // goals: Goal[]; // needed to get parent details
   completeWeeklyTask: (id: number, date: Date) => void;
   updateWeeklyTask: (id: number, title: string) => void;
   currentDate: Date;

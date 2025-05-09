@@ -13,12 +13,11 @@ import Colors from "@/src/constants/Colors";
 import { useAuth } from "@/src/providers/AuthProvider";
 import { useGoals } from "@/src/providers/GoalsProvider";
 import { globalStyles } from "@/src/styles/globals";
-import { Goal, GoalForm, WeeklyGoal, ValidDateType } from "@/src/types/goals";
+import { Goal, GoalForm, ValidDateType, WeeklyGoal } from "@/src/types/goals";
 import { dateToReadible } from "@/src/utils/dateUtils";
-import { calculateGoalProgress } from "@/src/utils/goalsUtils";
 import { Feather } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
-import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { Fragment, useEffect, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
@@ -65,8 +64,6 @@ const GoalEditScreen = () => {
   }
 
   useEffect(() => {
-    console.log("UPDATE MADE!!!!");
-
     if (
       !fetchedGoals.length ||
       !fetchedWeeklyGoals ||
@@ -89,8 +86,6 @@ const GoalEditScreen = () => {
 
     //! For now, if no current weekly goal then kick user back to goal page
     if (!curentWeekly) {
-      console.log("there is no current weekly...");
-
       return;
     }
 
@@ -137,7 +132,6 @@ const GoalEditScreen = () => {
     }
   };
 
-  //TODO ~ add delete here
   const onDelete = () => {
     Alert.alert("Confirm", "Are you sure you want to delete this goal?", [
       {
@@ -199,13 +193,6 @@ const GoalEditScreen = () => {
       }
     );
   };
-
-  if (goal) {
-    console.log("calculating goal...");
-    console.log(goal);
-
-    console.log(calculateGoalProgress(goal, fetchedWeeklyGoals));
-  }
 
   if (goal) {
     const { title, category, dueDate, progress, color, numTasks } = goal;

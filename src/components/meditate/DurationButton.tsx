@@ -1,7 +1,7 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
+import React from "react";
+import { Pressable, StyleSheet, Text } from "react-native";
 
 type DurationType = 5 | 10 | 15;
 type DurationButton = {

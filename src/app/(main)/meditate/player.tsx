@@ -1,22 +1,14 @@
-import React from "react";
+import BackButton from "@/src/components/BackButton";
 import PlayerButton from "@/src/components/meditate/PlayerButton";
 import Colors from "@/src/constants/Colors";
 import Fonts from "@/src/constants/Fonts";
+import { IMG_PATH } from "@/src/constants/Meditate";
 import { useMeditate } from "@/src/providers/MeditateProvider";
 import { playTrack } from "@/src/services/audioService";
-import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
-import {
-  Dimensions,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import React from "react";
+import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import { IMG_PATH } from "@/src/constants/Meditate";
-import BackButton from "@/src/components/BackButton";
 
 const { width, height } = Dimensions.get("window");
 
@@ -81,8 +73,8 @@ const PlayerScreen = () => {
           <CountdownCircleTimer
             isPlaying={isPlaying}
             duration={selectedDuration * 60}
-            // duration={selectedDuration}
             strokeWidth={5}
+            // @ts-ignore
             colors={[Colors.light.quinary]}
             size={250}
             onComplete={() => {
@@ -115,6 +107,7 @@ const PlayerScreen = () => {
             <PlayerButton iconType="PREV" />
             <PlayerButton
               onPress={() => currentAudio && onTrackPress(currentAudio)}
+              // @ts-ignore
               style={{ marginHorizontal: 30 }}
               iconType={isPlaying ? "PAUSE" : "PLAY"}
             />

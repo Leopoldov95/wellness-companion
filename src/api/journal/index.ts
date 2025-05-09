@@ -1,6 +1,6 @@
 import { supabase } from "@/src/lib/supabase";
 import { Tables } from "@/src/types/goals";
-import { GratitudeEntry, JournalAPIEntry } from "@/src/types/journal";
+import { GratitudeEntry } from "@/src/types/journal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const transformJournalEntry = (
