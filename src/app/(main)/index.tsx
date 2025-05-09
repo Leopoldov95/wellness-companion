@@ -21,10 +21,7 @@ import { globalStyles } from "@/src/styles/globals";
 import { Goal, WeeklyGoal } from "@/src/types/goals";
 import { MoodEntry, moodType } from "@/src/types/mood";
 import { datetoLocalString, formatDate } from "@/src/utils/dateUtils";
-import {
-  calculateGoalProgress,
-  isActiveWeeklyGoal,
-} from "@/src/utils/goalsUtils";
+import { isActiveWeeklyGoal } from "@/src/utils/goalsUtils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { Link } from "expo-router";

@@ -1,4 +1,5 @@
-import { AuthData, User } from "@/src/types/auth";
+import { supabase } from "@/src/lib/supabase";
+import { AuthData } from "@/src/types/auth";
 import { Session } from "@supabase/supabase-js";
 import {
   createContext,
@@ -7,10 +8,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import { supabase } from "@/src/lib/supabase";
-import { Tables } from "../database.types";
 import { ensureCurrentWeeklyGoals } from "../api/goals";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Tables } from "../database.types";
 
 const AuthContext = createContext<AuthData>({
   session: null,
@@ -29,46 +28,9 @@ export default function AuthProvider({ children }: PropsWithChildren) {
   const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   // right, cannot call async directly inside useEffect. Must create function first then call
-  //   const fetchSession = async () => {
-  //     const {
-  //       data: { session },
-  //       error,
-  //     } = await supabase.auth.getSession();
-
-  //     setSession(session);
-
-  //     if (session) {
-  //       //fetch profile
-  //       const { data } = await supabase
-  //         .from("profiles")
-  //         .select("*")
-  //         .eq("id", session.user.id)
-  //         .single();
-  //       setProfile(data || null);
-  //     }
-  //     setLoading(false);
-  //   };
-
-  //   fetchSession();
-  //   // sets the session on supabase state change
-  //   supabase.auth.onAuthStateChange((_event, session) => {
-  //     console.log("triggering...");
-
-  //     setSession(session);
-  //   });
-  // }, []);
-
   const maybeRunGoalInit = async (userId: string) => {
-    const todayStr = new Date().toISOString().split("T")[0];
-    // const lastRun = await AsyncStorage.getItem("lastGoalInitRun");
-
-    // if (lastRun === todayStr) return;
-
     try {
       await ensureCurrentWeeklyGoals(userId);
-      // await AsyncStorage.setItem("lastGoalInitRun", todayStr);
     } catch (error) {
       console.error("Failed to ensure current weekly goals:", error);
     }

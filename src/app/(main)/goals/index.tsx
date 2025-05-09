@@ -24,7 +24,6 @@ import NoGoals from "@/assets/images/goals/no_goals.svg";
 import { GoalForm } from "@/src/types/goals";
 import { ActivityIndicator } from "react-native-paper";
 import Toaster from "@/src/components/Snackbar";
-import { calculateGoalProgress } from "@/src/utils/goalsUtils";
 import { datetoLocalString } from "@/src/utils/dateUtils";
 
 /**
@@ -67,13 +66,9 @@ const GoalsScreen = () => {
     fetchedGoals.forEach((goal) => {
       if (goal.status === "active") {
         setSelectedGoalColors((prev) => [...prev, goal.color]);
-        goal.progress = calculateGoalProgress(
-          goal,
-          fetchedAllWeeklyGoals.filter((wkGoal) => wkGoal.goalId === goal.id)
-        );
       }
     });
-  }, [fetchedGoals, fetchedAllWeeklyGoals]);
+  }, [fetchedGoals]);
 
   const showToast = (message: string, type: "success" | "error") => {
     setSnackbarMessage(message);
@@ -146,6 +141,7 @@ const GoalsScreen = () => {
     <View style={styles.container}>
       <View style={styles.background}>
         <Wave
+          // @ts-ignore
           style={{ objectFit: "cover", transform: [{ scale: 3 }] }}
           width="100%"
           height={200}

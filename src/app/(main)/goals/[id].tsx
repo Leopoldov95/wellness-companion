@@ -1,4 +1,5 @@
 import {
+  useCompleteDailyTask,
   useDeleteGoal,
   useGoalsList,
   useGoalWeeklyTasks,
@@ -14,6 +15,7 @@ import { useGoals } from "@/src/providers/GoalsProvider";
 import { globalStyles } from "@/src/styles/globals";
 import { Goal, GoalForm, WeeklyGoal, ValidDateType } from "@/src/types/goals";
 import { dateToReadible } from "@/src/utils/dateUtils";
+import { calculateGoalProgress } from "@/src/utils/goalsUtils";
 import { Feather } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
@@ -27,7 +29,7 @@ const GoalEditScreen = () => {
   const id = parseFloat(typeof idString === "string" ? idString : idString[0]);
   const queryClient = useQueryClient();
 
-  const { goals, getWeeklyGoalsById, today, completeWeeklyTask } = useGoals();
+  const { today } = useGoals();
   const [goal, setGoal] = useState<Goal | null>(null);
   const [weekly, setWeekly] = useState<WeeklyGoal[]>([]);
   const [selectedGoalColors, setSelectedGoalColors] = useState<string[]>([]);
@@ -50,6 +52,7 @@ const GoalEditScreen = () => {
   const { mutate: updateGoal } = useUpdateGoalDetails();
   const { mutate: deleteGoal } = useDeleteGoal();
   const { mutate: updateWeeklyGoal } = useUpdateWeeklyGoalTitle();
+  const { mutate: completeDailyTask } = useCompleteDailyTask();
 
   const router = useRouter();
 
@@ -62,6 +65,8 @@ const GoalEditScreen = () => {
   }
 
   useEffect(() => {
+    console.log("UPDATE MADE!!!!");
+
     if (
       !fetchedGoals.length ||
       !fetchedWeeklyGoals ||
@@ -180,8 +185,31 @@ const GoalEditScreen = () => {
     );
   };
 
+  const completeWeeklyTask = (weeklyGoalId: number, date: Date) => {
+    completeDailyTask(
+      {
+        weeklyGoalId,
+        date,
+      },
+      {
+        onError: (error) => {
+          console.log("ERROR");
+          console.log(error);
+        },
+      }
+    );
+  };
+
+  if (goal) {
+    console.log("calculating goal...");
+    console.log(goal);
+
+    console.log(calculateGoalProgress(goal, fetchedWeeklyGoals));
+  }
+
   if (goal) {
     const { title, category, dueDate, progress, color, numTasks } = goal;
+
     return (
       <View style={styles.container}>
         <Pressable style={styles.backBtn} onPress={() => router.back()}>

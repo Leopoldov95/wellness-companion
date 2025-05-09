@@ -39,7 +39,7 @@ const transformGoalFormat = (goalAPI: Tables<"goals">): Goal => ({
   lastUpdated: new Date(goalAPI.last_updated),
   status: goalAPI.status,
   numTasks: goalAPI.num_tasks as NumTasks,
-  progress: 0,
+  progress: goalAPI.progress,
 });
 
 type WeeklyGoalWithRelations = Tables<"weekly_goals"> & {
