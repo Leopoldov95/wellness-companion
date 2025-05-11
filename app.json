@@ -18,11 +18,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.leo.ortega.WellnessCompanion",
-      "versionCode": 15
+      "versionCode": 25
     },
     "web": {
       "bundler": "metro",
