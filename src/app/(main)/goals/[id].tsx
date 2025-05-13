@@ -277,7 +277,9 @@ const GoalEditScreen = () => {
                 updateWeeklyTask={updateWeeklyTask}
                 currentDate={today}
                 completeWeeklyTask={completeWeeklyTask}
-                weeklyGoals={weekly} // we want to show the newest one first
+                weeklyGoals={weekly.sort(
+                  (a, b) => b.endDate.getTime() - a.endDate.getTime()
+                )} // we want to show the newest one first
               />
             </View>
           </Fragment>

@@ -181,7 +181,10 @@ const GoalsScreen = () => {
           </View>
         ) : (
           <FlatList
-            data={fetchedGoals}
+            data={fetchedGoals.sort(
+              (a, b) =>
+                new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+            )}
             renderItem={({ item }) => <GoalCard goal={item} />}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
@@ -194,14 +197,17 @@ const GoalsScreen = () => {
       {/* TODO ~ Will be a flatlist */}
 
       {fetchedGoals.length > 0 && fetchedWeeklyGoals!.length > 0 && (
-        <View style={{ height: `55%` }}>
+        <View style={{ height: `60%` }}>
           <Text style={styles.subtitle}>Weekly Goals</Text>
           <WeeklyCardList
             // goals={fetchedGoals}
             currentDate={today}
             completeWeeklyTask={completeWeeklyTask}
             updateWeeklyTask={updateWeeklyTask}
-            weeklyGoals={fetchedWeeklyGoals}
+            weeklyGoals={fetchedWeeklyGoals.sort(
+              (a, b) =>
+                new Date(a.endDate).getTime() - new Date(b.endDate).getTime()
+            )}
           />
         </View>
       )}

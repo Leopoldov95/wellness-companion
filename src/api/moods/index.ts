@@ -37,11 +37,15 @@ export const useInsertMood = () => {
 
   return useMutation({
     async mutationFn(data: any) {
+      const today = new Date(); // current timestamp with time
+      today.setHours(0, 0, 0, 0);
+
       const { data: newMood, error } = await supabase
         .from("moods")
         .insert({
           user_id: data.userId,
           mood: data.mood,
+          created_at: today.toISOString(),
         })
         .single();
 
