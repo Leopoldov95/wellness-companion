@@ -11,6 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 const EXCLUDED_ROUTES = [
   "meditate",
+  "meditate/player",
   "journal",
   "journal/entries",
   "journal/shared",

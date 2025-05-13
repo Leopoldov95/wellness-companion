@@ -14,8 +14,8 @@ const BackButton: React.FC<BackButtonProps> = ({
 }) => {
   const color = inverted ? "#fff" : Colors.light.textDark;
   return (
-    <Pressable style={styles.backBtn} onPress={onPress}>
-      <Feather name="chevron-left" size={32} color={color} />
+    <Pressable onPress={onPress}>
+      <Feather name="chevron-left" size={24} color={color} />
     </Pressable>
   );
 };
@@ -23,10 +23,10 @@ const BackButton: React.FC<BackButtonProps> = ({
 export default BackButton;
 
 const styles = StyleSheet.create({
-  backBtn: {
-    position: "absolute",
-    top: 32,
-    left: 20,
-    zIndex: 10,
-  },
+  // backBtn: {
+  //   position: "absolute",
+  //   top: 32,
+  //   left: 20,
+  //   zIndex: 10,
+  // },
 });

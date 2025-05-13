@@ -11,6 +11,7 @@ import { Goal, WeeklyGoal } from "@/src/types/goals";
 import { GratitudeEntry } from "@/src/types/journal";
 import { dateToYearMonth } from "@/src/utils/dateUtils";
 import { calculateGoalProgress } from "@/src/utils/goalsUtils";
+import { Stack } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
@@ -136,7 +137,7 @@ const ChartScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={globalStyles.title}>Stats</Text>
+      <Stack.Screen options={{ title: "Stats" }} />
 
       <View style={styles.moodContainer}>
         <Text style={globalStyles.subheader}>Moods</Text>

@@ -11,7 +11,7 @@ import { decode } from "base64-arraybuffer";
 import * as Crypto from "expo-crypto";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -237,8 +237,9 @@ const ProfileScreen = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Stack.Screen options={{ title: "Profile" }} />
+
         <View style={styles.container}>
-          <Text style={globalStyles.title}>Profile</Text>
           <Text>Hi {profile?.full_name}!</Text>
 
           <View style={styles.avatarContainer}>

@@ -18,7 +18,7 @@ import { useGoals } from "@/src/providers/GoalsProvider";
 import { globalStyles } from "@/src/styles/globals";
 import { GoalForm } from "@/src/types/goals";
 import { AntDesign, Octicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
@@ -130,6 +130,33 @@ const GoalsScreen = () => {
   // }
   return (
     <View style={styles.container}>
+      <Stack.Screen
+        options={{
+          title: "Your Goals",
+          headerRight: () => (
+            <Pressable
+              android_ripple={{
+                borderless: true,
+              }}
+              onPress={() => setGoalModalVisible(true)}
+            >
+              <AntDesign
+                name="plussquareo"
+                size={28}
+                color={Colors.light.quinary}
+              />
+            </Pressable>
+          ),
+          headerLeft: () => (
+            <Link href="/(main)/goals/history" asChild>
+              <Pressable disabled={fetchedGoals.length < 1}>
+                <Octicons name="history" size={24} color="#333" />
+              </Pressable>
+            </Link>
+          ),
+        }}
+      />
+
       <View style={styles.background}>
         <Wave
           // @ts-ignore
@@ -141,23 +168,7 @@ const GoalsScreen = () => {
       <View style={styles.header}>
         {/* ability to create goals */}
 
-        <Pressable
-          android_ripple={{
-            borderless: true,
-          }}
-          onPress={() => setGoalModalVisible(true)}
-        >
-          <AntDesign name="plussquareo" size={36} color="white" />
-        </Pressable>
-
-        <Text style={[globalStyles.title, { color: "white" }]}>Your Goals</Text>
-
         {/* menu button */}
-        <Link href="/(main)/goals/history" asChild>
-          <Pressable disabled={fetchedGoals.length < 1}>
-            <Octicons name="history" size={36} color="white" />
-          </Pressable>
-        </Link>
       </View>
 
       {/* Goal overview */}

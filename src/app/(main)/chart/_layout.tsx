@@ -9,8 +9,12 @@ const ChartLayout = () => {
     <SafeAreaProvider>
       <GoalsProvider>
         <JournalProvider>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack
+            screenOptions={{
+              headerTitleAlign: "center",
+            }}
+          >
+            <Stack.Screen name="index" />
           </Stack>
         </JournalProvider>
       </GoalsProvider>

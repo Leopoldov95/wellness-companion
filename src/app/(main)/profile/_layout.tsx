@@ -1,12 +1,14 @@
-import { View, Text } from "react-native";
-import React from "react";
 import { Stack } from "expo-router";
+import React from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const ProfileLayout = () => {
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-    </Stack>
+    <SafeAreaProvider>
+      <Stack screenOptions={{ headerTitleAlign: "center" }}>
+        <Stack.Screen name="index" />
+      </Stack>
+    </SafeAreaProvider>
   );
 };
 

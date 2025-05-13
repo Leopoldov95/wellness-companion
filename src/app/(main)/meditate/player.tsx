@@ -65,7 +65,6 @@ const PlayerScreen = () => {
       </View>
       {/* custom back button */}
       {/* TODO ~ need to PAUSE when going back */}
-      <BackButton inverted={true} onPress={onBackBtn} />
       <View style={styles.content}>
         <Text style={styles.trackName}>{currentAudio?.name}</Text>
         {/* Timer controls */}

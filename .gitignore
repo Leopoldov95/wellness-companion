@@ -41,10 +41,11 @@ expo-env.d.ts
 # @end expo-cli
 
 # test files
-/assets/tracks
 .todo.txt
 
 # misc
-.env
+supabase
 build*
 android
+.env
+assets/tracks

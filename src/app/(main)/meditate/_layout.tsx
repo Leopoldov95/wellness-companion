@@ -1,7 +1,9 @@
 import React from "react";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import MeditateProvider from "@/src/providers/MeditateProvider";
+import { Text } from "react-native";
+import BackButton from "@/src/components/BackButton";
 
 const MeditateLayout = () => {
   return (
@@ -10,7 +12,8 @@ const MeditateLayout = () => {
         <Stack
           initialRouteName="meditate"
           screenOptions={{
-            headerShown: false,
+            headerTitleAlign: "center",
+            headerLeft: () => <BackButton onPress={() => router.back()} />,
           }}
         />
       </MeditateProvider>
