@@ -283,13 +283,14 @@ export const useActiveWeeklyGoals = (userId: string) => {
   return useQuery<WeeklyGoal[]>({
     queryKey: ["weekly_goals_active"],
     queryFn: async () => {
-      const today = new Date().toISOString();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
       const { data, error } = await supabase
         .from("weekly_goals")
         .select("*, daily_tasks(*), goals(*)")
-        .lte("start_date", today) // start_date <= today
-        .gte("end_date", today) // end_date >= today
+        .lte("start_date", today.toISOString()) // start_date <= today
+        .gte("end_date", today.toISOString()) // end_date >= today
         .eq("goals.user_id", userId)
         .not("goals", "is", null)
         .eq("goals.status", "active"); // make sure to only get active goals
@@ -478,7 +479,7 @@ export const ensureCurrentWeeklyGoals = async (userId: string) => {
     }
 
     // If no weekly goal yet, or last one ended before yesterday, create a new one
-    if (!latestWeeklyGoal || new Date(latestWeeklyGoal.end_date) < yesterday) {
+    if (!latestWeeklyGoal || new Date(latestWeeklyGoal.end_date) <= yesterday) {
       const lastEnd = latestWeeklyGoal
         ? new Date(latestWeeklyGoal.end_date) //! this is the root cuase, fundamentally this is incorrect and will have a cascading effect
         : new Date(yesterday); //* set's it to yesterday
@@ -497,7 +498,7 @@ export const ensureCurrentWeeklyGoals = async (userId: string) => {
 
       await supabase.from("weekly_goals").insert({
         goal_id: goal.id,
-        title: goal.title,
+        title: latestWeeklyGoal.title,
         start_date: newStart.toISOString(),
         end_date: newEnd.toISOString(),
         status: "active",

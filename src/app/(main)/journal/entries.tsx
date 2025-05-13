@@ -17,7 +17,7 @@ import {
 } from "@/src/types/journal";
 import { filterEntries, sortEntries } from "@/src/utils/journalUtils";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -154,8 +154,7 @@ const EntriesScreen = () => {
 
   return (
     <View style={styles.container}>
-      <BackButton onPress={() => router.back()} />
-      <Text style={globalStyles.title}>Your Entries</Text>
+      <Stack.Screen options={{ title: "Your Entries" }} />
 
       {/* user sort */}
       <View style={styles.filterBtnContainer}>

@@ -172,7 +172,7 @@ const SignUpScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: "Sign In" }} />
+      <Stack.Screen options={{ title: "Sign Up" }} />
 
       <View style={styles.header}>
         <Text style={globalStyles.title}>Create Account</Text>

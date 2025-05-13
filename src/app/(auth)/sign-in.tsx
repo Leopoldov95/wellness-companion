@@ -124,10 +124,14 @@ const SignInScreen = () => {
       />
       {/* External Providers Authentication */}
       <View style={styles.socialContainer}>
-        <Pressable onPress={handleGoogleAuth} style={styles.iconLink}>
+        <Pressable disabled onPress={handleGoogleAuth} style={styles.iconLink}>
           <FontAwesome5 size={24} name="google" style={styles.icon} />
         </Pressable>
-        <Pressable onPress={handleFacebookAuth} style={styles.iconLink}>
+        <Pressable
+          disabled
+          onPress={handleFacebookAuth}
+          style={styles.iconLink}
+        >
           <FontAwesome5 size={24} name="facebook" style={styles.icon} />
         </Pressable>
       </View>

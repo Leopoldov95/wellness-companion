@@ -1,22 +1,19 @@
 import { globalStyles } from "@/src/styles/globals";
 import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 // import Button from "@/src/components/Button";
 import WelcomeGraphic from "@/assets/images/auth/welcome-graphic.svg";
 import Colors from "@/src/constants/Colors";
-import { Link, useRouter } from "expo-router";
+import { Link, Stack, useRouter } from "expo-router";
 import { Button } from "react-native-paper";
 
 const WelcomeScreen = () => {
   const router = useRouter();
   return (
     <View style={styles.container}>
+      <Stack.Screen options={{ title: "Welcome" }} />
+
       <View style={styles.header}>
-        <Image
-          source={require("@/assets/images/logo.png")}
-          style={styles.image}
-          resizeMode="contain"
-        />
         <Text style={globalStyles.title}>
           Welcome To Your Next Mental Health App
         </Text>

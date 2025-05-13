@@ -9,7 +9,7 @@ import { globalStyles } from "@/src/styles/globals";
 import { GratitudeEntry } from "@/src/types/journal";
 import { datetoLocalString } from "@/src/utils/dateUtils";
 import Feather from "@expo/vector-icons/Feather";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Dimensions,
@@ -103,9 +103,7 @@ const JournalScreen = () => {
 
   return (
     <View style={styles.container}>
-      <BackButton onPress={() => router.back()} />
-
-      <Text style={globalStyles.title}>Gratitude Journal</Text>
+      <Stack.Screen options={{ title: "Gratitude Journal" }} />
 
       {/* Journal component */}
       {!hasWrittenToday ? (

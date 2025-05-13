@@ -6,6 +6,7 @@ import {
   useUpdateGoalDetails,
   useUpdateWeeklyGoalTitle,
 } from "@/src/api/goals";
+import BackButton from "@/src/components/BackButton";
 import EditGoalForm from "@/src/components/goal/EditGoalForm";
 import GoalProgressBar from "@/src/components/goal/GoalProgressBar";
 import WeeklyCardList from "@/src/components/goal/WeeklyCardList";
@@ -17,7 +18,7 @@ import { Goal, GoalForm, ValidDateType, WeeklyGoal } from "@/src/types/goals";
 import { dateToReadible } from "@/src/utils/dateUtils";
 import { Feather } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { Fragment, useEffect, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
@@ -199,19 +200,22 @@ const GoalEditScreen = () => {
 
     return (
       <View style={styles.container}>
-        <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <Feather
-            name="chevron-left"
-            size={32}
-            color={Colors.light.textDark}
-          />
-        </Pressable>
-
-        {!isEdit && (
-          <Pressable style={styles.editBtn} onPress={() => setIsEdit(true)}>
-            <Feather name="edit" size={30} color={Colors.light.textDark} />
-          </Pressable>
-        )}
+        <Stack.Screen
+          options={{
+            title: "Manage Goal",
+            headerLeft: () => <BackButton onPress={() => router.back()} />,
+            headerRight: () =>
+              !isEdit && (
+                <Pressable onPress={() => setIsEdit(true)}>
+                  <Feather
+                    name="edit"
+                    size={26}
+                    color={Colors.light.textDark}
+                  />
+                </Pressable>
+              ),
+          }}
+        />
 
         <Text
           style={[globalStyles.subheader, { marginBottom: 5, marginTop: 10 }]}
@@ -273,7 +277,9 @@ const GoalEditScreen = () => {
                 updateWeeklyTask={updateWeeklyTask}
                 currentDate={today}
                 completeWeeklyTask={completeWeeklyTask}
-                weeklyGoals={weekly} // we want to show the newest one first
+                weeklyGoals={weekly.sort(
+                  (a, b) => b.endDate.getTime() - a.endDate.getTime()
+                )} // we want to show the newest one first
               />
             </View>
           </Fragment>
@@ -299,12 +305,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     left: 16,
-    zIndex: 10,
-  },
-  editBtn: {
-    position: "absolute",
-    top: 20,
-    right: 16,
     zIndex: 10,
   },
   detailRow: {

@@ -2,7 +2,7 @@ import BackButton from "@/src/components/BackButton";
 import Fonts from "@/src/constants/Fonts";
 import { globalStyles } from "@/src/styles/globals";
 import { GratitudeEntry } from "@/src/types/journal";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import {
@@ -113,11 +113,7 @@ const SharedScreen = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <BackButton onPress={() => router.back()} />
-        <Text style={globalStyles.title}>Community</Text>
-        <Text style={[globalStyles.subheader, { marginTop: 20 }]}>
-          Shared Entries
-        </Text>
+        <Stack.Screen options={{ title: "Shared Entries" }} />
         {entryIdx < entries.length && (
           <GestureDetector gesture={Gesture.Simultaneous(swipeLeft, swipeUp)}>
             <View style={styles.gestureContainer}>

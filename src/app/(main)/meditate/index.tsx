@@ -7,7 +7,7 @@ import { useMeditate } from "@/src/providers/MeditateProvider";
 import { globalStyles } from "@/src/styles/globals";
 import { DurationType, TrackAsset } from "@/src/types/meditation";
 import { Picker } from "@react-native-picker/picker";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 
 const MeditateScreen = () => {
   const { tracks, onTrackPress, setSelectedDuration, selectedDuration } =
@@ -22,9 +22,7 @@ const MeditateScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={globalStyles.title}>Meditation</Text>
-
-      <BackButton onPress={() => router.back()} />
+      <Stack.Screen options={{ title: "Meditation" }} />
 
       {/* set the duration */}
       <View style={styles.duration}>

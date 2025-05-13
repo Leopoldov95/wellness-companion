@@ -12,10 +12,10 @@ const AuthLayout = () => {
 
   return (
     <SafeAreaProvider>
-      <Stack>
-        <Stack.Screen name="welcome" options={{ headerShown: false }} />
-        <Stack.Screen name="sign-in" options={{ headerShown: false }} />
-        <Stack.Screen name="sign-up" options={{ headerShown: false }} />
+      <Stack screenOptions={{ headerTitleAlign: "center" }}>
+        <Stack.Screen name="welcome" />
+        <Stack.Screen name="sign-in" />
+        <Stack.Screen name="sign-up" />
       </Stack>
     </SafeAreaProvider>
   );
