@@ -22,7 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.leo.ortega.WellnessCompanion",
-      "versionCode": 25
+      "versionCode": 27
     },
     "web": {
       "bundler": "metro",
