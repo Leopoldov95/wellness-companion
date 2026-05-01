@@ -2,6 +2,8 @@
 
 A cross-platform mental wellness mobile application designed to help users build healthier habits, track their well-being, and develop mindfulness through daily reflection, goal setting, and self-care routines.
 
+![Screenshot](https://raw.githubusercontent.com/Leopoldov95/wellness-companion/main/wellness.jpeg)
+
 > ⚠️ **MVP Status:** Social sign-on and notifications are planned but not yet implemented.
 
 ---
